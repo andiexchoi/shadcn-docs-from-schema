@@ -42,7 +42,7 @@ Remove any word that doesn't add meaning. Replace the following phrases with the
 
 ### Sentences
 
-- Keep sentences to 25 words or fewer where possible.
+- Keep sentences to 15-20 words or fewer where possible.
 - Use complete sentences.
 - Avoid gerunds. Use "use," not "using"; "run," not "running."
 - Avoid nominalizations. "Decide" not "make a decision"; "fail" not "experience a failure."

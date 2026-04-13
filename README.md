@@ -2,7 +2,7 @@
 
 Generate structured component documentation from a JSON schema. Built for designers and product managers who need to know *when* and *how* to use a component, not how it's built.
 
-**[Live demo →]()**
+**[Live demo →](https://shadcn-docs-from-schema.vercel.app/)**
 
 ---
 
