@@ -87,18 +87,133 @@
   letter-spacing: 0.5px;
 }
 
-.schema-input {
-  flex: 1;
-  min-height: 420px;
-  padding: 16px;
+/* Input card — mirrors the output box */
+.input-card {
   border: 1px solid #e0e0e0;
   border-radius: 8px;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+}
+
+.mode-tabs {
+  display: flex;
+  border-bottom: 1px solid #e8e8e8;
+}
+
+.mode-tab {
+  flex: 1;
+  padding: 13px 16px;
+  border: none;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  background: transparent;
+  font-size: 13px;
+  font-weight: 500;
+  color: #999;
+  cursor: pointer;
+  transition: color 0.15s, background 0.15s, border-color 0.15s;
+}
+
+.mode-tab + .mode-tab {
+  border-left: 1px solid #e8e8e8;
+}
+
+.mode-tab.active {
+  color: #111;
+  background: #fff;
+  border-bottom-color: #111;
+}
+
+.mode-tab:hover:not(.active) {
+  color: #555;
+  background: #fafafa;
+}
+
+.input-body {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  flex: 1;
+}
+
+.fetch-mode {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 1;
+}
+
+.component-input {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  font-size: 14px;
+  color: #111;
+  background: #fff;
+  outline: none;
+  transition: border-color 0.15s;
+  box-sizing: border-box;
+}
+
+.component-input::placeholder {
+  color: #bbb;
+}
+
+.component-input:focus {
+  border-color: #aaa;
+}
+
+.source-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.source-label {
+  font-size: 12px;
+  color: #999;
+  margin-right: 2px;
+}
+
+.source-pill {
+  padding: 5px 12px;
+  border: 1px solid #e0e0e0;
+  border-radius: 20px;
+  background: #fff;
+  font-size: 12px;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.source-pill:hover:not(.selected) {
+  border-color: #bbb;
+  color: #333;
+}
+
+.source-pill.selected {
+  background: #111;
+  border-color: #111;
+  color: #fff;
+}
+
+.schema-input {
+  flex: 1;
+  padding: 16px;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
   font-family: "SF Mono", "Fira Code", monospace;
   font-size: 12.5px;
   line-height: 1.6;
   color: #111;
   background: #fff;
-  resize: vertical;
+  resize: none;
   outline: none;
   transition: border-color 0.15s;
 }
@@ -141,7 +256,8 @@
 }
 
 .generate-btn {
-  padding: 10px 20px;
+  width: 100%;
+  padding: 11px 20px;
   background: #111;
   color: #fff;
   border: none;
@@ -150,7 +266,7 @@
   font-weight: 500;
   cursor: pointer;
   transition: background 0.15s;
-  align-self: flex-start;
+  margin-top: auto;
 }
 
 .generate-btn:hover:not(:disabled) {

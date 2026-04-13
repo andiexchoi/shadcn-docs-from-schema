@@ -145,79 +145,82 @@ export default function App() {
 
         <div className="columns">
           <div className="column input-column">
-            <div className="mode-tabs">
-              <button
-                className={`mode-tab ${mode === "fetch" ? "active" : ""}`}
-                onClick={() => setMode("fetch")}
-              >
-                Fetch from docs
-              </button>
-              <button
-                className={`mode-tab ${mode === "schema" ? "active" : ""}`}
-                onClick={() => setMode("schema")}
-              >
-                Custom schema
-              </button>
-            </div>
-
-            {mode === "fetch" ? (
-              <div className="fetch-mode">
-                <div className="autocomplete-wrap">
-                  <input
-                    ref={inputRef}
-                    className="component-input"
-                    type="text"
-                    placeholder="Component name, e.g. Button, Dialog, Tabs"
-                    value={componentName}
-                    onChange={handleComponentInput}
-                    onKeyDown={handleInputKeyDown}
-                    onBlur={() => setTimeout(() => setSuggestions([]), 150)}
-                    autoComplete="off"
-                  />
-                  {suggestions.length > 0 && (
-                    <ul className="suggestions">
-                      {suggestions.map((item, i) => (
-                        <li
-                          key={item.slug}
-                          className={`suggestion-item ${i === activeSuggestion ? "active" : ""}`}
-                          onMouseDown={() => selectSuggestion(item)}
-                        >
-                          {item.display}
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                </div>
-                <div className="source-row">
-                  <span className="source-label">Sources:</span>
-                  {SOURCES.map((s) => (
-                    <label key={s.id} className="source-check">
-                      <input
-                        type="checkbox"
-                        checked={selectedSources.includes(s.id)}
-                        onChange={() => toggleSource(s.id)}
-                      />
-                      {s.label}
-                    </label>
-                  ))}
-                </div>
+            <div className="input-card">
+              <div className="mode-tabs">
+                <button
+                  className={`mode-tab ${mode === "fetch" ? "active" : ""}`}
+                  onClick={() => setMode("fetch")}
+                >
+                  Fetch from docs
+                </button>
+                <button
+                  className={`mode-tab ${mode === "schema" ? "active" : ""}`}
+                  onClick={() => setMode("schema")}
+                >
+                  Custom schema
+                </button>
               </div>
-            ) : (
-              <textarea
-                className="schema-input"
-                value={schemaInput}
-                onChange={(e) => setSchemaInput(e.target.value)}
-                spellCheck={false}
-              />
-            )}
 
-            <button
-              className="generate-btn"
-              onClick={generate}
-              disabled={loading}
-            >
-              {loading ? "Generating..." : "Generate docs"}
-            </button>
+              <div className="input-body">
+                {mode === "fetch" ? (
+                  <div className="fetch-mode">
+                    <div className="autocomplete-wrap">
+                      <input
+                        ref={inputRef}
+                        className="component-input"
+                        type="text"
+                        placeholder="Component name, e.g. Button, Dialog, Tabs"
+                        value={componentName}
+                        onChange={handleComponentInput}
+                        onKeyDown={handleInputKeyDown}
+                        onBlur={() => setTimeout(() => setSuggestions([]), 150)}
+                        autoComplete="off"
+                      />
+                      {suggestions.length > 0 && (
+                        <ul className="suggestions">
+                          {suggestions.map((item, i) => (
+                            <li
+                              key={item.slug}
+                              className={`suggestion-item ${i === activeSuggestion ? "active" : ""}`}
+                              onMouseDown={() => selectSuggestion(item)}
+                            >
+                              {item.display}
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </div>
+                    <div className="source-row">
+                      <span className="source-label">Sources</span>
+                      {SOURCES.map((s) => (
+                        <button
+                          key={s.id}
+                          className={`source-pill ${selectedSources.includes(s.id) ? "selected" : ""}`}
+                          onClick={() => toggleSource(s.id)}
+                        >
+                          {s.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  <textarea
+                    className="schema-input"
+                    value={schemaInput}
+                    onChange={(e) => setSchemaInput(e.target.value)}
+                    spellCheck={false}
+                  />
+                )}
+
+                <button
+                  className="generate-btn"
+                  onClick={generate}
+                  disabled={loading}
+                >
+                  {loading ? "Generating..." : "Generate docs"}
+                </button>
+              </div>
+            </div>
           </div>
 
           <div className="column output-column">
