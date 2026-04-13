@@ -123,7 +123,7 @@ export default function App() {
   return (
     <div className="app">
       <header className="header">
-        <h1>shadcn docs from schema</h1>
+        <h1>What does this shadcn/ui component do?</h1>
         <p className="subtitle">
           Paste a component JSON schema. Get a structured first draft for mobile app component documentation geared towards product managers and designers.
         </p>
