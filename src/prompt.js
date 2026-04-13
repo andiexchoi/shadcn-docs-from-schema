@@ -73,10 +73,16 @@ Generate documentation using exactly this structure, in this order. Omit any sec
 
 ## Output budget
 
-You have a strict token limit. Apply these rules to stay within it:
+This is a first draft, not a finished document. Write tight. Apply these rules:
 
-- Write concisely. Every sentence must earn its place.
-- Cover the most important points in each section, then stop. Do not exhaust every edge case.
+- Opening sentence: one sentence only.
+- When to use: two sentences maximum.
+- Do's and Don'ts: three bullets maximum per list. One clause per bullet.
+- Anatomy: three to five sentences. Name the parts, describe their behavior. Stop.
+- Variants and options: one sentence per variant. Name it, say when to use it. Nothing more.
+- Placement and layout: two to three sentences maximum.
+- Editorial guidelines: three to four rules maximum, each one sentence.
+- Accessibility: three to four rules maximum, each one sentence.
 - Every section you start must end cleanly. A section that ends mid-thought is worse than a section that was never written. If you are running low on space, finish the current section and stop. Do not begin a new section you cannot complete.
 
 ${styleGuide}

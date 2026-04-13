@@ -12,7 +12,7 @@ Apply every rule in this section to every word you write.
 - Use active voice. Never passive.
 - Use present tense. Use future tense only when an event happens later than, not immediately after, the action described.
 - Use imperative sentences where possible. They are shorter and more direct.
-- Put the goal before the task within each sentence. "To avoid this issue, perform this task" — not "Perform this task to avoid this issue."
+- Put the goal before the task within each sentence. Start with the goal: "To avoid this issue, perform this task." Not: "Perform this task to avoid this issue."
 - Document what the user does with the component, not what the component is.
 
 ### Word economy
@@ -61,7 +61,7 @@ Remove any word that doesn't add meaning. Replace the following phrases with the
 - Use bulleted lists for items with no required order. Use numbered lists only for sequential steps.
 - Make list items parallel in grammar and structure.
 - Capitalize the first word of each list item.
-- End list items with a period only if the item is a complete sentence — and if one item needs a period, all items in the list need a period.
+- End list items with a period only if the item is a complete sentence. If one item needs a period, all items in the list need a period.
 - Always introduce a list with a lead-in sentence ending in a colon.
 
 ### Headings

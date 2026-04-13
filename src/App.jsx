@@ -58,7 +58,7 @@ export default function App() {
       <header className="header">
         <h1>shadcn docs from schema</h1>
         <p className="subtitle">
-          Paste a component JSON schema. Get a structured documentation draft.
+          Paste a component JSON schema. Get a structured first draft for mobile app component documentation geared towards product managers and designers.
         </p>
       </header>
 
