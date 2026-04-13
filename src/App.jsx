@@ -125,7 +125,7 @@ export default function App() {
       <header className="header">
         <h1>What does this shadcn/ui component do?</h1>
         <p className="subtitle">
-          Paste a component JSON schema. Get a structured first draft for mobile app component documentation geared towards product managers and designers.
+          Retrieve and/or input a component JSON schema. Get a structured first draft for mobile app component documentation geared towards product managers and designers.
         </p>
       </header>
 
