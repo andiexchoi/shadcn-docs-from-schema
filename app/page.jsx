@@ -11,6 +11,10 @@ const SOURCES = [
   { id: "baseui", label: "Base UI" },
 ];
 
+function toMdx(markdown) {
+  return `---\ntitle: "Component documentation"\ndescription: "Generated with shadcn-docs-from-schema"\n---\n\n${markdown}`;
+}
+
 export default function Home() {
   const [mode, setMode] = useState("fetch");
   const [componentName, setComponentName] = useState("");
@@ -23,6 +27,14 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [activeTab, setActiveTab] = useState("markdown");
+  const [copied, setCopied] = useState(false);
+
+  function copyMdx() {
+    navigator.clipboard.writeText(toMdx(output)).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  }
 
   function toggleSource(id) {
     setSelectedSources((prev) =>
@@ -176,14 +188,20 @@ export default function Home() {
                         onKeyDown={handleInputKeyDown}
                         onBlur={() => setTimeout(() => setSuggestions([]), 150)}
                         autoComplete="off"
+                        aria-label="Component name"
+                        aria-autocomplete="list"
+                        aria-expanded={suggestions.length > 0}
+                        role="combobox"
                       />
                       {suggestions.length > 0 && (
-                        <ul className="suggestions">
+                        <ul className="suggestions" role="listbox" aria-label="Component suggestions">
                           {suggestions.map((item, i) => (
                             <li
                               key={item.slug}
                               className={`suggestion-item ${i === activeSuggestion ? "active" : ""}`}
                               onMouseDown={() => selectSuggestion(item)}
+                              role="option"
+                              aria-selected={i === activeSuggestion}
                             >
                               {item.display}
                             </li>
@@ -191,13 +209,14 @@ export default function Home() {
                         </ul>
                       )}
                     </div>
-                    <div className="source-row">
-                      <span className="source-label">Sources</span>
+                    <div className="source-row" role="group" aria-label="Documentation sources">
+                      <span className="source-label" id="source-label">Sources</span>
                       {SOURCES.map((s) => (
                         <button
                           key={s.id}
                           className={`source-pill ${selectedSources.includes(s.id) ? "selected" : ""}`}
                           onClick={() => toggleSource(s.id)}
+                          aria-pressed={selectedSources.includes(s.id)}
                         >
                           {s.label}
                         </button>
@@ -210,6 +229,7 @@ export default function Home() {
                     value={schemaInput}
                     onChange={(e) => setSchemaInput(e.target.value)}
                     spellCheck={false}
+                    aria-label="JSON schema input"
                   />
                 )}
 
@@ -228,30 +248,39 @@ export default function Home() {
             <div className="output-header">
               <label className="col-label">Documentation</label>
               {output && (
-                <div className="tabs">
-                  <button
-                    className={`tab ${activeTab === "markdown" ? "active" : ""}`}
-                    onClick={() => setActiveTab("markdown")}
-                  >
-                    Markdown
-                  </button>
-                  <button
-                    className={`tab ${activeTab === "preview" ? "active" : ""}`}
-                    onClick={() => setActiveTab("preview")}
-                  >
-                    Preview
+                <div className="output-actions">
+                  <div className="tabs" role="tablist" aria-label="Output format">
+                    <button
+                      className={`tab ${activeTab === "markdown" ? "active" : ""}`}
+                      onClick={() => setActiveTab("markdown")}
+                      role="tab"
+                      aria-selected={activeTab === "markdown"}
+                    >
+                      Markdown
+                    </button>
+                    <button
+                      className={`tab ${activeTab === "preview" ? "active" : ""}`}
+                      onClick={() => setActiveTab("preview")}
+                      role="tab"
+                      aria-selected={activeTab === "preview"}
+                    >
+                      Preview
+                    </button>
+                  </div>
+                  <button className="copy-mdx-btn" onClick={copyMdx}>
+                    {copied ? "Copied" : "Copy as MDX"}
                   </button>
                 </div>
               )}
             </div>
-            {error && <p className="error">{error}</p>}
+            {error && <p className="error" role="alert">{error}</p>}
             {!output && !error && !loading && (
               <div className="placeholder">
                 <p>Enter a component name or select an example, then click Generate docs.</p>
               </div>
             )}
             {loading && (
-              <div className="placeholder">
+              <div className="placeholder" aria-live="polite">
                 <p>Fetching docs and writing documentation...</p>
               </div>
             )}

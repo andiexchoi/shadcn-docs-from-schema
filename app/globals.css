@@ -298,6 +298,29 @@ body {
   justify-content: space-between;
 }
 
+.output-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.copy-mdx-btn {
+  padding: 4px 12px;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  background: #fff;
+  font-size: 12px;
+  font-weight: 500;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.copy-mdx-btn:hover {
+  border-color: #aaa;
+  color: #111;
+}
+
 .tabs {
   display: flex;
   gap: 2px;
@@ -423,6 +446,22 @@ body {
   background: #fff5f5;
   border: 1px solid #f5c6cb;
   border-radius: 6px;
+}
+
+/* Focus styles for keyboard navigation */
+.source-pill:focus-visible,
+.example-btn:focus-visible,
+.mode-tab:focus-visible,
+.tab:focus-visible,
+.copy-mdx-btn:focus-visible,
+.generate-btn:focus-visible {
+  outline: 2px solid #111;
+  outline-offset: 2px;
+}
+
+.component-input:focus-visible {
+  border-color: #111;
+  outline: 1px solid #111;
 }
 
 @media (max-width: 768px) {

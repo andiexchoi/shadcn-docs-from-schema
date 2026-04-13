@@ -145,16 +145,27 @@ Both Enter and Space activate a button. Don't override or block these key bindin
 
 ## Stack
 
-- React + Vite
+- Next.js on Vercel
 - Anthropic API (claude-sonnet-4-6)
 - Live doc fetching from GitHub raw content (shadcn/ui, Radix UI, Base UI)
-- Deployed on Vercel
+
+---
+
+## Prompt eval system
+
+The `eval/` directory contains a lightweight evaluation framework for testing prompt changes against expected output quality. Each test case defines traits the output must contain and antitraits it must not. Run `node eval/run.js` after changing the prompt, style guide, or platform guidelines to check for regressions.
+
+See [`eval/README.md`](eval/README.md) for details.
+
+---
+
+## Prompt changelog
+
+[`PROMPT_CHANGELOG.md`](PROMPT_CHANGELOG.md) tracks what changed in the prompt, why, and what effect it had on output quality. Each entry corresponds to a meaningful change in the prompt, style guide, or platform guidelines.
 
 ---
 
 ## What's next
 
-- Prompt versioning with change notes
-- Eval system: test inputs with expected quality criteria, flag regressions
 - Support for OpenAPI specs and TypeScript prop types as input formats
-- Export to MDX
+- Batch evaluation with scoring thresholds for CI integration
