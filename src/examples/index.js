@@ -46,46 +46,177 @@ export const examples = [
     }
   },
   {
-    name: "Toast",
+    name: "Sonner",
     schema: {
-      component: "Toast",
-      description: "A brief, auto-dismissing notification that appears in response to a user action.",
-      props: {
-        variant: {
+      component: "Sonner",
+      description: "An opinionated toast notification system for React. Replaces the deprecated shadcn Toast component.",
+      setup: {
+        toaster: "Add the Toaster component once at the root layout (app/layout.tsx). It can be placed in server components.",
+        trigger: "Call toast() from the sonner package anywhere in your app to fire a notification.",
+        multipleToasters: "Render multiple Toaster components with unique id props to create separate toast stacks. Target a specific toaster by passing toasterId to the toast() call."
+      },
+      toasterProps: {
+        theme: {
+          type: "string",
+          values: ["light", "dark", "system"],
+          default: "light",
+          description: "Visual theme for the toast stack. Pass a value from your theme provider (such as next-themes) to make it dynamic."
+        },
+        richColors: {
+          type: "boolean",
+          default: false,
+          description: "Enables richer color treatment for success, error, warning, and info toasts."
+        },
+        expand: {
+          type: "boolean",
+          default: false,
+          description: "When true, toasts are expanded by default instead of stacked. Users can also trigger expansion by hovering."
+        },
+        visibleToasts: {
+          type: "number",
+          default: 3,
+          description: "How many toasts are visible in the stack at once. Increase when expand is true."
+        },
+        position: {
           type: "enum",
-          values: ["default", "destructive"],
-          default: "default",
-          description: "Controls the visual style and semantic meaning of the toast."
+          values: ["top-left", "top-center", "top-right", "bottom-left", "bottom-center", "bottom-right"],
+          default: "bottom-right",
+          description: "Where the toast stack renders on screen. Applies to all toasts in this Toaster."
+        },
+        offset: {
+          type: "string | number | object",
+          default: "32px",
+          description: "Distance between the toast stack and the edge of the screen on desktop. Accepts a pixel value, a CSS unit string, or an object with per-side values (top, bottom, left, right)."
+        },
+        mobileOffset: {
+          type: "string | number | object",
+          default: "16px",
+          description: "Distance from screen edges on mobile (screens under 600px wide). Accepts the same values as offset."
+        },
+        closeButton: {
+          type: "boolean",
+          default: false,
+          description: "Renders a close button on every toast in this Toaster."
+        },
+        gap: {
+          type: "number",
+          default: 14,
+          description: "Vertical gap in pixels between toasts in the stack."
+        },
+        hotkey: {
+          type: "string",
+          default: "alt+T",
+          description: "Keyboard shortcut to focus the toast region."
+        },
+        dir: {
+          type: "string",
+          values: ["ltr", "rtl"],
+          default: "ltr",
+          description: "Text direction for the toast stack."
+        },
+        invert: {
+          type: "boolean",
+          default: false,
+          description: "Inverts the color scheme of all toasts."
+        },
+        icons: {
+          type: "object",
+          description: "Override the default icons for success, error, warning, info, and loading toast types."
+        },
+        toastOptions: {
+          type: "object",
+          description: "Default options applied to every toast rendered by this Toaster. Individual toast() calls override these."
+        }
+      },
+      toastTypes: {
+        default: "toast('Message') — a neutral informational message. Accepts a string or JSX as the first argument.",
+        success: "toast.success('Message') — confirms a completed action. Renders a checkmark icon.",
+        error: "toast.error('Message') — communicates a failure. Renders an error icon.",
+        loading: "toast.loading('Message') — shows a loading spinner. Use when handling async states manually.",
+        promise: "toast.promise(promise, { loading, success, error }) — automatically transitions through loading, success, and error states as a promise resolves or rejects.",
+        custom: "toast(<JSX />) — renders custom JSX as the toast content while keeping default Sonner styling and animations.",
+        headless: "toast.custom((id) => <JSX />) — fully unstyled. Receives the toast id for manual dismissal via sonner.dismiss(id)."
+      },
+      toastOptions: {
+        description: {
+          type: "ReactNode",
+          default: null,
+          description: "Supporting detail below the main message."
+        },
+        action: {
+          type: "ReactNode or { label: string, onClick: (event) => void }",
+          description: "A primary action button inside the toast. Closes the toast on click by default. Call event.preventDefault() in onClick to keep the toast open."
+        },
+        cancel: {
+          type: "ReactNode or { label: string, onClick: () => void }",
+          description: "A secondary cancel button inside the toast. Closes the toast on click."
+        },
+        icon: {
+          type: "ReactNode",
+          default: null,
+          description: "A custom icon rendered before the message."
+        },
+        closeButton: {
+          type: "boolean",
+          default: false,
+          description: "Renders an explicit close button on the toast."
         },
         duration: {
           type: "number",
-          default: 5000,
-          description: "How long the toast remains visible, in milliseconds."
+          default: 4000,
+          description: "How long the toast remains visible, in milliseconds. Set to Infinity for a persistent toast."
         },
-        open: {
+        dismissible: {
           type: "boolean",
-          description: "Controls whether the toast is visible."
+          default: true,
+          description: "Whether the user can swipe or click to dismiss the toast manually."
         },
-        onOpenChange: {
+        invert: {
+          type: "boolean",
+          default: false,
+          description: "Inverts the toast colors. Use on dark backgrounds where the default styling creates low contrast."
+        },
+        position: {
+          type: "enum",
+          values: ["top-left", "top-center", "top-right", "bottom-left", "bottom-center", "bottom-right"],
+          default: "bottom-right",
+          description: "Set on the Toaster component to control where the entire toast stack appears. Cannot be set per individual toast."
+        },
+        containerAriaLabel: {
+          type: "string",
+          default: "Notifications",
+          description: "The aria-label for the toast container element. Override when 'Notifications' doesn't match the context."
+        },
+        onDismiss: {
           type: "function",
-          description: "Callback fired when the open state changes."
+          description: "Callback fired when the toast is dismissed by the user."
+        },
+        onAutoClose: {
+          type: "function",
+          description: "Callback fired when the toast auto-closes after its duration."
         }
-      },
-      slots: {
-        title: "Short summary of the event",
-        description: "Optional supporting detail",
-        action: "Optional action button (e.g. Undo)",
-        close: "Dismiss button"
       },
       behavior: {
         autoDismiss: true,
         stackable: true,
-        position: "bottom-right by default, configurable via ToastProvider"
+        swipeToDismiss: true,
+        maxVisible: "Three toasts visible at once by default. Older toasts stack behind."
+      },
+      programmaticControl: {
+        update: "Pass the id returned by toast() to a subsequent toast() call to update an existing toast. Only the properties you pass will change. Call toast.success(message, { id }) to also change the type.",
+        dismiss: "Call toast.dismiss(id) to remove a specific toast programmatically. Call toast.dismiss() with no argument to remove all toasts at once.",
+        persist: "Set duration to Infinity to keep a toast on screen indefinitely. Dismiss it programmatically with toast.dismiss(id) when the condition resolves.",
+        getActive: "Use toast.getActiveToasts() outside of React to retrieve an array of all currently visible toasts. Inside React, use the useSonner hook: const { toasts } = useSonner().",
+        customElements: "Pass a function returning JSX instead of a string as the title or description to render custom elements (links, buttons, inline components) inside the toast."
+      },
+      distinction: {
+        vsAlert: "Alerts are persistent and inline. Sonner toasts are temporary overlays.",
+        actionVsCancel: "action renders a primary button. cancel renders a secondary button. Use action for the thing you want the user to do (Undo, Retry). Use cancel for dismissal with a label."
       },
       accessibility: {
-        role: "status",
-        ariaLive: "polite for default, assertive for destructive",
-        keyboardInteraction: ["Escape to dismiss"]
+        containerAriaLabel: "Notifications (default). The entire toast stack is a labelled region.",
+        ariaLive: "polite by default. Error toasts use assertive, which interrupts screen reader announcement immediately.",
+        notes: "Do not use toasts for information that requires a user response. Use an Alert or Dialog instead. Screen readers announce toast content on appearance."
       }
     }
   },
