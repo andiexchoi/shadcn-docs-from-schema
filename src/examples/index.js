@@ -224,43 +224,82 @@ export const examples = [
     name: "Dialog",
     schema: {
       component: "Dialog",
-      description: "A modal window that interrupts the user flow to focus attention on a critical task or message.",
-      subcomponents: ["DialogTrigger", "DialogContent", "DialogHeader", "DialogTitle", "DialogDescription", "DialogFooter", "DialogClose"],
-      props: {
-        open: {
-          type: "boolean",
-          description: "Controls whether the dialog is visible. Use for controlled dialogs."
+      description: "A window overlaid on the primary window or another dialog, rendering the content underneath inert.",
+      composition: {
+        structure: "Dialog > DialogTrigger + DialogContent > DialogHeader (DialogTitle + DialogDescription) + DialogFooter",
+        portal: "DialogContent renders inside a Portal, which appends it to document.body by default. Use the Portal container prop to target a different element.",
+        overlay: "DialogOverlay covers the inert content behind the dialog. It is included inside DialogContent in the shadcn implementation."
+      },
+      subcomponents: {
+        Root: {
+          description: "The root component. Wraps the trigger and content.",
+          props: {
+            open: { type: "boolean", description: "Controls visibility in controlled mode." },
+            defaultOpen: { type: "boolean", description: "Initial open state in uncontrolled mode." },
+            onOpenChange: { type: "function", description: "Callback fired when open state changes. Use to sync controlled state." },
+            modal: { type: "boolean", default: true, description: "When false, interaction outside the dialog is not blocked. Use for non-modal dialogs that coexist with page content." }
+          }
         },
-        onOpenChange: {
-          type: "function",
-          description: "Callback fired when the open state changes."
+        Trigger: {
+          description: "The element that opens the dialog. Renders a button by default.",
+          props: {
+            asChild: { type: "boolean", default: false, description: "Merges props onto the child element instead of rendering a button." }
+          }
         },
-        modal: {
-          type: "boolean",
-          default: true,
-          description: "When true, interaction outside the dialog is blocked."
+        Content: {
+          description: "The dialog panel. Contains all visible dialog content.",
+          props: {
+            showCloseButton: { type: "boolean", default: true, description: "Shows or hides the default X close button in the top-right corner. Set to false to hide it." },
+            onOpenAutoFocus: { type: "function", description: "Callback when focus moves into the content on open. Call event.preventDefault() to override default focus behavior." },
+            onCloseAutoFocus: { type: "function", description: "Callback when focus returns to the trigger on close. Call event.preventDefault() to override." },
+            onEscapeKeyDown: { type: "function", description: "Callback when Escape is pressed. Call event.preventDefault() to prevent the dialog from closing." },
+            onPointerDownOutside: { type: "function", description: "Callback when a pointer event occurs outside the content. Call event.preventDefault() to prevent closing." },
+            onInteractOutside: { type: "function", description: "Callback on any interaction outside the content." }
+          }
+        },
+        Title: {
+          description: "Required. The dialog heading, announced to screen readers when the dialog opens. Wrap in VisuallyHidden to hide it visually while keeping it accessible."
+        },
+        Description: {
+          description: "Optional. Announced to screen readers after the title. Wrap in VisuallyHidden to hide visually. Remove and pass aria-describedby={undefined} to DialogContent to omit entirely."
+        },
+        Header: { description: "Layout wrapper for DialogTitle and DialogDescription." },
+        Footer: { description: "Layout wrapper for action buttons. Typically contains Cancel and a primary action." },
+        Close: {
+          description: "Closes the dialog when activated.",
+          props: {
+            asChild: { type: "boolean", default: false, description: "Merges close behavior onto a child element, such as a custom button." }
+          }
         }
       },
-      slots: {
-        trigger: "The element that opens the dialog",
-        content: "The dialog panel, including header, body, and footer",
-        title: "Required. The dialog's heading, announced to screen readers",
-        description: "Optional. Supporting context below the title",
-        footer: "Action buttons, typically Cancel and a primary action",
-        close: "Dismiss button, typically an X in the top-right corner"
-      },
       behavior: {
-        overlay: true,
-        focusTrap: true,
-        scrollLock: true,
+        focusTrap: "Focus is trapped inside the dialog while it is open.",
+        scrollLock: "Page scroll is locked while the dialog is open.",
+        closeOnEscape: true,
         closeOnOverlayClick: true,
-        closeOnEscape: true
+        controlled: "Use open and onOpenChange together for controlled dialogs, such as closing after an async form submission completes.",
+        uncontrolled: "Use defaultOpen for simple open/close behavior without managing state."
+      },
+      patterns: {
+        asyncClose: "In controlled mode, set open to false inside a form's onSubmit after the async operation resolves to close the dialog programmatically.",
+        scrollableContent: "Wrap DialogContent inside DialogOverlay and set overflow-y: auto on the overlay to allow long content to scroll while the overlay stays fixed.",
+        hiddenTitle: "Wrap DialogTitle in VisuallyHidden if the dialog's purpose is clear from context and a visible title would be redundant. Do not remove DialogTitle entirely.",
+        customCloseButton: "Use Dialog.Close with asChild to replace the default X button with a custom element."
       },
       accessibility: {
+        pattern: "WAI-ARIA Dialog pattern",
         role: "dialog",
-        ariaAttributes: ["aria-labelledby (DialogTitle)", "aria-describedby (DialogDescription)"],
-        focusManagement: "Focus moves to dialog on open; returns to trigger on close",
-        keyboardInteraction: ["Escape to close", "Tab to cycle through focusable elements"]
+        ariaAttributes: [
+          "aria-labelledby: automatically linked to DialogTitle",
+          "aria-describedby: automatically linked to DialogDescription"
+        ],
+        focusManagement: "Focus moves to the first focusable element inside the dialog on open. Returns to DialogTrigger on close.",
+        keyboardInteraction: [
+          "Space or Enter on trigger: opens the dialog",
+          "Escape: closes the dialog and returns focus to trigger",
+          "Tab: moves focus to the next focusable element inside the dialog",
+          "Shift + Tab: moves focus to the previous focusable element"
+        ]
       }
     }
   },
