@@ -7,29 +7,36 @@ export const examples = [
       props: {
         variant: {
           type: "enum",
-          values: ["default", "destructive", "outline", "secondary", "ghost", "link"],
+          values: ["default", "outline", "ghost", "destructive", "secondary", "link"],
           default: "default",
           description: "Controls the visual style of the button."
         },
         size: {
           type: "enum",
-          values: ["default", "sm", "lg", "icon"],
+          values: ["default", "xs", "sm", "lg", "icon", "icon-xs", "icon-sm", "icon-lg"],
           default: "default",
-          description: "Controls the size of the button."
-        },
-        disabled: {
-          type: "boolean",
-          default: false,
-          description: "Prevents interaction and dims the button visually."
+          description: "Controls the size of the button. Icon sizes produce a square button for icon-only use."
         },
         asChild: {
           type: "boolean",
           default: false,
-          description: "Merges props onto the child element instead of rendering a button."
+          description: "Merges props onto the child element instead of rendering a button. Use to make a link or other element look like a button."
         }
       },
-      slots: {
-        default: "Button label text or icon + label combination"
+      attributes: {
+        "data-icon": {
+          values: ["inline-start", "inline-end"],
+          description: "Add to an icon or Spinner inside the button to apply correct spacing. Use inline-start for icons before the label, inline-end for icons after."
+        },
+        disabled: {
+          type: "boolean",
+          inherited: "Native HTML button attribute. Prevents interaction and dims the button visually."
+        }
+      },
+      notes: {
+        cursor: "Tailwind v4 changed button cursor from pointer to default. Add a CSS override to globals.css if your design requires cursor: pointer.",
+        rounded: "Use the rounded-full utility class to produce a pill-shaped button.",
+        spinner: "Render a Spinner component inside the button for loading states. Add data-icon for correct spacing."
       },
       accessibility: {
         role: "button",
