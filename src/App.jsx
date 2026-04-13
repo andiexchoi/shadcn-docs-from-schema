@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import ReactMarkdown from "react-markdown";
 import { examples } from "./examples/index.js";
+import { searchComponents } from "./shadcn-components.js";
 import "./App.css";
 
 const SOURCES = [
@@ -12,7 +13,10 @@ const SOURCES = [
 export default function App() {
   const [mode, setMode] = useState("fetch");
   const [componentName, setComponentName] = useState("");
+  const [suggestions, setSuggestions] = useState([]);
+  const [activeSuggestion, setActiveSuggestion] = useState(-1);
   const [selectedSources, setSelectedSources] = useState(["shadcn", "radix"]);
+  const inputRef = useRef(null);
   const [schemaInput, setSchemaInput] = useState(JSON.stringify(examples[0].schema, null, 2));
   const [output, setOutput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -30,6 +34,45 @@ export default function App() {
     setSchemaInput(JSON.stringify(ex.schema, null, 2));
     setOutput("");
     setError("");
+  }
+
+  function handleComponentInput(e) {
+    const val = e.target.value;
+    setComponentName(val);
+    setSuggestions(searchComponents(val));
+    setActiveSuggestion(-1);
+  }
+
+  function selectSuggestion(item) {
+    setComponentName(item.display);
+    setSuggestions([]);
+    setActiveSuggestion(-1);
+    inputRef.current?.focus();
+  }
+
+  function handleInputKeyDown(e) {
+    if (!suggestions.length) {
+      if (e.key === "Enter") generate();
+      return;
+    }
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      setActiveSuggestion((i) => Math.min(i + 1, suggestions.length - 1));
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      setActiveSuggestion((i) => Math.max(i - 1, -1));
+    } else if (e.key === "Enter") {
+      e.preventDefault();
+      if (activeSuggestion >= 0) {
+        selectSuggestion(suggestions[activeSuggestion]);
+      } else {
+        setSuggestions([]);
+        generate();
+      }
+    } else if (e.key === "Escape") {
+      setSuggestions([]);
+      setActiveSuggestion(-1);
+    }
   }
 
   async function generate() {
@@ -119,14 +162,32 @@ export default function App() {
 
             {mode === "fetch" ? (
               <div className="fetch-mode">
-                <input
-                  className="component-input"
-                  type="text"
-                  placeholder="Component name, e.g. button, dialog, tabs"
-                  value={componentName}
-                  onChange={(e) => setComponentName(e.target.value)}
-                  onKeyDown={(e) => e.key === "Enter" && generate()}
-                />
+                <div className="autocomplete-wrap">
+                  <input
+                    ref={inputRef}
+                    className="component-input"
+                    type="text"
+                    placeholder="Component name, e.g. Button, Dialog, Tabs"
+                    value={componentName}
+                    onChange={handleComponentInput}
+                    onKeyDown={handleInputKeyDown}
+                    onBlur={() => setTimeout(() => setSuggestions([]), 150)}
+                    autoComplete="off"
+                  />
+                  {suggestions.length > 0 && (
+                    <ul className="suggestions">
+                      {suggestions.map((item, i) => (
+                        <li
+                          key={item.slug}
+                          className={`suggestion-item ${i === activeSuggestion ? "active" : ""}`}
+                          onMouseDown={() => selectSuggestion(item)}
+                        >
+                          {item.display}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
                 <div className="source-row">
                   <span className="source-label">Sources:</span>
                   {SOURCES.map((s) => (

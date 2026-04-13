@@ -107,6 +107,39 @@
   border-color: #aaa;
 }
 
+.autocomplete-wrap {
+  position: relative;
+}
+
+.suggestions {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  margin: 0;
+  padding: 4px;
+  list-style: none;
+  z-index: 100;
+}
+
+.suggestion-item {
+  padding: 8px 12px;
+  border-radius: 5px;
+  font-size: 14px;
+  color: #222;
+  cursor: pointer;
+  transition: background 0.1s;
+}
+
+.suggestion-item:hover,
+.suggestion-item.active {
+  background: #f5f5f5;
+}
+
 .generate-btn {
   padding: 10px 20px;
   background: #111;
