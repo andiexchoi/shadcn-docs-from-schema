@@ -11,9 +11,6 @@ const SOURCES = [
   { id: "baseui", label: "Base UI" },
 ];
 
-function toMdx(markdown) {
-  return `---\ntitle: "Component documentation"\ndescription: "Generated with shadcn-docs-from-schema"\n---\n\n${markdown}`;
-}
 
 export default function Home() {
   const [mode, setMode] = useState("fetch");
@@ -27,12 +24,22 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [activeTab, setActiveTab] = useState("markdown");
-  const [copied, setCopied] = useState(false);
+  const [copiedMarkdown, setCopiedMarkdown] = useState(false);
+  const [copiedPreview, setCopiedPreview] = useState(false);
 
-  function copyMdx() {
-    navigator.clipboard.writeText(toMdx(output)).then(() => {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
+  function copyMarkdown() {
+    navigator.clipboard.writeText(output).then(() => {
+      setCopiedMarkdown(true);
+      setTimeout(() => setCopiedMarkdown(false), 2000);
+    });
+  }
+
+  function copyPreviewText() {
+    const el = document.querySelector(".output.preview");
+    const text = el ? el.innerText : output;
+    navigator.clipboard.writeText(text).then(() => {
+      setCopiedPreview(true);
+      setTimeout(() => setCopiedPreview(false), 2000);
     });
   }
 
@@ -267,8 +274,17 @@ export default function Home() {
                       Preview
                     </button>
                   </div>
-                  <button className="copy-mdx-btn" onClick={copyMdx}>
-                    {copied ? "Copied" : "Copy as MDX"}
+                  <button
+                    className="copy-icon-btn"
+                    onClick={activeTab === "markdown" ? copyMarkdown : copyPreviewText}
+                    aria-label={activeTab === "markdown" ? "Copy markdown" : "Copy text"}
+                    title={activeTab === "markdown" ? "Copy markdown" : "Copy text"}
+                  >
+                    {(activeTab === "markdown" ? copiedMarkdown : copiedPreview) ? (
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                    ) : (
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                    )}
                   </button>
                 </div>
               )}

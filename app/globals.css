@@ -304,19 +304,22 @@ body {
   gap: 8px;
 }
 
-.copy-mdx-btn {
-  padding: 4px 12px;
+.copy-icon-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
   border: 1px solid #e0e0e0;
   border-radius: 4px;
   background: #fff;
-  font-size: 12px;
-  font-weight: 500;
   color: #666;
   cursor: pointer;
   transition: all 0.15s;
+  flex-shrink: 0;
 }
 
-.copy-mdx-btn:hover {
+.copy-icon-btn:hover {
   border-color: #aaa;
   color: #111;
 }
@@ -453,7 +456,7 @@ body {
 .example-btn:focus-visible,
 .mode-tab:focus-visible,
 .tab:focus-visible,
-.copy-mdx-btn:focus-visible,
+.copy-icon-btn:focus-visible,
 .generate-btn:focus-visible {
   outline: 2px solid #111;
   outline-offset: 2px;
