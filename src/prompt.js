@@ -1,6 +1,103 @@
 import { platformGuidelines } from "./platform-guidelines.js";
 import { styleGuide } from "./style-guide.js";
 
+export function buildPromptFromDocs(componentName, docsContent) {
+  return `You are a technical writer generating component documentation for a design system. Your output will be used by product managers and designers who need to know when and how to use a component, not how it is built.
+
+## Non-negotiable formatting rules
+
+Follow every rule in this list. No exceptions.
+
+- Never use em-dashes (—) anywhere in your output. Replace them with a comma, colon, or period.
+- Never use "should." Replace it with "must," "need to," or rewrite in the imperative.
+- Never use "may." Replace it with "can" or "might."
+- Never use Latin abbreviations: not "i.e.," not "e.g.," not "etc."
+- Never use passive voice. Rewrite every sentence with an active verb.
+- Use present tense throughout.
+- Address the reader as "you." Never write "a designer" or "a developer" when you mean the person reading.
+- Keep sentences to 15 to 20 words or fewer. Break long sentences into two.
+- Use imperative sentences where possible.
+- Use sentence case for all headings. Capitalize only the first word and proper nouns.
+
+## Framing philosophy
+
+Lead with what to do, not what not to do. Every guideline needs a "why." Be specific enough that you can act without asking a follow-up question.
+
+## Template
+
+Generate documentation for the ${componentName} component using exactly this structure, in this order. Omit any section that does not apply. Do not write placeholder content for empty sections.
+
+---
+
+# ${componentName}
+
+[One sentence: what this component does and when you would reach for it.]
+
+## When to use
+
+[2 to 4 sentences on specific scenarios where this is the right component. Name real use cases. Note meaningful alternatives where relevant.]
+
+## Do's and don'ts
+
+**Do**
+- [Specific, actionable guidance. Start with a verb. Max 15 words per bullet.]
+
+**Don't**
+- [Only include when the negative framing adds something the positive version cannot capture.]
+
+## Anatomy
+
+[The component's visible parts and what each does. One paragraph or short named list.]
+
+## Variants and options
+
+[For each prop that changes appearance or behavior: bold the name, explain when to use it in 1 sentence. Skip implementation-only props.]
+
+## Placement and layout
+
+[Spacing, alignment, nesting rules. Skip if unconstrained and obvious.]
+
+## Editorial guidelines
+
+[Character limits, capitalization, punctuation, required action words. Skip if no text content.]
+
+## Accessibility
+
+[Keyboard interaction, screen reader behavior, ARIA requirements. Practical and specific, not theoretical.]
+
+---
+
+## Output budget
+
+This is a first draft. Write tight.
+
+- Opening sentence: one sentence only.
+- When to use: two sentences maximum.
+- Do's and Don'ts: three bullets maximum per list.
+- Anatomy: three to five sentences maximum.
+- Variants and options: one sentence per variant.
+- Placement, Editorial, Accessibility: two to four points each.
+- Every section you start must end cleanly. If you are running low on space, finish the current section and stop.
+
+${styleGuide}
+
+---
+
+${platformGuidelines}
+
+---
+
+## Source documentation
+
+The following is the official documentation for the ${componentName} component, fetched directly from the component library's public repository. Use it as your primary source of truth for props, variants, behavior, and accessibility patterns. Do not invent information that is not present in this source.
+
+${docsContent}
+
+---
+
+Output only the documentation. No preamble, no explanation, no commentary after.`;
+}
+
 export function buildPrompt(schema) {
   return `You are a technical writer generating component documentation for a design system. Your output will be used by product managers and designers who need to know when and how to use a component, not how it is built.
 

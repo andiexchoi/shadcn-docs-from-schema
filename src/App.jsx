@@ -3,19 +3,31 @@ import ReactMarkdown from "react-markdown";
 import { examples } from "./examples/index.js";
 import "./App.css";
 
-const defaultSchema = JSON.stringify(examples[0].schema, null, 2);
+const SOURCES = [
+  { id: "shadcn", label: "shadcn/ui" },
+  { id: "radix", label: "Radix UI" },
+  { id: "baseui", label: "Base UI" },
+];
 
 export default function App() {
-  const [schemaInput, setSchemaInput] = useState(defaultSchema);
+  const [mode, setMode] = useState("fetch");
+  const [componentName, setComponentName] = useState("");
+  const [selectedSources, setSelectedSources] = useState(["shadcn", "radix"]);
+  const [schemaInput, setSchemaInput] = useState(JSON.stringify(examples[0].schema, null, 2));
   const [output, setOutput] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [activeExample, setActiveExample] = useState(examples[0].name);
   const [activeTab, setActiveTab] = useState("markdown");
 
-  function loadExample(example) {
-    setSchemaInput(JSON.stringify(example.schema, null, 2));
-    setActiveExample(example.name);
+  function toggleSource(id) {
+    setSelectedSources((prev) =>
+      prev.includes(id) ? prev.filter((s) => s !== id) : [...prev, id]
+    );
+  }
+
+  function loadExample(ex) {
+    setMode("schema");
+    setSchemaInput(JSON.stringify(ex.schema, null, 2));
     setOutput("");
     setError("");
   }
@@ -25,11 +37,23 @@ export default function App() {
     setError("");
     setOutput("");
 
-    let parsed;
-    try {
-      parsed = JSON.parse(schemaInput);
-    } catch {
-      setError("Invalid JSON. Check your schema and try again.");
+    const body =
+      mode === "fetch"
+        ? { component: componentName.trim(), sources: selectedSources }
+        : (() => {
+            try {
+              return { schema: JSON.parse(schemaInput) };
+            } catch {
+              setError("Invalid JSON. Check your schema and try again.");
+              setLoading(false);
+              return null;
+            }
+          })();
+
+    if (!body) return;
+
+    if (mode === "fetch" && !componentName.trim()) {
+      setError("Enter a component name.");
       setLoading(false);
       return;
     }
@@ -38,7 +62,7 @@ export default function App() {
       const res = await fetch("/api/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ schema: parsed }),
+        body: JSON.stringify(body),
       });
       const data = await res.json();
       if (data.error) {
@@ -68,7 +92,7 @@ export default function App() {
           {examples.map((ex) => (
             <button
               key={ex.name}
-              className={`example-btn ${activeExample === ex.name ? "active" : ""}`}
+              className="example-btn"
               onClick={() => loadExample(ex)}
             >
               {ex.name}
@@ -78,13 +102,54 @@ export default function App() {
 
         <div className="columns">
           <div className="column input-column">
-            <label className="col-label">Schema (JSON)</label>
-            <textarea
-              className="schema-input"
-              value={schemaInput}
-              onChange={(e) => setSchemaInput(e.target.value)}
-              spellCheck={false}
-            />
+            <div className="mode-tabs">
+              <button
+                className={`mode-tab ${mode === "fetch" ? "active" : ""}`}
+                onClick={() => setMode("fetch")}
+              >
+                Fetch from docs
+              </button>
+              <button
+                className={`mode-tab ${mode === "schema" ? "active" : ""}`}
+                onClick={() => setMode("schema")}
+              >
+                Custom schema
+              </button>
+            </div>
+
+            {mode === "fetch" ? (
+              <div className="fetch-mode">
+                <input
+                  className="component-input"
+                  type="text"
+                  placeholder="Component name, e.g. button, dialog, tabs"
+                  value={componentName}
+                  onChange={(e) => setComponentName(e.target.value)}
+                  onKeyDown={(e) => e.key === "Enter" && generate()}
+                />
+                <div className="source-row">
+                  <span className="source-label">Sources:</span>
+                  {SOURCES.map((s) => (
+                    <label key={s.id} className="source-check">
+                      <input
+                        type="checkbox"
+                        checked={selectedSources.includes(s.id)}
+                        onChange={() => toggleSource(s.id)}
+                      />
+                      {s.label}
+                    </label>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <textarea
+                className="schema-input"
+                value={schemaInput}
+                onChange={(e) => setSchemaInput(e.target.value)}
+                spellCheck={false}
+              />
+            )}
+
             <button
               className="generate-btn"
               onClick={generate}
@@ -117,12 +182,12 @@ export default function App() {
             {error && <p className="error">{error}</p>}
             {!output && !error && !loading && (
               <div className="placeholder">
-                <p>Select an example or paste a schema, then click Generate docs.</p>
+                <p>Enter a component name or select an example, then click Generate docs.</p>
               </div>
             )}
             {loading && (
               <div className="placeholder">
-                <p>Writing documentation...</p>
+                <p>Fetching docs and writing documentation...</p>
               </div>
             )}
             {output && activeTab === "markdown" && (
