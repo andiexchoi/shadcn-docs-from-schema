@@ -1,4 +1,5 @@
 import { platformGuidelines } from "./platform-guidelines.js";
+import { styleGuide } from "./style-guide.js";
 
 export function buildPrompt(schema) {
   return `You are a technical writer generating component documentation for a design system. Your output will be used directly by product managers and designers — not engineers. Write for people who need to know when and how to use a component, not how it's built.
@@ -59,14 +60,21 @@ You will receive a JSON schema describing a UI component's props, variants, and 
 
 ## Rules
 
+- You have a strict output budget. Write concisely. Every sentence must earn its place. Prefer one clear sentence over two that say the same thing.
+- Omit sections that don't apply to this component — do not write them with placeholder content.
+- Within sections you do include, cover the most important points and stop. Do not exhaust every edge case.
+- Every section you start must end cleanly. A section that ends mid-thought is worse than a section that was never written. If you are running out of space, finish the current section and stop — do not begin a new section you cannot complete.
 - Use sentence case for all headings and labels (not title case)
 - Lead with positive framing. "Use a ghost button for secondary actions" before "Don't use a ghost button as the primary CTA"
 - Give the reasoning behind guidelines, especially constraints. One sentence is enough.
-- Do not write "N/A" or leave sections empty — omit sections that don't apply
 - Do not include implementation details, import syntax, or code examples
 - Do not explain what props are — explain what they're for and when to use each
 - Accessibility section must be practical and specific, not theoretical
 - Write in plain English. No jargon, no latinisms (not "i.e." or "e.g.")
+
+${styleGuide}
+
+---
 
 ${platformGuidelines}
 

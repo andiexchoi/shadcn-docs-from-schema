@@ -1,4 +1,5 @@
 import { useState } from "react";
+import ReactMarkdown from "react-markdown";
 import { examples } from "./examples/index.js";
 import "./App.css";
 
@@ -10,6 +11,7 @@ export default function App() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [activeExample, setActiveExample] = useState(examples[0].name);
+  const [activeTab, setActiveTab] = useState("markdown");
 
   function loadExample(example) {
     setSchemaInput(JSON.stringify(example.schema, null, 2));
@@ -93,7 +95,25 @@ export default function App() {
           </div>
 
           <div className="column output-column">
-            <label className="col-label">Documentation</label>
+            <div className="output-header">
+              <label className="col-label">Documentation</label>
+              {output && (
+                <div className="tabs">
+                  <button
+                    className={`tab ${activeTab === "markdown" ? "active" : ""}`}
+                    onClick={() => setActiveTab("markdown")}
+                  >
+                    Markdown
+                  </button>
+                  <button
+                    className={`tab ${activeTab === "preview" ? "active" : ""}`}
+                    onClick={() => setActiveTab("preview")}
+                  >
+                    Preview
+                  </button>
+                </div>
+              )}
+            </div>
             {error && <p className="error">{error}</p>}
             {!output && !error && !loading && (
               <div className="placeholder">
@@ -105,8 +125,13 @@ export default function App() {
                 <p>Writing documentation...</p>
               </div>
             )}
-            {output && (
+            {output && activeTab === "markdown" && (
               <pre className="output">{output}</pre>
+            )}
+            {output && activeTab === "preview" && (
+              <div className="output preview">
+                <ReactMarkdown>{output}</ReactMarkdown>
+              </div>
             )}
           </div>
         </div>
