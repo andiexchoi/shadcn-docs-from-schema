@@ -1,6 +1,8 @@
-# shadcn docs from schema
+# What does this shadcn/ui component do?
 
-Generate structured component documentation from a JSON schema. Built for designers and product managers who need to know *when* and *how* to use a component, not how it's built.
+Type a shadcn/ui component name and get structured documentation written for designers and product managers — not engineers. The tool fetches live docs directly from the shadcn/ui, Radix UI, and Base UI GitHub repositories, so the output is grounded in current source material, not training data.
+
+You can also paste a JSON schema directly, which is useful if you're working with a custom or internal component library.
 
 **[Live demo →](https://shadcn-docs-from-schema.vercel.app/)**
 
@@ -52,13 +54,15 @@ The full design rationale is in [`docs/design-philosophy.md`](docs/design-philos
 
 ## How the tool is built
 
-### The schema drives the structure
+### Two input modes
 
-The component's JSON schema determines what sections are generated and what gets covered. This is the no-hallucination constraint: the tool doesn't invent props or variants that aren't in the schema.
+**Fetch from docs:** type any shadcn/ui component name and the tool pulls raw MDX directly from the shadcn/ui, Radix UI, and Base UI GitHub repositories. The live source content becomes the grounding material for generation. The tool tries both the `base/` and `radix/` subdirectories in the shadcn repo and combines what it finds. This means the output reflects current documentation, not a snapshot from training data.
+
+**Custom schema:** paste a JSON schema for any component. The schema determines what sections are generated and what gets covered. This is the no-hallucination constraint for custom libraries: the tool doesn't invent props or variants that aren't in the schema.
 
 ### The platform guidelines drive the reasoning
 
-A curated knowledge layer in [`src/platform-guidelines.js`](src/platform-guidelines.js) contains best practices from Apple's Human Interface Guidelines and Google's Material Design: touch target sizes, disabled state guidance, label conventions, accessibility requirements, and more. This layer is injected into the prompt as a reference.
+A curated knowledge layer in [`src/platform-guidelines.js`](src/platform-guidelines.js) contains best practices from Apple's Human Interface Guidelines and Google's Material Design: touch target sizes, disabled state guidance, label conventions, accessibility requirements, and more. This layer is injected into every prompt as a reference.
 
 The model draws from this encoded knowledge rather than recalling best practices from training data. The result is guidance that's grounded and auditable: if something looks wrong, you can check it against the source file.
 
@@ -68,7 +72,7 @@ The model draws from this encoded knowledge rather than recalling best practices
 
 ### Output still requires human review
 
-The tool generates first drafts. Engineers verify technical accuracy. Writers edit for voice, edge cases, and anything the schema doesn't capture. This is intentional: the goal is to automate the mechanical scaffolding so the human work, judgment, accuracy, and audience awareness, can happen faster.
+The tool generates first drafts. Engineers verify technical accuracy. Writers edit for voice, edge cases, and anything the source docs don't capture. This is intentional: the goal is to automate the mechanical scaffolding so the human work — judgment, accuracy, audience awareness — can happen faster.
 
 > *"You did a darn good job running things and keeping us in check."*
 >
@@ -143,6 +147,7 @@ Both Enter and Space activate a button. Don't override or block these key bindin
 
 - React + Vite
 - Anthropic API (claude-sonnet-4-6)
+- Live doc fetching from GitHub raw content (shadcn/ui, Radix UI, Base UI)
 - Deployed on Vercel
 
 ---
