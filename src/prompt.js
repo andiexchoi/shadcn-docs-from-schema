@@ -1,107 +1,9 @@
 import { platformGuidelines } from "./platform-guidelines.js";
+import { semanticGuidelines } from "./semantic-guidelines.js";
 import { styleGuide } from "./style-guide.js";
 
-export function buildPromptFromDocs(componentName, docsContent) {
-  return `You are a technical writer generating component documentation for a design system. Your output will be used by product managers and designers who need to know when and how to use a component, not how it is built.
-
-## Non-negotiable formatting rules
-
-Follow every rule in this list. No exceptions.
-
-- Never use em-dashes (—) anywhere in your output. Replace them with a comma, colon, or period.
-- Never use "should." Replace it with "must," "need to," or rewrite in the imperative.
-- Never use "may." Replace it with "can" or "might."
-- Never use Latin abbreviations: not "i.e.," not "e.g.," not "etc."
-- Never use passive voice. Rewrite every sentence with an active verb.
-- Use present tense throughout.
-- Address the reader as "you." Never write "a designer" or "a developer" when you mean the person reading.
-- Keep sentences to 15 to 20 words or fewer. Break long sentences into two.
-- Use imperative sentences where possible.
-- Use sentence case for all headings. Capitalize only the first word and proper nouns.
-
-## Framing philosophy
-
-Lead with what to do, not what not to do. Every guideline needs a "why." Be specific enough that you can act without asking a follow-up question.
-
-## Template
-
-Generate documentation for the ${componentName} component using exactly this structure, in this order. Omit any section that does not apply. Do not write placeholder content for empty sections.
-
----
-
-# ${componentName}
-
-[One sentence: what this component does and when you would reach for it.]
-
-## When to use
-
-[2 to 4 sentences on specific scenarios where this is the right component. Name real use cases. Note meaningful alternatives where relevant.]
-
-## Do's and don'ts
-
-**Do**
-- [Specific, actionable guidance. Start with a verb. Max 15 words per bullet.]
-
-**Don't**
-- [Only include when the negative framing adds something the positive version cannot capture.]
-
-## Anatomy
-
-[The component's visible parts and what each does. One paragraph or short named list.]
-
-## Variants and options
-
-[For each prop that changes appearance or behavior: bold the name, explain when to use it in 1 sentence. Skip implementation-only props.]
-
-## Placement and layout
-
-[Spacing, alignment, nesting rules. Skip if unconstrained and obvious.]
-
-## Editorial guidelines
-
-[Character limits, capitalization, punctuation, required action words. Skip if no text content.]
-
-## Accessibility
-
-[Keyboard interaction, screen reader behavior, ARIA requirements. Practical and specific, not theoretical.]
-
----
-
-## Output budget
-
-This is a first draft. Write tight.
-
-- Opening sentence: one sentence only.
-- When to use: two sentences maximum.
-- Do's and Don'ts: three bullets maximum per list.
-- Anatomy: three to five sentences maximum.
-- Variants and options: one sentence per variant.
-- Placement, Editorial, Accessibility: two to four points each.
-- Every section you start must end cleanly. If you are running low on space, finish the current section and stop.
-
-${styleGuide}
-
----
-
-${platformGuidelines}
-
----
-
-## Source documentation
-
-The following is the official documentation for the ${componentName} component, fetched directly from the component library's public repository. Use it as your primary source of truth for props, variants, behavior, and accessibility patterns. Do not invent information that is not present in this source.
-
-${docsContent}
-
----
-
-Output only the documentation. No preamble, no explanation, no commentary after.`;
-}
-
-export function buildPrompt(schema) {
-  return `You are a technical writer generating component documentation for a design system. Your output will be used by product managers and designers who need to know when and how to use a component, not how it is built.
-
-## Non-negotiable formatting rules
+function buildSharedPromptBody(componentIdentifier) {
+  return `## Non-negotiable formatting rules
 
 Follow every rule in this list. No exceptions.
 
@@ -124,13 +26,23 @@ Every guideline needs a "why." A rule without context cannot be applied to situa
 
 Be specific. Not "keep labels short" but "keep button labels under 30 characters." Not "use clear language" but "start the label with an action verb."
 
+When documenting structural requirements (contracts, ARIA, keyboard), be precise enough that an AI coding agent can emit correct code from this documentation alone. Name specific attributes, elements, and values.
+
 ## Template
 
-Generate documentation using exactly this structure, in this order. Omit any section that does not apply to this component. Do not write placeholder content for empty sections.
+Generate documentation for the ${componentIdentifier} component using exactly this structure, in this order. Omit any section that does not apply to this component. Do not write placeholder content for empty sections.
+
+Section omission rules:
+- Component contracts: omit for single-element components with no sub-components or composition requirements.
+- Keyboard interactions: omit for non-interactive, display-only components (badges, avatars, separators).
+- ARIA requirements: omit for non-interactive components that need no ARIA attributes.
+- Placement and layout: omit when placement is unconstrained and obvious.
+- Editorial guidelines: omit when the component contains no user-facing text.
+- Common mistakes: omit when there are no common implementation pitfalls specific to this component.
 
 ---
 
-# [Component name]
+# ${componentIdentifier}
 
 [One sentence: what this component does and when you would reach for it. Be specific. Do not write "A [component] is a UI element that..."]
 
@@ -150,6 +62,10 @@ Generate documentation using exactly this structure, in this order. Omit any sec
 
 [Describe the component's visible parts and what each does. Name each part: label, icon, badge, close button, etc. One paragraph or short named list. Explain behavior for variable-length content, truncation, or overflow if relevant.]
 
+## Component contracts
+
+[Required sub-components and their nesting rules. Composition patterns: which elements must wrap which. Required props or attributes that the underlying primitive enforces even if TypeScript allows omitting them. asChild and ref forwarding requirements. Omit this section for single-element components with no composition requirements.]
+
 ## Variants and options
 
 [For each prop that changes the component's appearance or behavior, explain what it is for and when you would choose it, not just what it looks like. Skip internal implementation props like className, asChild, ref, onOpenChange. Bold the variant name, then explain in 1 to 3 sentences.]
@@ -162,9 +78,21 @@ Generate documentation using exactly this structure, in this order. Omit any sec
 
 [Rules for the text inside the component. Include: character limits, capitalization, punctuation, required action words, and tone. Be specific. Skip if the component has no text.]
 
+## Keyboard interactions
+
+[Explicit key-to-action mapping for this component. Format as a list: key or key combination, then what it does. Include focus trap behavior and focus return on close. Omit this section for non-interactive components.]
+
+## ARIA requirements
+
+[Specific ARIA attributes this component requires. Name the attribute, the element it goes on, and what value it takes. Do not list generic ARIA advice. Omit this section for non-interactive components that need no ARIA attributes.]
+
 ## Accessibility
 
-[Practical, component-specific guidance. Cover keyboard interaction, screen reader behavior, ARIA attributes, and focus management. Do not cite WCAG abstractly. Give action-oriented guidance tied to this specific component. Write what you must do, not what the spec says.]
+[Focus management, screen reader announcements, motion considerations, contrast requirements, and any accessibility behavior not covered in the Keyboard interactions or ARIA requirements sections. Omit if fully covered above.]
+
+## Common mistakes
+
+[Implementation errors specific to this component. Focus on mistakes an AI coding agent or a developer unfamiliar with the component library would make. State what goes wrong, then state the correct approach. Omit this section if there are no common pitfalls for this component.]
 
 ---
 
@@ -176,10 +104,14 @@ This is a first draft, not a finished document. Write tight. Apply these rules:
 - When to use: two sentences maximum.
 - Do's and Don'ts: three bullets maximum per list. One clause per bullet.
 - Anatomy: three to five sentences. Name the parts, describe their behavior. Stop.
+- Component contracts: two to four points maximum. Name the required sub-component or rule, explain why.
 - Variants and options: one sentence per variant. Name it, say when to use it. Nothing more.
 - Placement and layout: two to three sentences maximum.
 - Editorial guidelines: three to four rules maximum, each one sentence.
-- Accessibility: three to four rules maximum, each one sentence.
+- Keyboard interactions: one line per key or key combination. No prose paragraphs.
+- ARIA requirements: one line per attribute. Name the attribute, the element, and the value.
+- Accessibility: two to three points maximum, only for what Keyboard and ARIA sections did not cover.
+- Common mistakes: two to four items maximum, each one to two sentences.
 - Every section you start must end cleanly. A section that ends mid-thought is worse than a section that was never written. If you are running low on space, finish the current section and stop. Do not begin a new section you cannot complete.
 
 ${styleGuide}
@@ -187,6 +119,35 @@ ${styleGuide}
 ---
 
 ${platformGuidelines}
+
+---
+
+${semanticGuidelines}`;
+}
+
+export function buildPromptFromDocs(componentName, docsContent) {
+  return `You are a technical writer generating component documentation for a design system. Your output will be used by engineers, design engineers, and AI coding agents who need a shared reference for correct, consistent component usage, including structural requirements, composition rules, and accessibility contracts.
+
+${buildSharedPromptBody(componentName)}
+
+---
+
+## Source documentation
+
+The following is the official documentation for the ${componentName} component, fetched directly from the component library's public repository. Use it as your primary source of truth for props, variants, behavior, and accessibility patterns. Do not invent information that is not present in this source.
+
+${docsContent}
+
+---
+
+Output only the documentation. No preamble, no explanation, no commentary after.`;
+}
+
+export function buildPrompt(schema) {
+  const componentName = schema.component || "Component";
+  return `You are a technical writer generating component documentation for a design system. Your output will be used by engineers, design engineers, and AI coding agents who need a shared reference for correct, consistent component usage, including structural requirements, composition rules, and accessibility contracts.
+
+${buildSharedPromptBody(componentName)}
 
 ---
 

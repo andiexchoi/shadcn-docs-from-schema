@@ -1,6 +1,13 @@
+import { examples } from "../src/examples/index.js";
+
 // Each case tests a specific prompt behavior, not a component.
 // traits: strings or regex patterns the output MUST contain (case-insensitive substring match).
 // antitraits: strings or regex patterns the output must NOT contain.
+
+const dialogSchema = examples.find((e) => e.name === "Dialog").schema;
+const badgeSchema = examples.find((e) => e.name === "Badge").schema;
+const selectSchema = examples.find((e) => e.name === "Select").schema;
+const tabsSchema = examples.find((e) => e.name === "Tabs").schema;
 
 export const cases = [
   {
@@ -28,6 +35,7 @@ export const cases = [
       "## When to use",
       "## Do's and don'ts",
       "## Accessibility",
+      "## Keyboard interactions",
       "aria-label",
     ],
     antitraits: [
@@ -72,6 +80,11 @@ export const cases = [
       "focus",
       "Escape",
       "aria-",
+      "## Component contracts",
+      "DialogTitle",
+      "## Keyboard interactions",
+      "## ARIA requirements",
+      "aria-labelledby",
     ],
     antitraits: [
       "—",
@@ -95,10 +108,11 @@ export const cases = [
     },
     traits: [
       "# Badge",
+      "## Variants and options",
     ],
     antitraits: [
-      "## Placement and layout", // Badge doesn't need placement guidance
-      "## Editorial guidelines",  // Badge has minimal text content
+      "## Keyboard interactions", // Badge is non-interactive
+      "## Component contracts",   // Badge is a single element
     ],
   },
   {
@@ -151,6 +165,94 @@ export const cases = [
       "are displayed",
       "are rendered",
       "can be seen",
+    ],
+  },
+  {
+    name: "Dialog (schema) — component contracts present",
+    input: { schema: dialogSchema },
+    traits: [
+      "## Component contracts",
+      "DialogTitle",
+      "DialogContent",
+    ],
+    antitraits: [
+      "—",
+      "should",
+    ],
+  },
+  {
+    name: "Badge (schema) — non-interactive sections omitted",
+    input: { schema: badgeSchema },
+    traits: [
+      "# Badge",
+    ],
+    antitraits: [
+      "## Keyboard interactions",
+      "## ARIA requirements",
+      "## Component contracts",
+    ],
+  },
+  {
+    name: "Select (schema) — keyboard interactions completeness",
+    input: { schema: selectSchema },
+    traits: [
+      "## Keyboard interactions",
+      "Arrow",
+      "Escape",
+      "Enter",
+    ],
+    antitraits: [
+      "—",
+    ],
+  },
+  {
+    name: "Dialog (schema) — common mistakes section",
+    input: { schema: dialogSchema },
+    traits: [
+      "## Common mistakes",
+      "DialogTitle",
+    ],
+    antitraits: [],
+    customCheck: (output) => {
+      const section = output.match(/## Common mistakes\n\n([\s\S]*?)(?:\n## |\n---|$)/);
+      if (!section) return { pass: false, reason: "Common mistakes section not found" };
+      const bullets = section[1].split("\n").filter((l) => l.trim().startsWith("-") || l.trim().startsWith("*") || l.trim().startsWith("**"));
+      if (bullets.length < 2)
+        return { pass: false, reason: `Common mistakes has ${bullets.length} items, expected at least 2` };
+      return { pass: true };
+    },
+  },
+  {
+    name: "Tabs (schema) — ARIA specificity",
+    input: { schema: tabsSchema },
+    traits: [
+      "## ARIA requirements",
+      "aria-selected",
+      "tablist",
+      "tabpanel",
+    ],
+    antitraits: [
+      "WCAG",
+    ],
+  },
+  {
+    name: "Switch (schema) — old audience framing gone",
+    input: {
+      schema: {
+        component: "Switch",
+        props: {
+          checked: { type: "boolean", default: false },
+          disabled: { type: "boolean", default: false },
+        },
+      },
+    },
+    traits: [
+      "# Switch",
+    ],
+    antitraits: [
+      "product managers",
+      "designers who need to know",
+      "not how it is built",
     ],
   },
 ];

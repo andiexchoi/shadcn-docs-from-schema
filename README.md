@@ -1,26 +1,18 @@
-# What does this shadcn/ui component do?
+# Component documentation from source
 
-Type a shadcn/ui component name and get structured documentation written for designers and product managers — not engineers. The tool fetches live docs directly from the shadcn/ui, Radix UI, and Base UI GitHub repositories, so the output is grounded in current source material, not training data.
+Type a shadcn/ui component name and get structured documentation: usage guidance, variant logic, accessibility specs, and editorial standards. The tool fetches live docs from the shadcn/ui, Radix UI, and Base UI GitHub repositories, so the output is grounded in current source material, not training data.
 
 You can also paste a JSON schema directly, which is useful if you're working with a custom or internal component library.
 
-**[Live demo →](https://shadcn-docs-from-schema.vercel.app/)**
+**[Live demo](https://shadcn-docs-from-schema.vercel.app/)**
 
 ---
 
 ## Origin
 
-I built the first version of this at Amazon, for the Selling Partner Services Mobile App team.
+I built the [first version of this](/work/mobiledocs) at Amazon, for a mobile app team with no designated writer and auto-generated docs that engineers could skim but designers and PMs couldn't use. I designed a hybrid template that combined quick-reference Do's and Don'ts with structured prose on usage, accessibility, and editorial standards, benchmarked against Apple's HIG, Material Design, and Shopify's Polaris. I quickly recognized that my own process was mechanical, encoded it into a prompt, and built an AI agent that cut documentation time from 3+ hours to 30 minutes per component.
 
-The team had developed an internal component framework for the seller app, but the system could only auto-generate raw technical references from JSON schemas. What was missing was the content that product managers and designers actually needed: when to use a component, when not to, how to handle edge cases, and what accessibility considerations applied.
-
-There was no designated writer on the team. Engineers were writing guidance ad hoc, or not writing it at all. The result was inconsistent quality, missing sections, and a framework that was technically functional but hard for non-engineers to adopt.
-
-I sat with engineers, reviewed JSON schemas, set up an iOS simulator to see components in context, and studied how PMs and designers were actually using the existing documentation. Then I noticed something: my own documentation process was mechanical in places. I was reading the same schema fields, writing the same sections in the same order, applying the same editorial standards every time. That pattern was encodable.
-
-I built an AI agent that accepts a component's JSON schema and generates a structured first draft. Documentation time dropped from 3+ hours to 30 minutes per component. Engineers went from writing documentation to verifying it.
-
-That tool was internal and couldn't be shown publicly. This is the rebuilt version, generalized to work with any component library, starting with shadcn/ui.
+That tool was internal, and it had a friction point: every draft started with copy-pasting a component's JSON schema into the generator. I wanted to see if I could rebuild it on my own, remove that step, and make something that could stand on its own. The public version pulls component schemas directly from shadcn/ui's GitHub repos. Users search for a component the same way they would on the shadcn docs site and get structured design documentation back.
 
 > *"Andie quickly stepped up to bridge that gap. She took the initiative to learn our components, defined a complete documentation process, partnered with me on priorities and timelines, worked closely with developers to fact-check details, and owned the publishing workflow from review to approval. Her work became a key enabler for the successful adoption of our new platform. Demonstrating the Learn and Be Curious leadership principle, she went further by developing an AI-powered tool that generates first-draft design documentation from a component's JSON input."*
 >
@@ -28,27 +20,77 @@ That tool was internal and couldn't be shown publicly. This is the rebuilt versi
 
 ---
 
-## The design problem
+## The problem has shifted
 
-Most component documentation fails designers in the same way: it tells them what a component does, not when to use it or why the rules are the rules.
+The original tool solved a translation problem: non-technical people couldn't read the technical docs. That problem was real at Amazon. It's smaller now. Designers are becoming design engineers. PMs are becoming tech leads. The roles that needed translation are gaining technical fluency or folding into engineering entirely.
 
-The standard Do's and Don'ts format is scannable but shallow. Related guidelines get fragmented across bullets with no context linking them. A designer reading the list knows *what* to do but not *why*. Without the why, they can't make a good judgment call when their situation doesn't perfectly match the rule.
-
-Research on instructional framing backs this up. Kuvaas and Selart (2004) found that positive framing produces lower recall but significantly higher confidence. In documentation, confidence matters more than perfect retention. You need to feel clear on the right action, not anxious about the wrong one. Tversky and Kahneman's framing effect research reinforces the same point: how you present information changes how people act on it, even when the content is identical.
-
-The template this tool uses is designed around those findings.
+The new problem is worse, and it's accelerating.
 
 ---
 
-## How the template works
+## Component adoption outpaces component governance
 
-The output follows a hybrid structure, developed after a format debate with the Mosaic engineering team:
+shadcn/ui is one of the most widely used component systems in the React ecosystem. Its docs are clear about what it is: "This is NOT a component library. It's a collection of re-usable components that you can copy and paste into your apps." That's the whole point. You take the code and make it yours.
 
-**Do's and Don'ts at the top:** preserved for quick reference. Engineers can scan and maintain these without restructuring paragraphs. Designers get a fast answer when they're in a hurry.
+The problem starts the moment you do. A developer runs `npx shadcn@latest add button`, changes the padding, adds a `loading` prop, renames `destructive` to `critical`. The official shadcn docs are now 80% correct and 20% dangerous. The team's actual component system is undocumented, living only in the codebase. Brad Frost called this clearly: "Once the pattern library ceases to reflect the current state of the products it serves, it becomes obsolete." The Sparkbox Design Systems Survey (2022) backs it up: 39% of subscribers said their system was documented poorly, and 35% said it was unclear what was old, broken, or coming soon.
 
-**Structured sections below:** When to use, Anatomy, Variants and options, Placement, Editorial guidelines, Accessibility. Each section explains not just what to do but why, grounded in the component's real behavior. Sections are omitted when they don't apply: a simple Text component doesn't need a Placement section.
+This isn't new. Software engineering has a name for it: documentation drift. Aghajani et al. analyzed Stack Overflow and GitHub data at ICSE 2019 and found documentation-code inconsistency was a top problem. But "copy and paste" component libraries like shadcn make the drift structural, not incidental. The architecture assumes mutation. Every team that adopts it will diverge.
 
-The full design rationale is in [`docs/design-philosophy.md`](docs/design-philosophy.md).
+---
+
+## AI agents need documentation to write correct code
+
+Here's where it compounds. We're in an era where AI agents write production UI. v0, Cursor, Claude Code, Bolt. A tech lead prompts one tool to build a settings page; another prompts a different tool to build onboarding. Both get working UI. Neither gets consistency.
+
+The AI doesn't know your team renamed `destructive` to `critical`, that your Dialog has a custom focus trap, or that you've added a `loading` prop that doesn't exist upstream. Without structured documentation of the actual component system, AI agents generate plausible but wrong code. The 0xminds team tested this directly: across 50 prompts, 34% of AI-generated shadcn components had API errors. With structured documentation provided as context, that dropped to 3%.
+
+This is a recognized problem at every level of the ecosystem. Andrew Ng described it plainly: "Agentic coding systems often make mistakes because they're not aware of tools, API calls, and the like that came out after they were trained." Birgitta Bockeler, writing on Martin Fowler's site, framed the emerging discipline of "context engineering" as "curating what the model sees so that you get a better result." shadcn itself built Skills and an MCP server specifically to give AI tools structured access to component metadata. Their docs describe a registry as "a distribution specification designed to pass context from your design system to AI Models."
+
+The pattern is clear. AGENTS.md, CLAUDE.md, .cursorrules, llms.txt: all different implementations of the same idea. AI tools that generate code from components need a structured reference for those components. Steve Sewell at Builder.io documented the adoption: n8n (178K stars), llama.cpp (97K stars), Bun (82K stars), all shipping agent context files. The question isn't whether this layer is needed. It's who produces it and how.
+
+Helge Sverre named the failure mode: "agentic drift," the gradual, invisible divergence that happens when parallel autonomous agents work on related parts of a codebase without coordination. Three agents independently implemented dynamic model discovery three different ways. Code compiled. Tests passed. The merged result was semantic noise. The TypeUI team at Creative Tim described the same thing from the design side: "The first component looks great, the second one drifts, and by the third prompt your buttons have different padding, your fonts have changed."
+
+---
+
+## Accessibility breaks through inconsistency, not ignorance
+
+shadcn/ui is accessible by default because it's built on Radix. But "accessible by default" is a black box. A DevUnionX audit found that AI tools "mostly don't automatically add important parts like DialogTrigger or SheetDescription" and that "elements like SheetDescription that seem unnecessary are actually for accessibility. AI generally skips these."
+
+This isn't hypothetical. The shadcn/ui issue tracker documents the same failure pattern across four separate bug reports (#4302, #5474, #5746, #6284), all reporting the same accessibility error: missing `SheetTitle` or `SheetDescription` in component implementations, triggering the Radix warning "DialogContent requires a DialogTitle for the component to be accessible for screen reader users." These weren't filed as AI bugs. They're the exact class of error that AI tools reproduce when generating components without understanding the semantic contracts underneath.
+
+Radix itself enforces these contracts strictly. When `DialogDescription` is absent, Radix generates a dangling `aria-describedby` pointing to a non-existent ID. That's a broken ARIA reference, inherited silently by every AI-generated component that skips the sub-component.
+
+Nobody on the team is ignorant of accessibility. The problem is that nobody is checking whether three independently generated features handle focus management, keyboard interactions, and ARIA labels the same way. Accessibility breaks not from missing knowledge but from missing coordination. Structured documentation that surfaces "this component traps focus, requires a visible title, and responds to Escape" gives both humans and AI agents the spec they need to stay consistent.
+
+---
+
+## Design quality degrades without a shared reference
+
+Accessibility failures are invisible until someone runs an audit. Design principle violations are visible immediately, and they compound the same way.
+
+The OverlayQA team ran structured QA passes on apps built by Bolt, Lovable, and Figma Make. They found an average of 160 issues per AI-generated app: layout and spacing errors, incorrect CSS values, missing design token usage. AI-generated code introduced 1.7x more visual issues than human-written code. Their core finding: "AI app builders optimize for functional correctness. They do not optimize for visual fidelity."
+
+The pattern is predictable. AI tools default to their training data, not your design system. Anna Arteeva, former Head of Product Design at Payoneer, described the mechanism directly: "AI tools tend to be biased toward the frameworks and styles they were trained on. If your system deviates from those defaults, extra work is needed to teach the AI your design tokens, components, and patterns, or coding agents will fall back to infamous AI slop." Addy Osmani found the same thing evaluating v0: it "re-themes designs towards its default look instead of faithfully matching a given spec." The tool overrides your design intent with its own aesthetic preferences.
+
+This isn't just about aesthetics. GitClear analyzed 211 million changed lines of code from 2020 to 2024, across repos owned by Google, Microsoft, and Meta. Refactored code dropped from 24.1% of changes to 9.5%, a 60% decline. Copy-pasted code surpassed refactoring for the first time in 2024. Duplicated code blocks saw an eightfold increase. These patterns map directly to UI code: inline styles instead of tokens, duplicated component variants instead of reuse, hardcoded values instead of design system references. The code works. It just doesn't cohere.
+
+Nielsen Norman Group's "State of UX 2026" report frames the broader consequence: "UI is cheaper to produce due to standardization" but "visual output alone has stopped being a differentiator." Their separate evaluation of AI design tools found that even Figma's First Draft produced output with "poor information and visual hierarchy, even for a wireframe." Their conclusion: "Only a human designer can balance the design, business, and user needs that go into a great visual design."
+
+The DOC piece ties it together. "AI didn't create the craft crisis. It exposed the technical literacy gap that's been eroding strategic influence for over a decade." When Figma Sites produced 210 WCAG violations, it wasn't because the tool lacked capability. It was because there was no spec for it to follow. The same applies to spacing, hierarchy, variant logic, and every other design decision that lives in someone's head instead of in documentation.
+
+This is the same problem as the accessibility section, with a different symptom. No shared reference means no consistency. Accessibility breaks fail screen readers. Design drift fails users' eyes. Both get worse when multiple AI agents generate UI independently. Both are solved by the same artifact: structured component documentation that encodes not just what the components are but when and how to use them.
+
+---
+
+## What this tool demonstrates
+
+The demo pulls from shadcn/ui's GitHub repos and generates structured documentation for any component in the library. The output covers usage guidance, variant logic, accessibility specs, and editorial standards, in a format that serves both humans scanning for answers and AI agents generating code.
+
+The shadcn fetch is proof of concept. The thesis is that every team running a customized component system needs this layer, and it needs to be generated from their actual codebase, not the upstream library. The process I identified at Amazon, reading a schema, writing the same sections in the same order, applying the same editorial standards, is the same process. The reason it matters has changed. It's no longer about translating for non-technical people. It's about producing the shared reference that keeps a team and its tools aligned when components ship faster than anyone can write documentation by hand.
+
+> *"You did a darn good job running things and keeping us in check."*
+>
+> — Matt Caruano, Engineering, Amazon, after a documentation sprint
 
 ---
 
@@ -72,11 +114,7 @@ The model draws from this encoded knowledge rather than recalling best practices
 
 ### Output still requires human review
 
-The tool generates first drafts. Engineers verify technical accuracy. Writers edit for voice, edge cases, and anything the source docs don't capture. This is intentional: the goal is to automate the mechanical scaffolding so the human work — judgment, accuracy, audience awareness — can happen faster.
-
-> *"You did a darn good job running things and keeping us in check."*
->
-> — Matt Caruano, Engineering, Amazon, after a documentation sprint
+The tool generates first drafts. Engineers verify technical accuracy. Writers edit for voice, edge cases, and anything the source docs don't capture. This is intentional: the goal is to automate the mechanical scaffolding so the human work, judgment, accuracy, audience awareness, can happen faster.
 
 ---
 
@@ -165,7 +203,21 @@ See [`eval/README.md`](eval/README.md) for details.
 
 ---
 
+## Research
+
+[`docs/research.md`](docs/research.md) contains the sources and citations backing the claims in this README, organized by argument with verification notes and MLA citations.
+
+---
+
+## Design philosophy
+
+[`docs/design-philosophy.md`](docs/design-philosophy.md) covers the rationale behind the hybrid template format: why narrative documentation with positive framing produces more confident decision-making than Do's and Don'ts lists alone, grounded in behavioral science research.
+
+---
+
 ## What's next
 
-- Support for OpenAPI specs and TypeScript prop types as input formats
+- Generate documentation from a team's local repo, not just upstream shadcn
+- Output structured formats (DESIGN.md, JSON) that serve as AI agent context
+- Support for OpenAPI specs and TypeScript prop types as input
 - Batch evaluation with scoring thresholds for CI integration

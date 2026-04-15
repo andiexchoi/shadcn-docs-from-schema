@@ -4,6 +4,16 @@ Documents what changed in the prompt, why, and what effect it had on output qual
 
 ---
 
+## v5 — Audience reframe and semantic layer (2026)
+
+**What changed:** Rewrote audience framing from "product managers and designers" to "engineers, design engineers, and AI coding agents." Added four new template sections: Component contracts, Keyboard interactions, ARIA requirements, Common mistakes. Created `src/semantic-guidelines.js` as a new knowledge layer covering compound component composition, ARIA patterns by type, and known AI agent failure patterns. Extracted shared prompt content into a helper function to eliminate duplication between `buildPrompt` and `buildPromptFromDocs`. Increased max_tokens from 2000 to 4000. Added explicit section omission rules for non-interactive components. Added six new eval cases (12 total).
+
+**Why:** The project thesis shifted. The original tool solved a translation problem: non-technical people couldn't read technical docs. That problem is shrinking as roles converge. The new problem is that component adoption outpaces component governance. Teams mutate shadcn/ui the moment they adopt it, and AI coding agents generate inconsistent UI when they lack structured documentation of the actual component system. Research shows 34% of AI-generated shadcn components had API errors without structured docs as context (0xminds, 2026). The shadcn/ui issue tracker documents the same accessibility failure pattern (missing DialogTitle/SheetDescription) across four separate bug reports. The prompt now generates documentation that serves as both a human reference and an AI agent context layer.
+
+**Effect:** Output now includes structural contracts (required sub-components, composition rules), explicit keyboard mappings, specific ARIA attributes per element, and common implementation mistakes. Complex components like Dialog generate all new sections. Simple components like Badge correctly omit them. The old "product managers and designers" framing no longer appears in output.
+
+---
+
 ## v4 — Live doc fetching mode (2024)
 
 **What changed:** Added `buildPromptFromDocs()`, a second prompt path that accepts fetched MDX documentation instead of a JSON schema. Source documentation is injected as a grounding section at the end of the prompt.
