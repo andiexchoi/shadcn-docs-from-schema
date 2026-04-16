@@ -1,10 +1,11 @@
 import { generateFromComponent } from "./generate.js";
 import { markdownToCompact } from "./markdown-to-compact.js";
+import { combineCLAUDEmd, combineAgentsMd, combineLlmsTxt } from "./agent-context-formats.js";
 import { writeFileSync, mkdirSync, existsSync } from "fs";
 import { join } from "path";
 
 function parseArgs(argv) {
-  const args = { components: [], format: "both", output: null };
+  const args = { components: [], format: "both", output: null, combine: null };
   for (let i = 2; i < argv.length; i++) {
     if (argv[i] === "--components" && argv[i + 1]) {
       args.components = argv[++i].split(",").map((c) => c.trim());
@@ -12,8 +13,10 @@ function parseArgs(argv) {
       args.format = argv[++i];
     } else if (argv[i] === "--output" && argv[i + 1]) {
       args.output = argv[++i];
+    } else if (argv[i] === "--combine" && argv[i + 1]) {
+      args.combine = argv[++i];
     } else if (argv[i] === "--help") {
-      console.log(`Usage: node src/batch.js --components button,dialog,tabs [--format markdown|compact|both] [--output ./docs/generated/]`);
+      console.log(`Usage: node src/batch.js --components button,dialog,tabs [--format markdown|compact|both] [--output ./docs/generated/] [--combine claude|agents|llms]`);
       process.exit(0);
     }
   }
@@ -40,6 +43,7 @@ async function main() {
   let totalOutputTokens = 0;
   const errors = [];
   const results = [];
+  const compactEntries = [];
 
   for (let i = 0; i < args.components.length; i++) {
     const name = args.components[i];
@@ -59,6 +63,10 @@ async function main() {
 
       const compact =
         result.compact || (args.format !== "markdown" ? markdownToCompact(result.markdown) : null);
+
+      if (compact && args.combine) {
+        compactEntries.push({ name, compactYaml: compact });
+      }
 
       if (args.output) {
         if (args.format === "markdown" || args.format === "both") {
@@ -82,6 +90,18 @@ async function main() {
     } catch (err) {
       console.log(` ERROR: ${err.message}`);
       errors.push({ name, error: err.message });
+    }
+  }
+
+  if (args.combine && args.output && compactEntries.length > 0) {
+    const combiners = { claude: combineCLAUDEmd, agents: combineAgentsMd, llms: combineLlmsTxt };
+    const filenames = { claude: "CLAUDE.md", agents: "AGENTS.md", llms: "llms.txt" };
+    const fn = combiners[args.combine];
+    if (fn) {
+      const combined = fn(compactEntries);
+      const outPath = join(args.output, filenames[args.combine]);
+      writeFileSync(outPath, combined);
+      console.log(`Combined: ${outPath} (${compactEntries.length} components)`);
     }
   }
 

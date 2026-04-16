@@ -96,11 +96,13 @@ The shadcn fetch is proof of concept. The thesis is that every team running a cu
 
 ## How the tool is built
 
-### Two input modes
+### Three input modes
 
 **Fetch from docs:** type any shadcn/ui component name and the tool pulls raw MDX directly from the shadcn/ui, Radix UI, and Base UI GitHub repositories. The live source content becomes the grounding material for generation. The tool tries both the `base/` and `radix/` subdirectories in the shadcn repo and combines what it finds. This means the output reflects current documentation, not a snapshot from training data.
 
 **Custom schema:** paste a JSON schema for any component. The schema determines what sections are generated and what gets covered. This is the no-hallucination constraint for custom libraries: the tool doesn't invent props or variants that aren't in the schema.
+
+**Paste source:** paste a component's TSX/JSX source code directly. The tool extracts a JSON schema from the source using regex-based prop extraction (interfaces, type aliases, cva variants, forwardRef patterns, destructuring defaults) and generates documentation from the result. This is the path for teams whose components exist only as code, with no schema or upstream docs to fetch.
 
 ### The platform guidelines drive the reasoning
 
@@ -111,6 +113,39 @@ The model draws from this encoded knowledge rather than recalling best practices
 ### The prompt is the core artifact
 
 [`src/prompt.js`](src/prompt.js) is where the documentation philosophy becomes machine-readable: the section structure, the framing rules, the editorial standards, and the instruction to lead with positive framing and always include the "why." Most AI tools treat the prompt as an implementation detail. Here it's the primary design artifact: versioned, readable, and separable from the platform knowledge layer so both can be maintained independently.
+
+The prompt assembles from four modules, injected in this order:
+
+1. **Formatting rules and framing philosophy** (inline in `prompt.js`) — non-negotiable editorial constraints: no passive voice, no em-dashes, positive framing first, every guideline includes a "why"
+2. **Template with section structure** (inline in `prompt.js`) — the exact heading names and section omission rules that make the output deterministically parseable by the compact format converter
+3. **Output budget** (inline in `prompt.js`) — sentence and bullet limits per section, calibrated to produce first drafts that are tight enough to use as agent context without post-editing
+4. **Style guide** ([`src/style-guide.js`](src/style-guide.js)), **platform guidelines** ([`src/platform-guidelines.js`](src/platform-guidelines.js)), and **semantic guidelines** ([`src/semantic-guidelines.js`](src/semantic-guidelines.js)) — injected as reference material the model draws from rather than recalling from training data
+
+The modules are separate so each can be versioned, tested, and updated independently. The heading names in the template are the same heading names the compact format parser splits on, which is why both must be maintained together.
+
+### Two output representations
+
+The tool generates markdown documentation and a compact YAML representation. Both contain the same content, governed by the same editorial rules. The compact format is not a summary or a degraded version.
+
+The compact format strips the presentation layer: heading syntax, bold markers, blank lines, the visual hierarchy designed for humans scanning a rendered page. What it adds is structural predictability. Every component uses the same short keys (`use_when`, `do`, `dont`, `keyboard`, `aria`, `a11y`, `mistakes`) in the same order. Sections that don't apply are absent, not empty. Bullet lists become arrays. An agent can extract `keyboard:` or `aria:` without parsing markdown headings.
+
+Token savings are modest, roughly 3-5%. The original hypothesis was 30-50%, but that holds for API specifications with deep structural nesting, not prose documentation where content dominates format overhead. The value is parseability, not compression. Consistent keys, predictable schema, no formatting noise.
+
+The UI shows both formats side by side with token estimates so you can see the tradeoff directly.
+
+### Agent context file export
+
+The compact YAML can be exported as:
+
+- **CLAUDE.md** — fenced YAML block with usage instructions for Claude Code
+- **AGENTS.md** — AI agent context wrapper
+- **llms.txt** — plain text format with summary extraction
+
+These are the files you'd commit to a repo so that AI coding tools consuming your component library get structured documentation as context. The export wraps the same compact YAML in the conventions each format expects.
+
+### Batch CLI
+
+`node src/batch.js --components button,dialog,tabs --format both --output ./docs/generated/` generates documentation for multiple components in sequence, writing `.md` and `.yaml` files to the output directory. This is the path for generating a full component library's documentation in one pass.
 
 ### Output still requires human review
 
@@ -186,6 +221,8 @@ Both Enter and Space activate a button. Don't override or block these key bindin
 - Next.js on Vercel
 - Anthropic API (claude-sonnet-4-6)
 - Live doc fetching from GitHub raw content (shadcn/ui, Radix UI, Base UI)
+- Regex-based TypeScript/JSX prop extraction (no build tooling dependency)
+- Deterministic markdown-to-YAML post-processing (no second API call)
 
 ---
 
@@ -211,13 +248,12 @@ See [`eval/README.md`](eval/README.md) for details.
 
 ## Design philosophy
 
-[`docs/design-philosophy.md`](docs/design-philosophy.md) covers the rationale behind the hybrid template format: why narrative documentation with positive framing produces more confident decision-making than Do's and Don'ts lists alone, grounded in behavioral science research.
+[`docs/design-philosophy.md`](docs/design-philosophy.md) covers the rationale behind the hybrid template format and the compact YAML representation: why the same editorial philosophy governs both human-readable and machine-readable output, and why structure matters more than token count.
 
 ---
 
 ## What's next
 
-- Generate documentation from a team's local repo, not just upstream shadcn
-- Output structured formats (DESIGN.md, JSON) that serve as AI agent context
-- Support for OpenAPI specs and TypeScript prop types as input
-- Batch evaluation with scoring thresholds for CI integration
+- End-to-end validation: give an AI agent the compact output as context, generate a component, and check for known failure patterns (missing ARIA, wrong prop names, broken contracts)
+- Batch "combine" mode: merge all component docs into a single CLAUDE.md or AGENTS.md for whole-library context
+- Support for OpenAPI specs as input alongside JSON schemas and TSX source

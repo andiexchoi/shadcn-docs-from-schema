@@ -1,4 +1,5 @@
 import { examples } from "../src/examples/index.js";
+import { markdownToCompact } from "../src/markdown-to-compact.js";
 
 // Each case tests a specific prompt behavior, not a component.
 // traits: strings or regex patterns the output MUST contain (case-insensitive substring match).
@@ -254,5 +255,46 @@ export const cases = [
       "designers who need to know",
       "not how it is built",
     ],
+  },
+  {
+    name: "Dialog (schema) — compact output has agent-critical keys",
+    input: { schema: dialogSchema },
+    traits: [
+      "## Component contracts",
+      "## Keyboard interactions",
+      "## ARIA requirements",
+      "## Common mistakes",
+    ],
+    antitraits: [],
+    customCheck: (output) => {
+      const compact = markdownToCompact(output);
+      const requiredKeys = ["component:", "keyboard:", "aria:", "contracts:", "mistakes:"];
+      const missing = requiredKeys.filter((k) => !compact.includes(k));
+      if (missing.length > 0) {
+        return { pass: false, reason: `Compact output missing keys: ${missing.join(", ")}` };
+      }
+      return { pass: true };
+    },
+  },
+  {
+    name: "Custom Button (schema) — divergent props in output",
+    input: {
+      schema: examples.find((e) => e.name === "Custom Button").schema,
+    },
+    traits: [
+      "# Button",
+      "loading",
+      "critical",
+    ],
+    antitraits: [
+      "destructive",
+    ],
+    customCheck: (output) => {
+      const hasLoadingText = output.toLowerCase().includes("loadingtext") || output.toLowerCase().includes("loading text");
+      if (!hasLoadingText) {
+        return { pass: false, reason: "Output does not mention loadingText prop" };
+      }
+      return { pass: true };
+    },
   },
 ];
