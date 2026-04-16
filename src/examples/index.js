@@ -472,6 +472,64 @@ export const examples = [
         focusManagement: "Focus stays on the tab trigger when navigating. It moves to the content panel only when the user explicitly tabs into it."
       }
     }
+  },
+  {
+    name: "Custom Button",
+    schema: {
+      component: "Button",
+      description: "Triggers an action or event when clicked. Customized from the upstream shadcn/ui Button with loading states, a renamed destructive variant, and focus trap behavior for modal contexts.",
+      props: {
+        variant: {
+          type: "enum",
+          values: ["default", "outline", "ghost", "critical", "secondary", "link"],
+          default: "default",
+          description: "Controls the visual style of the button. 'critical' replaces the upstream 'destructive' variant to align with the product's severity taxonomy."
+        },
+        size: {
+          type: "enum",
+          values: ["default", "sm", "lg", "icon"],
+          default: "default",
+          description: "Controls the size of the button. Icon size produces a square button for icon-only use."
+        },
+        loading: {
+          type: "boolean",
+          default: false,
+          description: "Shows a spinner and disables interaction. The button retains its dimensions to prevent layout shift."
+        },
+        loadingText: {
+          type: "string",
+          default: null,
+          description: "Replaces the button label while loading is true. If omitted, the original label remains visible next to the spinner."
+        },
+        focusTrap: {
+          type: "boolean",
+          default: false,
+          description: "When true, pressing Tab from this button wraps focus back to it instead of moving to the next element. Use inside modal footers where the button is the only focusable element."
+        },
+        asChild: {
+          type: "boolean",
+          default: false,
+          description: "Merges props onto the child element instead of rendering a button."
+        }
+      },
+      attributes: {
+        "data-loading": {
+          values: ["true"],
+          description: "Present when loading is true. Use for CSS-only loading styles."
+        }
+      },
+      notes: {
+        upstreamDivergence: "This component diverges from upstream shadcn/ui Button in three ways: (1) 'destructive' variant renamed to 'critical', (2) loading and loadingText props added, (3) focusTrap prop added for modal contexts. Upstream docs do not cover these props.",
+        loading: "The loading spinner renders inside the button at inline-start position. The button's min-width is locked to prevent layout shift when loadingText changes the label length.",
+        critical: "The 'critical' variant uses the same visual treatment as upstream 'destructive' but is renamed to match the product severity scale: info, warning, critical."
+      },
+      accessibility: {
+        role: "button",
+        keyboardInteraction: ["Enter", "Space"],
+        ariaAttributes: ["aria-disabled (set automatically when loading is true)", "aria-busy (set to true during loading)"],
+        loadingBehavior: "Screen readers announce the loadingText value when loading begins. If no loadingText is set, aria-busy alone signals the state change."
+      }
+    }
   }
 ];
 

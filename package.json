@@ -5,7 +5,10 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "batch": "node src/batch.js",
+    "test:compact": "node eval/compact-cases.js",
+    "test:extract": "node eval/extractProps.test.js"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.88.0",
