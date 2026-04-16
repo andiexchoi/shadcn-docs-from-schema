@@ -2,9 +2,10 @@ import { NextResponse } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
 import { buildPrompt, buildPromptFromDocs } from "@/src/prompt.js";
 import { fetchComponentDocs } from "@/src/fetchDocs.js";
+import { markdownToCompact } from "@/src/markdown-to-compact.js";
 
 export async function POST(request) {
-  const { schema, component, sources } = await request.json();
+  const { schema, component, sources, format } = await request.json();
 
   if (!schema && !component) {
     return NextResponse.json(
@@ -46,7 +47,11 @@ export async function POST(request) {
     });
 
     const text = message.content.map((c) => c.text || "").join("");
-    return NextResponse.json({ markdown: text });
+    const response = { markdown: text };
+    if (format === "compact" || format === "both") {
+      response.compact = markdownToCompact(text);
+    }
+    return NextResponse.json(response);
   } catch (err) {
     console.error(err);
     return NextResponse.json(
