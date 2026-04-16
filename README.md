@@ -216,6 +216,61 @@ Both Enter and Space activate a button. Don't override or block these key bindin
 
 ---
 
+## Example: Custom Button (divergence from upstream)
+
+This is the scenario the tool is built for. Your team forked shadcn's Button and renamed `destructive` to `critical`, added `loading`/`loadingText` for async states, and added `focusTrap` for modal contexts. Upstream docs don't cover any of this.
+
+**Input schema (paste source or custom schema):**
+
+```json
+{
+  "component": "Button",
+  "props": {
+    "variant": { "type": "enum", "values": ["default", "critical", "outline", "ghost"], "default": "default" },
+    "size": { "type": "enum", "values": ["sm", "default", "lg"], "default": "default" },
+    "loading": { "type": "boolean", "default": false },
+    "loadingText": { "type": "string" },
+    "focusTrap": { "type": "boolean" }
+  },
+  "element": "button"
+}
+```
+
+**Generated output mentions `critical` (not `destructive`), documents the custom props, and surfaces accessibility implications:**
+
+```markdown
+**`critical`**: Use for actions that permanently delete data or can't be reversed.
+
+**`loading`**: Set to `true` while an async operation is in progress to block repeat submissions.
+
+**`loadingText`**: Provide a short label, such as "Saving…", to replace the button label
+while `loading` is `true`. This keeps sighted users informed of progress.
+```
+
+**Compact YAML (for CLAUDE.md / AGENTS.md):**
+
+```yaml
+component: Button
+props:
+  variant: enum [default, critical, outline, ghost] = "default"
+  loading: boolean = false
+  loadingText: string
+  focusTrap: boolean
+keyboard:
+  Enter: activates the button
+  Space: activates the button
+aria:
+  aria-busy: set when loading is true
+  aria-disabled: use instead of disabled attribute
+mistakes:
+  - using disabled instead of aria-disabled when explanation is needed
+  - omitting loadingText when loading is true
+```
+
+The AI agent that consumes this file will never hallucinate `destructive` or miss `loadingText` — both are specified explicitly from the actual component source.
+
+---
+
 ## Stack
 
 - Next.js on Vercel
@@ -255,5 +310,4 @@ See [`eval/README.md`](eval/README.md) for details.
 ## What's next
 
 - End-to-end validation: give an AI agent the compact output as context, generate a component, and check for known failure patterns (missing ARIA, wrong prop names, broken contracts)
-- Batch "combine" mode: merge all component docs into a single CLAUDE.md or AGENTS.md for whole-library context
 - Support for OpenAPI specs as input alongside JSON schemas and TSX source

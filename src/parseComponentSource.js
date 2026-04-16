@@ -20,7 +20,7 @@ function extractComponentName(source) {
 
 function extractPropsFromInterface(source) {
   const match = source.match(
-    /(?:interface|type)\s+\w+Props\s*(?:extends\s+[^{]+)?\s*[={]\s*\{([^}]*)\}/s
+    /(?:interface|type)\s+\w*Props?\s*(?:extends\s+[^{]+)?\s*=?\s*\{([^}]*)\}/s
   );
   if (!match) return {};
 
@@ -76,6 +76,11 @@ function extractDefaults(source) {
     let bm;
     while ((bm = boolPattern.exec(body)) !== null) {
       defaults[bm[1]] = bm[2] === "true";
+    }
+    const numPattern = /(\w+)\s*=\s*(\d+(?:\.\d+)?)/g;
+    let nm;
+    while ((nm = numPattern.exec(body)) !== null) {
+      defaults[nm[1]] = Number(nm[2]);
     }
   }
 

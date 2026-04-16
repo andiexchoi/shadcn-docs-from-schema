@@ -286,13 +286,15 @@ export const cases = [
       "loading",
       "critical",
     ],
-    antitraits: [
-      "destructive",
-    ],
+    antitraits: [],
     customCheck: (output) => {
       const hasLoadingText = output.toLowerCase().includes("loadingtext") || output.toLowerCase().includes("loading text");
       if (!hasLoadingText) {
         return { pass: false, reason: "Output does not mention loadingText prop" };
+      }
+      const variantRef = /`destructive`|variant="destructive"|variant:\s*destructive\b|"destructive"/.test(output);
+      if (variantRef) {
+        return { pass: false, reason: "Output references destructive as a variant value (should be critical)" };
       }
       return { pass: true };
     },
