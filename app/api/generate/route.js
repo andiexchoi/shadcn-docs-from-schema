@@ -3,9 +3,10 @@ import Anthropic from "@anthropic-ai/sdk";
 import { buildPrompt, buildPromptFromDocs } from "@/src/prompt.js";
 import { fetchComponentDocs } from "@/src/fetchDocs.js";
 import { markdownToCompact } from "@/src/markdown-to-compact.js";
+import { toCLAUDEmd, toAgentsMd, toLlmsTxt } from "@/src/agent-context-formats.js";
 
 export async function POST(request) {
-  const { schema, component, sources, format } = await request.json();
+  const { schema, component, sources, format, contextFormat } = await request.json();
 
   if (!schema && !component) {
     return NextResponse.json(
@@ -47,9 +48,16 @@ export async function POST(request) {
     });
 
     const text = message.content.map((c) => c.text || "").join("");
+    const componentName = component || schema?.component || "Component";
+    const compact = markdownToCompact(text);
     const response = { markdown: text };
     if (format === "compact" || format === "both") {
-      response.compact = markdownToCompact(text);
+      response.compact = compact;
+    }
+    if (contextFormat) {
+      const formatters = { claude: toCLAUDEmd, agents: toAgentsMd, llms: toLlmsTxt };
+      const fn = formatters[contextFormat];
+      if (fn) response.contextFile = fn(componentName, compact);
     }
     return NextResponse.json(response);
   } catch (err) {

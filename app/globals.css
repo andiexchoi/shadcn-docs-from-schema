@@ -458,13 +458,113 @@ body {
   text-align: right;
 }
 
+.source-mode {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1;
+}
+
+.parsed-schema {
+  font-size: 12px;
+  color: #666;
+  border: 1px solid #e5e5e5;
+  border-radius: 6px;
+  padding: 0;
+}
+
+.parsed-schema summary {
+  padding: 8px 12px;
+  cursor: pointer;
+  font-weight: 500;
+  color: #444;
+}
+
+.parsed-schema-pre {
+  margin: 0;
+  padding: 8px 12px;
+  font-family: "SF Mono", "Fira Code", monospace;
+  font-size: 11px;
+  line-height: 1.5;
+  background: #fafafa;
+  border-top: 1px solid #e5e5e5;
+  white-space: pre-wrap;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.output-action-btns {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.export-wrap {
+  position: relative;
+}
+
+.export-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  background: #fff;
+  font-size: 12px;
+  font-weight: 500;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.export-btn:hover {
+  border-color: #aaa;
+  color: #111;
+}
+
+.export-menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  list-style: none;
+  margin: 0;
+  padding: 4px;
+  z-index: 100;
+  min-width: 120px;
+}
+
+.export-menu-item {
+  display: block;
+  width: 100%;
+  padding: 6px 10px;
+  border: none;
+  border-radius: 4px;
+  background: transparent;
+  font-size: 12px;
+  color: #333;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.1s;
+}
+
+.export-menu-item:hover {
+  background: #f5f5f5;
+}
+
 /* Focus styles for keyboard navigation */
 .source-pill:focus-visible,
 .example-btn:focus-visible,
 .mode-tab:focus-visible,
 .tab:focus-visible,
 .copy-icon-btn:focus-visible,
-.generate-btn:focus-visible {
+.generate-btn:focus-visible,
+.export-btn:focus-visible,
+.export-menu-item:focus-visible {
   outline: 2px solid #111;
   outline-offset: 2px;
 }
