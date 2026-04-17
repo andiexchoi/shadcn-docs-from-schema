@@ -1,9 +1,9 @@
 import "./globals.css";
 
 export const metadata = {
-  title: "What does this shadcn/ui component do?",
+  title: "Component documentation for humans and AI agents · shadcn-docs-from-schema",
   description:
-    "Type a shadcn/ui component name and get structured documentation written for designers and product managers. Grounded in live source docs from the shadcn/ui, Radix UI, and Base UI repositories.",
+    "The documentation layer between your component library and everything that reads it. Generate readable markdown docs and structured agent context files (CLAUDE.md, AGENTS.md, llms.txt) from a JSON schema, a TSX file, or a live shadcn/ui component.",
 };
 
 export default function RootLayout({ children }) {

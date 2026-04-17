@@ -234,9 +234,9 @@ export default function Home() {
   return (
     <div className="app">
       <header className="header">
-        <h1>What does this shadcn/ui component do?</h1>
+        <h1>Component documentation for humans and AI agents</h1>
         <p className="subtitle">
-          Retrieve and/or input a component JSON schema. Get a structured first draft for mobile app component documentation geared towards product managers and designers.
+          The documentation layer between your component library and everything that reads it. Generate readable markdown docs and structured agent context files (CLAUDE.md, AGENTS.md, llms.txt) from a JSON schema, a TSX file, or a live shadcn/ui component. One source of truth for the engineers, designers, and AI agents working on your design system.
         </p>
       </header>
 
