@@ -69,6 +69,14 @@ This document backs the three core claims in the case study and README. Sources 
 - **Key quote:** "Insufficient context may cause AI agents to hallucinate, increasing the likelihood of low quality responses with nonexistent APIs and packages, incorrect configurations, or generic boilerplate code."
 - **Relevance:** Recommends llms.txt files to reduce hallucinations. States they "prevent AI from inventing non-existent APIs or features."
 
+### Supplemental note: model-internal memory (DeepSeek Engram)
+- **Paper:** "Engram: Scaling MoE Models with N-gram Memory"
+- **URL:** https://arxiv.org/abs/2601.07372
+- **Publication:** DeepSeek (arXiv preprint)
+- **Date:** January 2026
+- **Summary:** Introduces a pretraining-time architectural module that embeds large N-gram lookup tables inside specific MoE layers. Under matched parameters and FLOPs, allocating ~75–80% of the sparse parameter budget to experts and ~20–25% to Engram beats pure MoE. A 100B-parameter Engram table can be offloaded to CPU RAM at <3% throughput cost because lookups are deterministic.
+- **Relevance to this project:** Engram is orthogonal to the argument above, but worth flagging because it's easy to misread as a counter-thesis. The paper shows that models can absorb canonical, high-frequency knowledge (named entities, stable APIs) more cheaply inside the network, freeing upper layers for reasoning. This applies only to knowledge present at pretraining time. A team's post-training divergence — `destructive` renamed to `critical`, an added `loading` prop, a custom `focusTrap` — is unreachable by this mechanism by definition. If anything, better internal recall of the canonical shadcn/Radix API makes the silent-fork failure mode more acute: the model becomes more confident about a version of the component that doesn't match what the team shipped. The reasoning/recall separation the paper argues for inside the model (cheap deterministic lookup for facts, expensive compute for reasoning) is structurally the same move this tool makes at the context layer: compact YAML as deterministic lookup for post-training component knowledge, leaving the model's reasoning budget for composition.
+
 ---
 
 ## Claim 2: Shadow design system (documentation rot)
@@ -291,6 +299,8 @@ Ritchie, Logan. "When Coding Agents Spiral Into 693 Lines of Hallucinations." *S
 *2026 Agentic Coding Trends Report*. Anthropic, 2026, resources.anthropic.com/2026-agentic-coding-trends-report.
 
 "Best Practices for Context Management When Generating Code with AI Agents." *DigitalOcean Documentation*, docs.digitalocean.com/products/gradient-ai-platform/concepts/context-management/. Accessed 14 Apr. 2026.
+
+DeepSeek-AI. "Engram: Scaling MoE Models with N-gram Memory." *arXiv*, Jan. 2026, arxiv.org/abs/2601.07372.
 
 ### Claim 2: Shadow design system (documentation rot)
 
