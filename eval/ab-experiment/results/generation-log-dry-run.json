@@ -1,0 +1,70 @@
+{
+  "label": "dry-run",
+  "startedAt": "2026-04-18T21:11:03.079Z",
+  "finishedAt": "2026-04-18T21:11:28.358Z",
+  "model": "claude-sonnet-4-6",
+  "components": [
+    "dialog"
+  ],
+  "conditions": [
+    "A",
+    "B"
+  ],
+  "runsPerCell": 2,
+  "totalTasks": 4,
+  "succeeded": 4,
+  "failures": 0,
+  "totalInputTokens": 3578,
+  "totalOutputTokens": 8905,
+  "estimatedCostUsd": 0.1443,
+  "log": [
+    {
+      "index": 0,
+      "componentName": "dialog",
+      "condition": "A",
+      "runId": "01",
+      "outPath": "/Users/andie/Repos/shadcn-docs-from-schema/eval/ab-experiment/runs/direct/dialog/A/run-01.tsx",
+      "ok": true,
+      "strippedFences": false,
+      "inputTokens": 349,
+      "outputTokens": 1779,
+      "notes": []
+    },
+    {
+      "index": 1,
+      "componentName": "dialog",
+      "condition": "A",
+      "runId": "02",
+      "outPath": "/Users/andie/Repos/shadcn-docs-from-schema/eval/ab-experiment/runs/direct/dialog/A/run-02.tsx",
+      "ok": true,
+      "strippedFences": false,
+      "inputTokens": 349,
+      "outputTokens": 2071,
+      "notes": []
+    },
+    {
+      "index": 2,
+      "componentName": "dialog",
+      "condition": "B",
+      "runId": "01",
+      "outPath": "/Users/andie/Repos/shadcn-docs-from-schema/eval/ab-experiment/runs/direct/dialog/B/run-01.tsx",
+      "ok": true,
+      "strippedFences": false,
+      "inputTokens": 1440,
+      "outputTokens": 2553,
+      "notes": []
+    },
+    {
+      "index": 3,
+      "componentName": "dialog",
+      "condition": "B",
+      "runId": "02",
+      "outPath": "/Users/andie/Repos/shadcn-docs-from-schema/eval/ab-experiment/runs/direct/dialog/B/run-02.tsx",
+      "ok": true,
+      "strippedFences": false,
+      "inputTokens": 1440,
+      "outputTokens": 2502,
+      "notes": []
+    }
+  ]
+}

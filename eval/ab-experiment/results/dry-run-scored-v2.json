@@ -1,0 +1,282 @@
+{
+  "scoredAt": "2026-04-18T21:22:08.416Z",
+  "skipSemantic": true,
+  "runs": [
+    {
+      "componentName": "dialog",
+      "condition": "A",
+      "runId": "01",
+      "filePath": "/Users/andie/Repos/shadcn-docs-from-schema/eval/ab-experiment/runs/direct/dialog/A/run-01.tsx",
+      "sourceLength": 6081,
+      "results": [
+        {
+          "id": "dialog-title-rendered",
+          "tier": "structural",
+          "direction": "+",
+          "matched": true,
+          "satisfied": true
+        },
+        {
+          "id": "dialog-description-rendered",
+          "tier": "structural",
+          "direction": "+",
+          "matched": true,
+          "satisfied": true
+        },
+        {
+          "id": "dialog-variant-destructive",
+          "tier": "structural",
+          "direction": "+",
+          "matched": true,
+          "satisfied": true
+        },
+        {
+          "id": "dialog-no-invented-variant",
+          "tier": "structural",
+          "direction": "-",
+          "matched": false,
+          "satisfied": true
+        },
+        {
+          "id": "dialog-onOpenChange",
+          "tier": "behavioral",
+          "direction": "+",
+          "requiresMatched": true,
+          "forbidsMatched": null,
+          "satisfied": true
+        },
+        {
+          "id": "dialog-no-manual-setOpen-toggle",
+          "tier": "behavioral",
+          "direction": "-",
+          "requiresMatched": null,
+          "forbidsMatched": false,
+          "satisfied": true
+        },
+        {
+          "id": "dialog-aria-describedby-explicit",
+          "tier": "behavioral",
+          "direction": "+",
+          "requiresMatched": false,
+          "forbidsMatched": null,
+          "satisfied": false
+        },
+        {
+          "id": "dialog-no-placeholder-projectname",
+          "tier": "behavioral",
+          "direction": "-",
+          "requiresMatched": null,
+          "forbidsMatched": true,
+          "satisfied": false
+        }
+      ]
+    },
+    {
+      "componentName": "dialog",
+      "condition": "A",
+      "runId": "02",
+      "filePath": "/Users/andie/Repos/shadcn-docs-from-schema/eval/ab-experiment/runs/direct/dialog/A/run-02.tsx",
+      "sourceLength": 7120,
+      "results": [
+        {
+          "id": "dialog-title-rendered",
+          "tier": "structural",
+          "direction": "+",
+          "matched": true,
+          "satisfied": true
+        },
+        {
+          "id": "dialog-description-rendered",
+          "tier": "structural",
+          "direction": "+",
+          "matched": true,
+          "satisfied": true
+        },
+        {
+          "id": "dialog-variant-destructive",
+          "tier": "structural",
+          "direction": "+",
+          "matched": true,
+          "satisfied": true
+        },
+        {
+          "id": "dialog-no-invented-variant",
+          "tier": "structural",
+          "direction": "-",
+          "matched": false,
+          "satisfied": true
+        },
+        {
+          "id": "dialog-onOpenChange",
+          "tier": "behavioral",
+          "direction": "+",
+          "requiresMatched": true,
+          "forbidsMatched": null,
+          "satisfied": true
+        },
+        {
+          "id": "dialog-no-manual-setOpen-toggle",
+          "tier": "behavioral",
+          "direction": "-",
+          "requiresMatched": null,
+          "forbidsMatched": false,
+          "satisfied": true
+        },
+        {
+          "id": "dialog-aria-describedby-explicit",
+          "tier": "behavioral",
+          "direction": "+",
+          "requiresMatched": false,
+          "forbidsMatched": null,
+          "satisfied": false
+        },
+        {
+          "id": "dialog-no-placeholder-projectname",
+          "tier": "behavioral",
+          "direction": "-",
+          "requiresMatched": null,
+          "forbidsMatched": true,
+          "satisfied": false
+        }
+      ]
+    },
+    {
+      "componentName": "dialog",
+      "condition": "B",
+      "runId": "01",
+      "filePath": "/Users/andie/Repos/shadcn-docs-from-schema/eval/ab-experiment/runs/direct/dialog/B/run-01.tsx",
+      "sourceLength": 8518,
+      "results": [
+        {
+          "id": "dialog-title-rendered",
+          "tier": "structural",
+          "direction": "+",
+          "matched": true,
+          "satisfied": true
+        },
+        {
+          "id": "dialog-description-rendered",
+          "tier": "structural",
+          "direction": "+",
+          "matched": true,
+          "satisfied": true
+        },
+        {
+          "id": "dialog-variant-destructive",
+          "tier": "structural",
+          "direction": "+",
+          "matched": true,
+          "satisfied": true
+        },
+        {
+          "id": "dialog-no-invented-variant",
+          "tier": "structural",
+          "direction": "-",
+          "matched": false,
+          "satisfied": true
+        },
+        {
+          "id": "dialog-onOpenChange",
+          "tier": "behavioral",
+          "direction": "+",
+          "requiresMatched": true,
+          "forbidsMatched": null,
+          "satisfied": true
+        },
+        {
+          "id": "dialog-no-manual-setOpen-toggle",
+          "tier": "behavioral",
+          "direction": "-",
+          "requiresMatched": null,
+          "forbidsMatched": false,
+          "satisfied": true
+        },
+        {
+          "id": "dialog-aria-describedby-explicit",
+          "tier": "behavioral",
+          "direction": "+",
+          "requiresMatched": true,
+          "forbidsMatched": null,
+          "satisfied": true
+        },
+        {
+          "id": "dialog-no-placeholder-projectname",
+          "tier": "behavioral",
+          "direction": "-",
+          "requiresMatched": null,
+          "forbidsMatched": true,
+          "satisfied": false
+        }
+      ]
+    },
+    {
+      "componentName": "dialog",
+      "condition": "B",
+      "runId": "02",
+      "filePath": "/Users/andie/Repos/shadcn-docs-from-schema/eval/ab-experiment/runs/direct/dialog/B/run-02.tsx",
+      "sourceLength": 8286,
+      "results": [
+        {
+          "id": "dialog-title-rendered",
+          "tier": "structural",
+          "direction": "+",
+          "matched": true,
+          "satisfied": true
+        },
+        {
+          "id": "dialog-description-rendered",
+          "tier": "structural",
+          "direction": "+",
+          "matched": true,
+          "satisfied": true
+        },
+        {
+          "id": "dialog-variant-destructive",
+          "tier": "structural",
+          "direction": "+",
+          "matched": true,
+          "satisfied": true
+        },
+        {
+          "id": "dialog-no-invented-variant",
+          "tier": "structural",
+          "direction": "-",
+          "matched": false,
+          "satisfied": true
+        },
+        {
+          "id": "dialog-onOpenChange",
+          "tier": "behavioral",
+          "direction": "+",
+          "requiresMatched": true,
+          "forbidsMatched": null,
+          "satisfied": true
+        },
+        {
+          "id": "dialog-no-manual-setOpen-toggle",
+          "tier": "behavioral",
+          "direction": "-",
+          "requiresMatched": null,
+          "forbidsMatched": false,
+          "satisfied": true
+        },
+        {
+          "id": "dialog-aria-describedby-explicit",
+          "tier": "behavioral",
+          "direction": "+",
+          "requiresMatched": true,
+          "forbidsMatched": null,
+          "satisfied": true
+        },
+        {
+          "id": "dialog-no-placeholder-projectname",
+          "tier": "behavioral",
+          "direction": "-",
+          "requiresMatched": null,
+          "forbidsMatched": true,
+          "satisfied": false
+        }
+      ]
+    }
+  ]
+}
