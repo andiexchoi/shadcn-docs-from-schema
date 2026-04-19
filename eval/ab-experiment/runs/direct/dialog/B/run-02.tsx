@@ -13,6 +13,7 @@ import { cn } from "@/lib/utils";
 const Dialog = DialogPrimitive.Root;
 const DialogTrigger = DialogPrimitive.Trigger;
 const DialogPortal = DialogPrimitive.Portal;
+const DialogClose = DialogPrimitive.Close;
 
 const DialogOverlay = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Overlay>,
@@ -24,7 +25,7 @@ const DialogOverlay = React.forwardRef<
       "fixed inset-0 z-50 bg-black/60 backdrop-blur-sm",
       "data-[state=open]:animate-in data-[state=closed]:animate-out",
       "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
-      "motion-reduce:animate-none",
+      "motion-reduce:transition-none",
       className
     )}
     {...props}
@@ -44,20 +45,20 @@ const DialogContent = React.forwardRef<
       ref={ref}
       className={cn(
         "fixed left-1/2 top-1/2 z-50 w-full max-w-md -translate-x-1/2 -translate-y-1/2",
-        "rounded-xl border border-border bg-background p-6 shadow-xl",
+        "rounded-lg border border-border bg-background p-6 shadow-xl",
         "data-[state=open]:animate-in data-[state=closed]:animate-out",
         "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
         "data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
-        "data-[state=closed]:slide-out-to-left-1/2 data-[state=open]:slide-in-from-left-1/2",
-        "data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-top-[48%]",
-        "motion-reduce:animate-none",
+        "data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%]",
+        "data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%]",
+        "motion-reduce:transition-none",
         className
       )}
       {...props}
     >
       {children}
       {showCloseButton && (
-        <DialogPrimitive.Close
+        <DialogClose
           className={cn(
             "absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity",
             "hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
@@ -66,7 +67,7 @@ const DialogContent = React.forwardRef<
           aria-label="Close"
         >
           <X className="h-4 w-4" />
-        </DialogPrimitive.Close>
+        </DialogClose>
       )}
     </DialogPrimitive.Content>
   </DialogPortal>
@@ -77,23 +78,8 @@ const DialogHeader = ({
   className,
   ...props
 }: React.HTMLAttributes<HTMLDivElement>) => (
-  <div
-    className={cn("flex flex-col space-y-1.5 text-left", className)}
-    {...props}
-  />
+  <div className={cn("mb-4 flex flex-col gap-1.5", className)} {...props} />
 );
-DialogHeader.displayName = "DialogHeader";
-
-const DialogFooter = ({
-  className,
-  ...props
-}: React.HTMLAttributes<HTMLDivElement>) => (
-  <div
-    className={cn("flex flex-col-reverse gap-2 sm:flex-row sm:justify-end", className)}
-    {...props}
-  />
-);
-DialogFooter.displayName = "DialogFooter";
 
 const DialogTitle = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Title>,
@@ -119,66 +105,87 @@ const DialogDescription = React.forwardRef<
 ));
 DialogDescription.displayName = "DialogDescription";
 
+const DialogFooter = ({
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement>) => (
+  <div
+    className={cn("mt-6 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end", className)}
+    {...props}
+  />
+);
+
 /* ─── ConfirmDeleteDialog ─── */
 
 export interface ConfirmDeleteDialogProps {
-  /** The exact project name the user must type to confirm deletion. */
+  /** The project name the user must type to confirm deletion. */
   projectName: string;
   /** Called when the user confirms deletion. */
-  onConfirm: () => void | Promise<void>;
-  /** Called when the dialog is closed without confirming. */
+  onConfirm: () => void;
+  /** Called when the dialog is cancelled or closed. */
   onCancel?: () => void;
-  /** Controls open state externally. */
-  open?: boolean;
-  /** Called when open state changes. */
-  onOpenChange?: (open: boolean) => void;
-  /** Optional custom trigger element. If omitted, a default "Delete project" button is rendered. */
-  trigger?: React.ReactNode;
-  /** Whether the confirm action is in a loading state. */
+  /** Whether the delete action is currently in progress. */
   isDeleting?: boolean;
+  /** Controlled open state. If omitted the dialog manages its own state. */
+  open?: boolean;
+  /** Called when the open state should change (controlled mode). */
+  onOpenChange?: (open: boolean) => void;
+  /** Trigger element. If omitted a default "Delete project" button is rendered. */
+  trigger?: React.ReactNode;
 }
 
 export function ConfirmDeleteDialog({
   projectName,
   onConfirm,
   onCancel,
-  open,
-  onOpenChange,
-  trigger,
   isDeleting = false,
+  open: controlledOpen,
+  onOpenChange: controlledOnOpenChange,
+  trigger,
 }: ConfirmDeleteDialogProps) {
-  const [internalOpen, setInternalOpen] = React.useState(false);
-  const [inputValue, setInputValue] = React.useState("");
+  const isControlled = controlledOpen !== undefined;
 
-  const isControlled = open !== undefined;
-  const isOpen = isControlled ? open : internalOpen;
+  const [internalOpen, setInternalOpen] = React.useState(false);
+  const open = isControlled ? controlledOpen : internalOpen;
+
+  const [inputValue, setInputValue] = React.useState("");
+  const inputRef = React.useRef<HTMLInputElement>(null);
+
+  const isConfirmed = inputValue === projectName;
 
   const handleOpenChange = React.useCallback(
     (next: boolean) => {
+      if (isControlled) {
+        controlledOnOpenChange?.(next);
+      } else {
+        setInternalOpen(next);
+      }
       if (!next) {
+        // Reset on close
         setInputValue("");
         onCancel?.();
       }
-      if (isControlled) {
-        onOpenChange?.(next);
-      } else {
-        setInternalOpen(next);
-        onOpenChange?.(next);
-      }
     },
-    [isControlled, onCancel, onOpenChange]
+    [isControlled, controlledOnOpenChange, onCancel]
   );
 
-  const isConfirmEnabled = inputValue === projectName && !isDeleting;
+  // Focus input when dialog opens
+  React.useEffect(() => {
+    if (open) {
+      setInputValue("");
+      // Small timeout lets the animation settle before focusing
+      const id = setTimeout(() => inputRef.current?.focus(), 50);
+      return () => clearTimeout(id);
+    }
+  }, [open]);
 
-  const handleConfirm = async () => {
-    if (!isConfirmEnabled) return;
-    await onConfirm();
-    handleOpenChange(false);
+  const handleConfirm = () => {
+    if (!isConfirmed || isDeleting) return;
+    onConfirm();
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
+    if (e.key === "Enter" && isConfirmed && !isDeleting) {
       handleConfirm();
     }
   };
@@ -188,39 +195,45 @@ export function ConfirmDeleteDialog({
   const inputId = React.useId();
 
   return (
-    <Dialog open={isOpen} onOpenChange={handleOpenChange}>
-      {trigger ? (
-        <DialogTrigger asChild>{trigger}</DialogTrigger>
-      ) : (
-        <DialogTrigger asChild>
-          <Button variant="destructive">Delete project</Button>
-        </DialogTrigger>
-      )}
+    <Dialog open={open} onOpenChange={handleOpenChange}>
+      <DialogTrigger asChild>
+        {trigger ?? (
+          <Button variant="destructive" size="sm">
+            Delete project
+          </Button>
+        )}
+      </DialogTrigger>
 
       <DialogContent
         aria-labelledby={titleId}
         aria-describedby={descriptionId}
       >
         <DialogHeader>
-          <DialogTitle id={titleId}>Delete this project?</DialogTitle>
-          <DialogDescription id={descriptionId} className="pt-1">
+          <DialogTitle id={titleId}>Delete &ldquo;{projectName}&rdquo;?</DialogTitle>
+          <DialogDescription id={descriptionId}>
             This action is permanent and cannot be undone. All data associated
-            with{" "}
-            <span className="font-medium text-foreground">{projectName}</span>{" "}
-            will be deleted immediately.
+            with this project will be deleted forever.
           </DialogDescription>
         </DialogHeader>
 
-        <div className="my-4 space-y-2">
-          <Label htmlFor={inputId}>
-            Type{" "}
-            <span className="font-mono font-semibold text-foreground">
+        <div className="rounded-md border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm text-destructive">
+          You are about to delete{" "}
+          <span className="font-semibold">{projectName}</span>. This will
+          remove all resources, settings, and history.
+        </div>
+
+        <div className="mt-4 flex flex-col gap-2">
+          <Label htmlFor={inputId} className="text-sm font-medium">
+            To confirm, type{" "}
+            <span className="select-all font-semibold text-foreground">
               {projectName}
             </span>{" "}
-            to confirm
+            below:
           </Label>
           <Input
+            ref={inputRef}
             id={inputId}
+            type="text"
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             onKeyDown={handleKeyDown}
@@ -230,13 +243,16 @@ export function ConfirmDeleteDialog({
             autoCapitalize="off"
             spellCheck={false}
             disabled={isDeleting}
+            aria-invalid={inputValue.length > 0 && !isConfirmed}
             className={cn(
-              inputValue.length > 0 &&
-                inputValue !== projectName &&
-                "border-destructive focus-visible:ring-destructive"
+              inputValue.length > 0 && !isConfirmed
+                ? "border-destructive focus-visible:ring-destructive"
+                : isConfirmed
+                ? "border-green-500 focus-visible:ring-green-500"
+                : ""
             )}
           />
-          {inputValue.length > 0 && inputValue !== projectName && (
+          {inputValue.length > 0 && !isConfirmed && (
             <p className="text-xs text-destructive" role="alert">
               Project name does not match.
             </p>
@@ -244,16 +260,16 @@ export function ConfirmDeleteDialog({
         </div>
 
         <DialogFooter>
-          <DialogPrimitive.Close asChild>
+          <DialogClose asChild>
             <Button variant="outline" disabled={isDeleting}>
               Cancel
             </Button>
-          </DialogPrimitive.Close>
+          </DialogClose>
           <Button
             variant="destructive"
-            disabled={!isConfirmEnabled}
             onClick={handleConfirm}
-            aria-disabled={!isConfirmEnabled}
+            disabled={!isConfirmed || isDeleting}
+            aria-busy={isDeleting}
           >
             {isDeleting ? "Deleting…" : "Delete project"}
           </Button>

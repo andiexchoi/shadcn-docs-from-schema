@@ -28,6 +28,7 @@ function parseArgs(argv) {
     condition: null, // null → both
     startRun: 1,
     label: "matrix",
+    skipExisting: false,
   };
   for (let i = 2; i < argv.length; i++) {
     const flag = argv[i];
@@ -37,8 +38,9 @@ function parseArgs(argv) {
     else if (flag === "--condition") { args.condition = next; i++; }
     else if (flag === "--start-run") { args.startRun = Number(next); i++; }
     else if (flag === "--label") { args.label = next; i++; }
+    else if (flag === "--skip-existing") { args.skipExisting = true; }
     else if (flag === "--help") {
-      console.log(`Usage: node harness.js [--components a,b] [--runs N] [--condition A|B] [--start-run N] [--label LBL]`);
+      console.log(`Usage: node harness.js [--components a,b] [--runs N] [--condition A|B] [--start-run N] [--label LBL] [--skip-existing]`);
       process.exit(0);
     }
   }
@@ -145,6 +147,7 @@ async function main() {
   const conditions = args.condition ? [args.condition] : ["A", "B"];
 
   const tasks = [];
+  let skipped = 0;
   for (const componentName of componentNames) {
     const component = COMPONENTS[componentName];
     if (!component) {
@@ -154,12 +157,17 @@ async function main() {
     for (const condition of conditions) {
       for (let r = 0; r < args.runs; r++) {
         const runId = String(args.startRun + r).padStart(2, "0");
+        const outPath = join(RUNS_DIR, componentName, condition, `run-${runId}.tsx`);
+        if (args.skipExisting && existsSync(outPath)) {
+          skipped++;
+          continue;
+        }
         tasks.push({ component, componentName, condition, runId });
       }
     }
   }
 
-  console.log(`[${args.label}] ${tasks.length} tasks: ${componentNames.join(", ")} × [${conditions.join(",")}] × ${args.runs} runs, concurrency=${CONCURRENCY}`);
+  console.log(`[${args.label}] ${tasks.length} tasks: ${componentNames.join(", ")} × [${conditions.join(",")}] × ${args.runs} runs, concurrency=${CONCURRENCY}${args.skipExisting ? ` (skipped ${skipped} existing)` : ""}`);
 
   mkdirSync(RESULTS_DIR, { recursive: true });
   const startedAt = new Date().toISOString();

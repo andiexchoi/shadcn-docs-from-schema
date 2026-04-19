@@ -24,37 +24,30 @@ export function ConfirmDeleteDialog({
   isDeleting = false,
 }: ConfirmDeleteDialogProps) {
   const [inputValue, setInputValue] = React.useState("");
-  const [isLoading, setIsLoading] = React.useState(false);
+  const [isPending, setIsPending] = React.useState(false);
 
-  const isConfirmed = inputValue === projectName;
+  const isMatch = inputValue === projectName;
 
   React.useEffect(() => {
     if (!open) {
       setInputValue("");
-      setIsLoading(false);
     }
   }, [open]);
 
   async function handleConfirm() {
-    if (!isConfirmed) return;
-    setIsLoading(true);
+    if (!isMatch) return;
+    setIsPending(true);
     try {
       await onConfirm();
     } finally {
-      setIsLoading(false);
+      setIsPending(false);
     }
   }
 
-  function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
-    if (e.key === "Enter" && isConfirmed && !isLoading && !isDeleting) {
-      handleConfirm();
-    }
-  }
-
-  const busy = isLoading || isDeleting;
+  const loading = isDeleting || isPending;
 
   return (
-    <Dialog.Root open={open} onOpenChange={(v) => !busy && onOpenChange(v)}>
+    <Dialog.Root open={open} onOpenChange={onOpenChange}>
       <Dialog.Portal>
         <Dialog.Overlay
           className={cn(
@@ -66,34 +59,30 @@ export function ConfirmDeleteDialog({
         <Dialog.Content
           className={cn(
             "fixed left-1/2 top-1/2 z-50 w-full max-w-md -translate-x-1/2 -translate-y-1/2",
-            "rounded-xl border border-border bg-background p-6 shadow-2xl",
+            "rounded-xl border border-border bg-background shadow-xl",
+            "p-6 focus:outline-none",
             "data-[state=open]:animate-in data-[state=closed]:animate-out",
             "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
             "data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
             "data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%]",
-            "data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%]",
-            "focus:outline-none"
+            "data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%]"
           )}
         >
           {/* Close button */}
           <Dialog.Close asChild>
             <button
-              disabled={busy}
+              className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none"
               aria-label="Close"
-              className={cn(
-                "absolute right-4 top-4 rounded-sm p-1 text-muted-foreground",
-                "transition-colors hover:text-foreground focus:outline-none focus:ring-2 focus:ring-ring",
-                "disabled:pointer-events-none disabled:opacity-50"
-              )}
+              disabled={loading}
             >
               <X className="h-4 w-4" />
             </button>
           </Dialog.Close>
 
-          {/* Icon + header */}
-          <div className="flex flex-col items-center gap-3 text-center">
-            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-destructive/10">
-              <AlertTriangle className="h-7 w-7 text-destructive" />
+          {/* Header */}
+          <div className="flex items-start gap-4 mb-5">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-destructive/10">
+              <AlertTriangle className="h-5 w-5 text-destructive" />
             </div>
             <div>
               <Dialog.Title className="text-lg font-semibold text-foreground">
@@ -108,44 +97,37 @@ export function ConfirmDeleteDialog({
             </div>
           </div>
 
-          {/* Project name callout */}
-          <div className="mt-5 rounded-lg border border-destructive/30 bg-destructive/5 px-4 py-3">
-            <p className="text-center text-sm text-muted-foreground">
-              You are about to delete{" "}
-              <span className="font-semibold text-foreground break-all">
-                &ldquo;{projectName}&rdquo;
-              </span>
-            </p>
-          </div>
+          {/* Divider */}
+          <div className="mb-5 h-px bg-border" />
 
           {/* Confirmation input */}
-          <div className="mt-5 space-y-2">
-            <Label htmlFor="confirm-name" className="text-sm text-foreground">
-              Type{" "}
-              <span className="font-semibold text-destructive">
+          <div className="space-y-2 mb-6">
+            <Label htmlFor="confirm-project-name" className="text-sm text-muted-foreground">
+              To confirm, type{" "}
+              <span className="font-semibold text-foreground select-all">
                 {projectName}
               </span>{" "}
-              to confirm
+              below:
             </Label>
             <Input
-              id="confirm-name"
+              id="confirm-project-name"
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
-              onKeyDown={handleKeyDown}
+              onPaste={(e) => e.preventDefault()}
               placeholder={projectName}
-              disabled={busy}
               autoComplete="off"
               spellCheck={false}
+              disabled={loading}
               className={cn(
                 "transition-colors",
-                inputValue.length > 0 &&
-                  !isConfirmed &&
-                  "border-destructive/60 focus-visible:ring-destructive/40",
-                isConfirmed &&
-                  "border-green-500/60 focus-visible:ring-green-500/40"
+                inputValue.length > 0 && !isMatch
+                  ? "border-destructive focus-visible:ring-destructive/40"
+                  : inputValue.length > 0 && isMatch
+                  ? "border-green-500 focus-visible:ring-green-500/40"
+                  : ""
               )}
             />
-            {inputValue.length > 0 && !isConfirmed && (
+            {inputValue.length > 0 && !isMatch && (
               <p className="text-xs text-destructive">
                 Project name does not match.
               </p>
@@ -153,19 +135,19 @@ export function ConfirmDeleteDialog({
           </div>
 
           {/* Actions */}
-          <div className="mt-6 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+          <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
             <Dialog.Close asChild>
-              <Button variant="outline" disabled={busy} className="w-full sm:w-auto">
+              <Button variant="outline" disabled={loading} className="sm:w-auto w-full">
                 Cancel
               </Button>
             </Dialog.Close>
             <Button
               variant="destructive"
-              disabled={!isConfirmed || busy}
+              disabled={!isMatch || loading}
               onClick={handleConfirm}
-              className="w-full gap-2 sm:w-auto"
+              className="sm:w-auto w-full gap-2"
             >
-              {busy ? (
+              {loading ? (
                 <>
                   <svg
                     className="h-4 w-4 animate-spin"

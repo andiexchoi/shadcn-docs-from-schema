@@ -20,6 +20,24 @@ Scoring rules:
   { "<marker_id>": { "satisfied": true|false, "reason": "<≤15 words>" }, ... }
 - Include every marker_id you were asked about, in the same order. No extras.`;
 
+async function callWithRetry(client, params, maxRetries = 5) {
+  let lastErr;
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    try {
+      return await client.messages.create(params);
+    } catch (err) {
+      lastErr = err;
+      const is429 = err.status === 429 || /429|rate_limit/.test(err.message || "");
+      if (!is429 || attempt === maxRetries) throw err;
+      // Exponential backoff with jitter, capped at 60s.
+      const base = Math.min(60_000, 2_000 * Math.pow(2, attempt));
+      const wait = base + Math.floor(Math.random() * 1_000);
+      await new Promise((r) => setTimeout(r, wait));
+    }
+  }
+  throw lastErr;
+}
+
 export async function scoreSemanticBatch({ client, markers, source }) {
   const semanticMarkers = markers.filter((m) => m.tier === "semantic");
   if (semanticMarkers.length === 0) return [];
@@ -40,7 +58,7 @@ ${rubricBlock}
 
 Respond with a JSON object keyed by marker id. Include all ${semanticMarkers.length} markers.`;
 
-  const response = await client.messages.create({
+  const response = await callWithRetry(client, {
     model: JUDGE_MODEL,
     max_tokens: JUDGE_MAX_TOKENS,
     temperature: 0,
@@ -54,7 +72,20 @@ Respond with a JSON object keyed by marker id. Include all ${semanticMarkers.len
   try {
     parsed = JSON.parse(cleaned);
   } catch (err) {
-    throw new Error(`Judge response not valid JSON:\n${text}\n\nError: ${err.message}`);
+    // Fallback: judge sometimes emits a string with unescaped inner quotes.
+    // Pull the booleans by regex per marker id. Reasons are lost, but the
+    // scoring is what matters. Flagged as fallback-extracted so the final
+    // report can count how many were recovered this way.
+    parsed = {};
+    for (const m of semanticMarkers) {
+      const escId = m.id.replace(/[-\/\\^$*+?.()|[\]{}]/g, "\\$&");
+      const re = new RegExp(`"${escId}"\\s*:\\s*\\{[^{}]*?"satisfied"\\s*:\\s*(true|false)`);
+      const match = cleaned.match(re);
+      if (match) parsed[m.id] = { satisfied: match[1] === "true", reason: "[fallback-extracted]" };
+    }
+    if (Object.keys(parsed).length === 0) {
+      throw new Error(`Judge response not valid JSON and fallback found no matches:\n${text.slice(0, 500)}\n\nError: ${err.message}`);
+    }
   }
 
   return semanticMarkers.map((m) => {

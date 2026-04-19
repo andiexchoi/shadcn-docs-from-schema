@@ -1,0 +1,1996 @@
+{
+  "scoredAt": "2026-04-19T02:25:03.544Z",
+  "skipSemantic": false,
+  "runs": [
+    {
+      "componentName": "dialog",
+      "condition": "A",
+      "runId": "01",
+      "filePath": "/Users/andie/Repos/shadcn-docs-from-schema/eval/ab-experiment/runs/agentic/dialog/A/run-01.tsx",
+      "sourceLength": 2484,
+      "results": [
+        {
+          "id": "dialog-title-rendered",
+          "tier": "structural",
+          "direction": "+",
+          "matched": true,
+          "satisfied": true
+        },
+        {
+          "id": "dialog-description-rendered",
+          "tier": "structural",
+          "direction": "+",
+          "matched": true,
+          "satisfied": true
+        },
+        {
+          "id": "dialog-variant-destructive",
+          "tier": "structural",
+          "direction": "+",
+          "matched": true,
+          "satisfied": true
+        },
+        {
+          "id": "dialog-no-invented-variant",
+          "tier": "structural",
+          "direction": "-",
+          "matched": false,
+          "satisfied": true
+        },
+        {
+          "id": "dialog-onOpenChange",
+          "tier": "behavioral",
+          "direction": "+",
+          "requiresMatched": true,
+          "forbidsMatched": null,
+          "satisfied": true
+        },
+        {
+          "id": "dialog-no-manual-setOpen-toggle",
+          "tier": "behavioral",
+          "direction": "-",
+          "requiresMatched": null,
+          "forbidsMatched": false,
+          "satisfied": true
+        },
+        {
+          "id": "dialog-aria-describedby-explicit",
+          "tier": "behavioral",
+          "direction": "+",
+          "requiresMatched": false,
+          "forbidsMatched": null,
+          "satisfied": false
+        },
+        {
+          "id": "dialog-no-placeholder-projectname",
+          "tier": "behavioral",
+          "direction": "-",
+          "requiresMatched": null,
+          "forbidsMatched": true,
+          "satisfied": false
+        },
+        {
+          "id": "dialog-title-question-framing",
+          "tier": "semantic",
+          "direction": "+",
+          "answered": false,
+          "satisfied": false,
+          "reason": "Title is 'Delete project' with no subject naming which project is deleted."
+        },
+        {
+          "id": "dialog-case-sensitivity-hint",
+          "tier": "semantic",
+          "direction": "+",
+          "answered": false,
+          "satisfied": false,
+          "reason": "No visible hint about case-sensitivity; only placeholder and label present."
+        },
+        {
+          "id": "dialog-motion-reduce",
+          "tier": "semantic",
+          "direction": "+",
+          "answered": false,
+          "satisfied": false,
+          "reason": "No motion-reduce classes, media queries, or animation opt-out logic present."
+        }
+      ]
+    },
+    {
+      "componentName": "dialog",
+      "condition": "A",
+      "runId": "02",
+      "filePath": "/Users/andie/Repos/shadcn-docs-from-schema/eval/ab-experiment/runs/agentic/dialog/A/run-02.tsx",
+      "sourceLength": 2770,
+      "results": [
+        {
+          "id": "dialog-title-rendered",
+          "tier": "structural",
+          "direction": "+",
+          "matched": true,
+          "satisfied": true
+        },
+        {
+          "id": "dialog-description-rendered",
+          "tier": "structural",
+          "direction": "+",
+          "matched": true,
+          "satisfied": true
+        },
+        {
+          "id": "dialog-variant-destructive",
+          "tier": "structural",
+          "direction": "+",
+          "matched": true,
+          "satisfied": true
+        },
+        {
+          "id": "dialog-no-invented-variant",
+          "tier": "structural",
+          "direction": "-",
+          "matched": false,
+          "satisfied": true
+        },
+        {
+          "id": "dialog-onOpenChange",
+          "tier": "behavioral",
+          "direction": "+",
+          "requiresMatched": true,
+          "forbidsMatched": null,
+          "satisfied": true
+        },
+        {
+          "id": "dialog-no-manual-setOpen-toggle",
+          "tier": "behavioral",
+          "direction": "-",
+          "requiresMatched": null,
+          "forbidsMatched": false,
+          "satisfied": true
+        },
+        {
+          "id": "dialog-aria-describedby-explicit",
+          "tier": "behavioral",
+          "direction": "+",
+          "requiresMatched": false,
+          "forbidsMatched": null,
+          "satisfied": false
+        },
+        {
+          "id": "dialog-no-placeholder-projectname",
+          "tier": "behavioral",
+          "direction": "-",
+          "requiresMatched": null,
+          "forbidsMatched": true,
+          "satisfied": false
+        },
+        {
+          "id": "dialog-title-question-framing",
+          "tier": "semantic",
+          "direction": "+",
+          "answered": false,
+          "satisfied": false,
+          "reason": "Title is 'Delete project' with no subject naming the specific project."
+        },
+        {
+          "id": "dialog-case-sensitivity-hint",
+          "tier": "semantic",
+          "direction": "+",
+          "answered": false,
+          "satisfied": false,
+          "reason": "No visible text tells the user matching is case-sensitive or exact."
+        },
+        {
+          "id": "dialog-motion-reduce",
+          "tier": "semantic",
+          "direction": "+",
+          "answered": false,
+          "satisfied": false,
+          "reason": "No motion-reduce classes, media queries, or animation opt-out logic present."
+        }
+      ]
+    },
+    {
+      "componentName": "dialog",
+      "condition": "A",
+      "runId": "03",
+      "filePath": "/Users/andie/Repos/shadcn-docs-from-schema/eval/ab-experiment/runs/agentic/dialog/A/run-03.tsx",
+      "sourceLength": 2963,
+      "results": [
+        {
+          "id": "dialog-title-rendered",
+          "tier": "structural",
+          "direction": "+",
+          "matched": true,
+          "satisfied": true
+        },
+        {
+          "id": "dialog-description-rendered",
+          "tier": "structural",
+          "direction": "+",
+          "matched": true,
+          "satisfied": true
+        },
+        {
+          "id": "dialog-variant-destructive",
+          "tier": "structural",
+          "direction": "+",
+          "matched": true,
+          "satisfied": true
+        },
+        {
+          "id": "dialog-no-invented-variant",
+          "tier": "structural",
+          "direction": "-",
+          "matched": false,
+          "satisfied": true
+        },
+        {
+          "id": "dialog-onOpenChange",
+          "tier": "behavioral",
+          "direction": "+",
+          "requiresMatched": true,
+          "forbidsMatched": null,
+          "satisfied": true
+        },
+        {
+          "id": "dialog-no-manual-setOpen-toggle",
+          "tier": "behavioral",
+          "direction": "-",
+          "requiresMatched": null,
+          "forbidsMatched": false,
+          "satisfied": true
+        },
+        {
+          "id": "dialog-aria-describedby-explicit",
+          "tier": "behavioral",
+          "direction": "+",
+          "requiresMatched": false,
+          "forbidsMatched": null,
+          "satisfied": false
+        },
+        {
+          "id": "dialog-no-placeholder-projectname",
+          "tier": "behavioral",
+          "direction": "-",
+          "requiresMatched": null,
+          "forbidsMatched": true,
+          "satisfied": false
+        },
+        {
+          "id": "dialog-title-question-framing",
+          "tier": "semantic",
+          "direction": "+",
+          "answered": false,
+          "satisfied": false,
+          "reason": "Title is 'Delete project' with no subject naming the specific project."
+        },
+        {
+          "id": "dialog-case-sensitivity-hint",
+          "tier": "semantic",
+          "direction": "+",
+          "answered": false,
+          "satisfied": false,
+          "reason": "No visible text tells the user matching is case-sensitive or exact."
+        },
+        {
+          "id": "dialog-motion-reduce",
+          "tier": "semantic",
+          "direction": "+",
+          "answered": false,
+          "satisfied": false,
+          "reason": "No motion-reduce classes, media queries, or animation opt-out logic present."
+        }
+      ]
+    },
+    {
+      "componentName": "dialog",
+      "condition": "A",
+      "runId": "04",
+      "filePath": "/Users/andie/Repos/shadcn-docs-from-schema/eval/ab-experiment/runs/agentic/dialog/A/run-04.tsx",
+      "sourceLength": 3007,
+      "results": [
+        {
+          "id": "dialog-title-rendered",
+          "tier": "structural",
+          "direction": "+",
+          "matched": true,
+          "satisfied": true
+        },
+        {
+          "id": "dialog-description-rendered",
+          "tier": "structural",
+          "direction": "+",
+          "matched": true,
+          "satisfied": true
+        },
+        {
+          "id": "dialog-variant-destructive",
+          "tier": "structural",
+          "direction": "+",
+          "matched": true,
+          "satisfied": true
+        },
+        {
+          "id": "dialog-no-invented-variant",
+          "tier": "structural",
+          "direction": "-",
+          "matched": false,
+          "satisfied": true
+        },
+        {
+          "id": "dialog-onOpenChange",
+          "tier": "behavioral",
+          "direction": "+",
+          "requiresMatched": true,
+          "forbidsMatched": null,
+          "satisfied": true
+        },
+        {
+          "id": "dialog-no-manual-setOpen-toggle",
+          "tier": "behavioral",
+          "direction": "-",
+          "requiresMatched": null,
+          "forbidsMatched": false,
+          "satisfied": true
+        },
+        {
+          "id": "dialog-aria-describedby-explicit",
+          "tier": "behavioral",
+          "direction": "+",
+          "requiresMatched": false,
+          "forbidsMatched": null,
+          "satisfied": false
+        },
+        {
+          "id": "dialog-no-placeholder-projectname",
+          "tier": "behavioral",
+          "direction": "-",
+          "requiresMatched": null,
+          "forbidsMatched": true,
+          "satisfied": false
+        },
+        {
+          "id": "dialog-title-question-framing",
+          "tier": "semantic",
+          "direction": "+",
+          "answered": false,
+          "satisfied": false,
+          "reason": "Title is 'Delete project' with no subject name or question mark."
+        },
+        {
+          "id": "dialog-case-sensitivity-hint",
+          "tier": "semantic",
+          "direction": "+",
+          "answered": false,
+          "satisfied": false,
+          "reason": "No visible text informs user the match is case-sensitive."
+        },
+        {
+          "id": "dialog-motion-reduce",
+          "tier": "semantic",
+          "direction": "+",
+          "answered": false,
+          "satisfied": false,
+          "reason": "No motion-reduce classes or media queries; relies on Dialog component animations."
+        }
+      ]
+    },
+    {
+      "componentName": "dialog",
+      "condition": "A",
+      "runId": "05",
+      "filePath": "/Users/andie/Repos/shadcn-docs-from-schema/eval/ab-experiment/runs/agentic/dialog/A/run-05.tsx",
+      "sourceLength": 2461,
+      "results": [
+        {
+          "id": "dialog-title-rendered",
+          "tier": "structural",
+          "direction": "+",
+          "matched": true,
+          "satisfied": true
+        },
+        {
+          "id": "dialog-description-rendered",
+          "tier": "structural",
+          "direction": "+",
+          "matched": true,
+          "satisfied": true
+        },
+        {
+          "id": "dialog-variant-destructive",
+          "tier": "structural",
+          "direction": "+",
+          "matched": true,
+          "satisfied": true
+        },
+        {
+          "id": "dialog-no-invented-variant",
+          "tier": "structural",
+          "direction": "-",
+          "matched": false,
+          "satisfied": true
+        },
+        {
+          "id": "dialog-onOpenChange",
+          "tier": "behavioral",
+          "direction": "+",
+          "requiresMatched": true,
+          "forbidsMatched": null,
+          "satisfied": true
+        },
+        {
+          "id": "dialog-no-manual-setOpen-toggle",
+          "tier": "behavioral",
+          "direction": "-",
+          "requiresMatched": null,
+          "forbidsMatched": false,
+          "satisfied": true
+        },
+        {
+          "id": "dialog-aria-describedby-explicit",
+          "tier": "behavioral",
+          "direction": "+",
+          "requiresMatched": false,
+          "forbidsMatched": null,
+          "satisfied": false
+        },
+        {
+          "id": "dialog-no-placeholder-projectname",
+          "tier": "behavioral",
+          "direction": "-",
+          "requiresMatched": null,
+          "forbidsMatched": true,
+          "satisfied": false
+        },
+        {
+          "id": "dialog-title-question-framing",
+          "tier": "semantic",
+          "direction": "+",
+          "answered": false,
+          "satisfied": false,
+          "reason": "Title is 'Delete project' with no subject; projectName not included."
+        },
+        {
+          "id": "dialog-case-sensitivity-hint",
+          "tier": "semantic",
+          "direction": "+",
+          "answered": false,
+          "satisfied": false,
+          "reason": "No visible hint about case-sensitivity or exact match requirement shown to user."
+        },
+        {
+          "id": "dialog-motion-reduce",
+          "tier": "semantic",
+          "direction": "+",
+          "answered": false,
+          "satisfied": false,
+          "reason": "No motion-reduce classes, media queries, or animation opt-out logic present."
+        }
+      ]
+    },
+    {
+      "componentName": "dialog",
+      "condition": "B",
+      "runId": "01",
+      "filePath": "/Users/andie/Repos/shadcn-docs-from-schema/eval/ab-experiment/runs/agentic/dialog/B/run-01.tsx",
+      "sourceLength": 3677,
+      "results": [
+        {
+          "id": "dialog-title-rendered",
+          "tier": "structural",
+          "direction": "+",
+          "matched": true,
+          "satisfied": true
+        },
+        {
+          "id": "dialog-description-rendered",
+          "tier": "structural",
+          "direction": "+",
+          "matched": true,
+          "satisfied": true
+        },
+        {
+          "id": "dialog-variant-destructive",
+          "tier": "structural",
+          "direction": "+",
+          "matched": true,
+          "satisfied": true
+        },
+        {
+          "id": "dialog-no-invented-variant",
+          "tier": "structural",
+          "direction": "-",
+          "matched": false,
+          "satisfied": true
+        },
+        {
+          "id": "dialog-onOpenChange",
+          "tier": "behavioral",
+          "direction": "+",
+          "requiresMatched": true,
+          "forbidsMatched": null,
+          "satisfied": true
+        },
+        {
+          "id": "dialog-no-manual-setOpen-toggle",
+          "tier": "behavioral",
+          "direction": "-",
+          "requiresMatched": null,
+          "forbidsMatched": false,
+          "satisfied": true
+        },
+        {
+          "id": "dialog-aria-describedby-explicit",
+          "tier": "behavioral",
+          "direction": "+",
+          "requiresMatched": true,
+          "forbidsMatched": null,
+          "satisfied": true
+        },
+        {
+          "id": "dialog-no-placeholder-projectname",
+          "tier": "behavioral",
+          "direction": "-",
+          "requiresMatched": null,
+          "forbidsMatched": true,
+          "satisfied": false
+        },
+        {
+          "id": "dialog-title-question-framing",
+          "tier": "semantic",
+          "direction": "+",
+          "answered": true,
+          "satisfied": true,
+          "reason": "Title reads 'Delete \"<projectName>\"?' — explicit subject, question form."
+        },
+        {
+          "id": "dialog-case-sensitivity-hint",
+          "tier": "semantic",
+          "direction": "+",
+          "answered": false,
+          "satisfied": false,
+          "reason": "No visible text tells the user matching is case-sensitive."
+        },
+        {
+          "id": "dialog-motion-reduce",
+          "tier": "semantic",
+          "direction": "+",
+          "answered": false,
+          "satisfied": false,
+          "reason": "No motion-reduce classes or media queries; animation handling delegated to Radix defaults."
+        }
+      ]
+    },
+    {
+      "componentName": "dialog",
+      "condition": "B",
+      "runId": "02",
+      "filePath": "/Users/andie/Repos/shadcn-docs-from-schema/eval/ab-experiment/runs/agentic/dialog/B/run-02.tsx",
+      "sourceLength": 3294,
+      "results": [
+        {
+          "id": "dialog-title-rendered",
+          "tier": "structural",
+          "direction": "+",
+          "matched": true,
+          "satisfied": true
+        },
+        {
+          "id": "dialog-description-rendered",
+          "tier": "structural",
+          "direction": "+",
+          "matched": true,
+          "satisfied": true
+        },
+        {
+          "id": "dialog-variant-destructive",
+          "tier": "structural",
+          "direction": "+",
+          "matched": true,
+          "satisfied": true
+        },
+        {
+          "id": "dialog-no-invented-variant",
+          "tier": "structural",
+          "direction": "-",
+          "matched": false,
+          "satisfied": true
+        },
+        {
+          "id": "dialog-onOpenChange",
+          "tier": "behavioral",
+          "direction": "+",
+          "requiresMatched": true,
+          "forbidsMatched": null,
+          "satisfied": true
+        },
+        {
+          "id": "dialog-no-manual-setOpen-toggle",
+          "tier": "behavioral",
+          "direction": "-",
+          "requiresMatched": null,
+          "forbidsMatched": false,
+          "satisfied": true
+        },
+        {
+          "id": "dialog-aria-describedby-explicit",
+          "tier": "behavioral",
+          "direction": "+",
+          "requiresMatched": false,
+          "forbidsMatched": null,
+          "satisfied": false
+        },
+        {
+          "id": "dialog-no-placeholder-projectname",
+          "tier": "behavioral",
+          "direction": "-",
+          "requiresMatched": null,
+          "forbidsMatched": true,
+          "satisfied": false
+        },
+        {
+          "id": "dialog-title-question-framing",
+          "tier": "semantic",
+          "direction": "+",
+          "answered": true,
+          "satisfied": true,
+          "reason": "Title reads 'Delete \"<projectName>\"?' — explicit subject, question form."
+        },
+        {
+          "id": "dialog-case-sensitivity-hint",
+          "tier": "semantic",
+          "direction": "+",
+          "answered": false,
+          "satisfied": false,
+          "reason": "No visible text tells user match is case-sensitive; only code comments mention it."
+        },
+        {
+          "id": "dialog-motion-reduce",
+          "tier": "semantic",
+          "direction": "+",
+          "answered": false,
+          "satisfied": false,
+          "reason": "No motion-reduce classes, media queries, or animation opt-out logic present."
+        }
+      ]
+    },
+    {
+      "componentName": "dialog",
+      "condition": "B",
+      "runId": "03",
+      "filePath": "/Users/andie/Repos/shadcn-docs-from-schema/eval/ab-experiment/runs/agentic/dialog/B/run-03.tsx",
+      "sourceLength": 2919,
+      "results": [
+        {
+          "id": "dialog-title-rendered",
+          "tier": "structural",
+          "direction": "+",
+          "matched": true,
+          "satisfied": true
+        },
+        {
+          "id": "dialog-description-rendered",
+          "tier": "structural",
+          "direction": "+",
+          "matched": true,
+          "satisfied": true
+        },
+        {
+          "id": "dialog-variant-destructive",
+          "tier": "structural",
+          "direction": "+",
+          "matched": true,
+          "satisfied": true
+        },
+        {
+          "id": "dialog-no-invented-variant",
+          "tier": "structural",
+          "direction": "-",
+          "matched": false,
+          "satisfied": true
+        },
+        {
+          "id": "dialog-onOpenChange",
+          "tier": "behavioral",
+          "direction": "+",
+          "requiresMatched": true,
+          "forbidsMatched": null,
+          "satisfied": true
+        },
+        {
+          "id": "dialog-no-manual-setOpen-toggle",
+          "tier": "behavioral",
+          "direction": "-",
+          "requiresMatched": null,
+          "forbidsMatched": false,
+          "satisfied": true
+        },
+        {
+          "id": "dialog-aria-describedby-explicit",
+          "tier": "behavioral",
+          "direction": "+",
+          "requiresMatched": false,
+          "forbidsMatched": null,
+          "satisfied": false
+        },
+        {
+          "id": "dialog-no-placeholder-projectname",
+          "tier": "behavioral",
+          "direction": "-",
+          "requiresMatched": null,
+          "forbidsMatched": true,
+          "satisfied": false
+        },
+        {
+          "id": "dialog-title-question-framing",
+          "tier": "semantic",
+          "direction": "+",
+          "answered": true,
+          "satisfied": true,
+          "reason": "Title reads 'Delete \"[projectName]\"?' — explicit subject, question form."
+        },
+        {
+          "id": "dialog-case-sensitivity-hint",
+          "tier": "semantic",
+          "direction": "+",
+          "answered": false,
+          "satisfied": false,
+          "reason": "No visible text tells user matching is case-sensitive; only placeholder shown."
+        },
+        {
+          "id": "dialog-motion-reduce",
+          "tier": "semantic",
+          "direction": "+",
+          "answered": false,
+          "satisfied": false,
+          "reason": "No motion-reduce classes, media queries, or animation opt-out logic present."
+        }
+      ]
+    },
+    {
+      "componentName": "dialog",
+      "condition": "B",
+      "runId": "04",
+      "filePath": "/Users/andie/Repos/shadcn-docs-from-schema/eval/ab-experiment/runs/agentic/dialog/B/run-04.tsx",
+      "sourceLength": 3302,
+      "results": [
+        {
+          "id": "dialog-title-rendered",
+          "tier": "structural",
+          "direction": "+",
+          "matched": true,
+          "satisfied": true
+        },
+        {
+          "id": "dialog-description-rendered",
+          "tier": "structural",
+          "direction": "+",
+          "matched": true,
+          "satisfied": true
+        },
+        {
+          "id": "dialog-variant-destructive",
+          "tier": "structural",
+          "direction": "+",
+          "matched": true,
+          "satisfied": true
+        },
+        {
+          "id": "dialog-no-invented-variant",
+          "tier": "structural",
+          "direction": "-",
+          "matched": false,
+          "satisfied": true
+        },
+        {
+          "id": "dialog-onOpenChange",
+          "tier": "behavioral",
+          "direction": "+",
+          "requiresMatched": true,
+          "forbidsMatched": null,
+          "satisfied": true
+        },
+        {
+          "id": "dialog-no-manual-setOpen-toggle",
+          "tier": "behavioral",
+          "direction": "-",
+          "requiresMatched": null,
+          "forbidsMatched": false,
+          "satisfied": true
+        },
+        {
+          "id": "dialog-aria-describedby-explicit",
+          "tier": "behavioral",
+          "direction": "+",
+          "requiresMatched": true,
+          "forbidsMatched": null,
+          "satisfied": true
+        },
+        {
+          "id": "dialog-no-placeholder-projectname",
+          "tier": "behavioral",
+          "direction": "-",
+          "requiresMatched": null,
+          "forbidsMatched": true,
+          "satisfied": false
+        },
+        {
+          "id": "dialog-title-question-framing",
+          "tier": "semantic",
+          "direction": "+",
+          "answered": true,
+          "satisfied": true,
+          "reason": "Title reads 'Delete \"[projectName]\"?' — explicit subject with question mark."
+        },
+        {
+          "id": "dialog-case-sensitivity-hint",
+          "tier": "semantic",
+          "direction": "+",
+          "answered": false,
+          "satisfied": false,
+          "reason": "No visible text tells the user matching is case-sensitive."
+        },
+        {
+          "id": "dialog-motion-reduce",
+          "tier": "semantic",
+          "direction": "+",
+          "answered": false,
+          "satisfied": false,
+          "reason": "No motion-reduce classes, media queries, or animation opt-out logic present."
+        }
+      ]
+    },
+    {
+      "componentName": "dialog",
+      "condition": "B",
+      "runId": "05",
+      "filePath": "/Users/andie/Repos/shadcn-docs-from-schema/eval/ab-experiment/runs/agentic/dialog/B/run-05.tsx",
+      "sourceLength": 2593,
+      "results": [
+        {
+          "id": "dialog-title-rendered",
+          "tier": "structural",
+          "direction": "+",
+          "matched": true,
+          "satisfied": true
+        },
+        {
+          "id": "dialog-description-rendered",
+          "tier": "structural",
+          "direction": "+",
+          "matched": true,
+          "satisfied": true
+        },
+        {
+          "id": "dialog-variant-destructive",
+          "tier": "structural",
+          "direction": "+",
+          "matched": true,
+          "satisfied": true
+        },
+        {
+          "id": "dialog-no-invented-variant",
+          "tier": "structural",
+          "direction": "-",
+          "matched": false,
+          "satisfied": true
+        },
+        {
+          "id": "dialog-onOpenChange",
+          "tier": "behavioral",
+          "direction": "+",
+          "requiresMatched": true,
+          "forbidsMatched": null,
+          "satisfied": true
+        },
+        {
+          "id": "dialog-no-manual-setOpen-toggle",
+          "tier": "behavioral",
+          "direction": "-",
+          "requiresMatched": null,
+          "forbidsMatched": false,
+          "satisfied": true
+        },
+        {
+          "id": "dialog-aria-describedby-explicit",
+          "tier": "behavioral",
+          "direction": "+",
+          "requiresMatched": false,
+          "forbidsMatched": null,
+          "satisfied": false
+        },
+        {
+          "id": "dialog-no-placeholder-projectname",
+          "tier": "behavioral",
+          "direction": "-",
+          "requiresMatched": null,
+          "forbidsMatched": true,
+          "satisfied": false
+        },
+        {
+          "id": "dialog-title-question-framing",
+          "tier": "semantic",
+          "direction": "+",
+          "answered": true,
+          "satisfied": true,
+          "reason": "Title reads 'Delete \"[projectName]\"?' — explicit subject with question mark."
+        },
+        {
+          "id": "dialog-case-sensitivity-hint",
+          "tier": "semantic",
+          "direction": "+",
+          "answered": false,
+          "satisfied": false,
+          "reason": "No visible text tells the user matching is case-sensitive; only a code comment exists."
+        },
+        {
+          "id": "dialog-motion-reduce",
+          "tier": "semantic",
+          "direction": "+",
+          "answered": false,
+          "satisfied": false,
+          "reason": "No motion-reduce classes, media queries, or animation opt-out logic present."
+        }
+      ]
+    },
+    {
+      "componentName": "field",
+      "condition": "A",
+      "runId": "01",
+      "filePath": "/Users/andie/Repos/shadcn-docs-from-schema/eval/ab-experiment/runs/agentic/field/A/run-01.tsx",
+      "sourceLength": 4172,
+      "results": [
+        {
+          "id": "field-FieldLabel-used",
+          "tier": "structural",
+          "direction": "+",
+          "matched": false,
+          "satisfied": false
+        },
+        {
+          "id": "field-FieldError-used",
+          "tier": "structural",
+          "direction": "+",
+          "matched": false,
+          "satisfied": false
+        },
+        {
+          "id": "field-FieldDescription-used",
+          "tier": "structural",
+          "direction": "+",
+          "matched": false,
+          "satisfied": false
+        },
+        {
+          "id": "field-Field-or-FieldGroup-used",
+          "tier": "structural",
+          "direction": "+",
+          "matched": true,
+          "satisfied": true
+        },
+        {
+          "id": "field-no-raw-label",
+          "tier": "structural",
+          "direction": "-",
+          "matched": false,
+          "satisfied": true
+        },
+        {
+          "id": "field-schema-resolver",
+          "tier": "structural",
+          "direction": "+",
+          "matched": true,
+          "satisfied": true
+        },
+        {
+          "id": "field-form-library",
+          "tier": "structural",
+          "direction": "+",
+          "matched": true,
+          "satisfied": true
+        },
+        {
+          "id": "field-label-htmlfor-id-paired",
+          "tier": "behavioral",
+          "direction": "+",
+          "requiresMatched": false,
+          "forbidsMatched": null,
+          "satisfied": false
+        },
+        {
+          "id": "field-aria-invalid-paired-with-data-invalid",
+          "tier": "behavioral",
+          "direction": "+",
+          "requiresMatched": false,
+          "forbidsMatched": null,
+          "satisfied": false
+        },
+        {
+          "id": "field-submit-tied-to-form-state",
+          "tier": "behavioral",
+          "direction": "+",
+          "requiresMatched": true,
+          "forbidsMatched": null,
+          "satisfied": true
+        },
+        {
+          "id": "field-typed-submit-handler",
+          "tier": "semantic",
+          "direction": "+",
+          "answered": true,
+          "satisfied": true,
+          "reason": "handleFormSubmit takes ProfileFormValues, derived via z.infer<typeof profileSchema>."
+        },
+        {
+          "id": "field-reasonable-validation",
+          "tier": "semantic",
+          "direction": "+",
+          "answered": true,
+          "satisfied": true,
+          "reason": "Schema has email(), max(300) on bio, and min(1) non-empty check on name."
+        },
+        {
+          "id": "field-description-on-a-field",
+          "tier": "semantic",
+          "direction": "+",
+          "answered": false,
+          "satisfied": false,
+          "reason": "No FieldDescription component used; character count is a plain <p>, not FieldDescription."
+        }
+      ]
+    },
+    {
+      "componentName": "field",
+      "condition": "A",
+      "runId": "02",
+      "filePath": "/Users/andie/Repos/shadcn-docs-from-schema/eval/ab-experiment/runs/agentic/field/A/run-02.tsx",
+      "sourceLength": 3062,
+      "results": [
+        {
+          "id": "field-FieldLabel-used",
+          "tier": "structural",
+          "direction": "+",
+          "matched": false,
+          "satisfied": false
+        },
+        {
+          "id": "field-FieldError-used",
+          "tier": "structural",
+          "direction": "+",
+          "matched": false,
+          "satisfied": false
+        },
+        {
+          "id": "field-FieldDescription-used",
+          "tier": "structural",
+          "direction": "+",
+          "matched": false,
+          "satisfied": false
+        },
+        {
+          "id": "field-Field-or-FieldGroup-used",
+          "tier": "structural",
+          "direction": "+",
+          "matched": false,
+          "satisfied": false
+        },
+        {
+          "id": "field-no-raw-label",
+          "tier": "structural",
+          "direction": "-",
+          "matched": false,
+          "satisfied": true
+        },
+        {
+          "id": "field-schema-resolver",
+          "tier": "structural",
+          "direction": "+",
+          "matched": true,
+          "satisfied": true
+        },
+        {
+          "id": "field-form-library",
+          "tier": "structural",
+          "direction": "+",
+          "matched": true,
+          "satisfied": true
+        },
+        {
+          "id": "field-label-htmlfor-id-paired",
+          "tier": "behavioral",
+          "direction": "+",
+          "requiresMatched": false,
+          "forbidsMatched": null,
+          "satisfied": false
+        },
+        {
+          "id": "field-aria-invalid-paired-with-data-invalid",
+          "tier": "behavioral",
+          "direction": "+",
+          "requiresMatched": false,
+          "forbidsMatched": null,
+          "satisfied": false
+        },
+        {
+          "id": "field-submit-tied-to-form-state",
+          "tier": "behavioral",
+          "direction": "+",
+          "requiresMatched": true,
+          "forbidsMatched": null,
+          "satisfied": true
+        },
+        {
+          "id": "field-typed-submit-handler",
+          "tier": "semantic",
+          "direction": "+",
+          "answered": true,
+          "satisfied": true,
+          "reason": "handleFormSubmit uses ProfileFormValues (z.infer<typeof profileSchema>) as parameter type"
+        },
+        {
+          "id": "field-reasonable-validation",
+          "tier": "semantic",
+          "direction": "+",
+          "answered": true,
+          "satisfied": true,
+          "reason": "Schema has email(), bio max(500), and name min(1) — all three checks present"
+        },
+        {
+          "id": "field-description-on-a-field",
+          "tier": "semantic",
+          "direction": "+",
+          "answered": false,
+          "satisfied": false,
+          "reason": "No FieldDescription component rendered; only conditional error paragraphs exist"
+        }
+      ]
+    },
+    {
+      "componentName": "field",
+      "condition": "A",
+      "runId": "03",
+      "filePath": "/Users/andie/Repos/shadcn-docs-from-schema/eval/ab-experiment/runs/agentic/field/A/run-03.tsx",
+      "sourceLength": 4483,
+      "results": [
+        {
+          "id": "field-FieldLabel-used",
+          "tier": "structural",
+          "direction": "+",
+          "matched": false,
+          "satisfied": false
+        },
+        {
+          "id": "field-FieldError-used",
+          "tier": "structural",
+          "direction": "+",
+          "matched": false,
+          "satisfied": false
+        },
+        {
+          "id": "field-FieldDescription-used",
+          "tier": "structural",
+          "direction": "+",
+          "matched": false,
+          "satisfied": false
+        },
+        {
+          "id": "field-Field-or-FieldGroup-used",
+          "tier": "structural",
+          "direction": "+",
+          "matched": false,
+          "satisfied": false
+        },
+        {
+          "id": "field-no-raw-label",
+          "tier": "structural",
+          "direction": "-",
+          "matched": false,
+          "satisfied": true
+        },
+        {
+          "id": "field-schema-resolver",
+          "tier": "structural",
+          "direction": "+",
+          "matched": true,
+          "satisfied": true
+        },
+        {
+          "id": "field-form-library",
+          "tier": "structural",
+          "direction": "+",
+          "matched": true,
+          "satisfied": true
+        },
+        {
+          "id": "field-label-htmlfor-id-paired",
+          "tier": "behavioral",
+          "direction": "+",
+          "requiresMatched": false,
+          "forbidsMatched": null,
+          "satisfied": false
+        },
+        {
+          "id": "field-aria-invalid-paired-with-data-invalid",
+          "tier": "behavioral",
+          "direction": "+",
+          "requiresMatched": false,
+          "forbidsMatched": null,
+          "satisfied": false
+        },
+        {
+          "id": "field-submit-tied-to-form-state",
+          "tier": "behavioral",
+          "direction": "+",
+          "requiresMatched": true,
+          "forbidsMatched": null,
+          "satisfied": true
+        },
+        {
+          "id": "field-typed-submit-handler",
+          "tier": "semantic",
+          "direction": "+",
+          "answered": true,
+          "satisfied": true,
+          "reason": "handleFormSubmit uses ProfileFormValues (z.infer<typeof profileSchema>) as parameter type."
+        },
+        {
+          "id": "field-reasonable-validation",
+          "tier": "semantic",
+          "direction": "+",
+          "answered": true,
+          "satisfied": true,
+          "reason": "Schema has email(), bio max(500), and name min(1) checks."
+        },
+        {
+          "id": "field-description-on-a-field",
+          "tier": "semantic",
+          "direction": "+",
+          "answered": false,
+          "satisfied": false,
+          "reason": "No FieldDescription component used; bio-count is a plain <p>, not FieldDescription."
+        }
+      ]
+    },
+    {
+      "componentName": "field",
+      "condition": "A",
+      "runId": "04",
+      "filePath": "/Users/andie/Repos/shadcn-docs-from-schema/eval/ab-experiment/runs/agentic/field/A/run-04.tsx",
+      "sourceLength": 4248,
+      "results": [
+        {
+          "id": "field-FieldLabel-used",
+          "tier": "structural",
+          "direction": "+",
+          "matched": false,
+          "satisfied": false
+        },
+        {
+          "id": "field-FieldError-used",
+          "tier": "structural",
+          "direction": "+",
+          "matched": false,
+          "satisfied": false
+        },
+        {
+          "id": "field-FieldDescription-used",
+          "tier": "structural",
+          "direction": "+",
+          "matched": false,
+          "satisfied": false
+        },
+        {
+          "id": "field-Field-or-FieldGroup-used",
+          "tier": "structural",
+          "direction": "+",
+          "matched": true,
+          "satisfied": true
+        },
+        {
+          "id": "field-no-raw-label",
+          "tier": "structural",
+          "direction": "-",
+          "matched": false,
+          "satisfied": true
+        },
+        {
+          "id": "field-schema-resolver",
+          "tier": "structural",
+          "direction": "+",
+          "matched": true,
+          "satisfied": true
+        },
+        {
+          "id": "field-form-library",
+          "tier": "structural",
+          "direction": "+",
+          "matched": true,
+          "satisfied": true
+        },
+        {
+          "id": "field-label-htmlfor-id-paired",
+          "tier": "behavioral",
+          "direction": "+",
+          "requiresMatched": false,
+          "forbidsMatched": null,
+          "satisfied": false
+        },
+        {
+          "id": "field-aria-invalid-paired-with-data-invalid",
+          "tier": "behavioral",
+          "direction": "+",
+          "requiresMatched": false,
+          "forbidsMatched": null,
+          "satisfied": false
+        },
+        {
+          "id": "field-submit-tied-to-form-state",
+          "tier": "behavioral",
+          "direction": "+",
+          "requiresMatched": true,
+          "forbidsMatched": null,
+          "satisfied": true
+        },
+        {
+          "id": "field-typed-submit-handler",
+          "tier": "semantic",
+          "direction": "+",
+          "answered": true,
+          "satisfied": true,
+          "reason": "handleSubmit infers ProfileFormValues from zodResolver; onSubmit typed as (values: ProfileFormValues)"
+        },
+        {
+          "id": "field-reasonable-validation",
+          "tier": "semantic",
+          "direction": "+",
+          "answered": true,
+          "satisfied": true,
+          "reason": "email().email(), bio max(500), name min(1) all present in schema"
+        },
+        {
+          "id": "field-description-on-a-field",
+          "tier": "semantic",
+          "direction": "+",
+          "answered": false,
+          "satisfied": false,
+          "reason": "Character count shown in plain <p>, no FieldDescription component imported or used"
+        }
+      ]
+    },
+    {
+      "componentName": "field",
+      "condition": "A",
+      "runId": "05",
+      "filePath": "/Users/andie/Repos/shadcn-docs-from-schema/eval/ab-experiment/runs/agentic/field/A/run-05.tsx",
+      "sourceLength": 4560,
+      "results": [
+        {
+          "id": "field-FieldLabel-used",
+          "tier": "structural",
+          "direction": "+",
+          "matched": false,
+          "satisfied": false
+        },
+        {
+          "id": "field-FieldError-used",
+          "tier": "structural",
+          "direction": "+",
+          "matched": false,
+          "satisfied": false
+        },
+        {
+          "id": "field-FieldDescription-used",
+          "tier": "structural",
+          "direction": "+",
+          "matched": false,
+          "satisfied": false
+        },
+        {
+          "id": "field-Field-or-FieldGroup-used",
+          "tier": "structural",
+          "direction": "+",
+          "matched": true,
+          "satisfied": true
+        },
+        {
+          "id": "field-no-raw-label",
+          "tier": "structural",
+          "direction": "-",
+          "matched": false,
+          "satisfied": true
+        },
+        {
+          "id": "field-schema-resolver",
+          "tier": "structural",
+          "direction": "+",
+          "matched": true,
+          "satisfied": true
+        },
+        {
+          "id": "field-form-library",
+          "tier": "structural",
+          "direction": "+",
+          "matched": true,
+          "satisfied": true
+        },
+        {
+          "id": "field-label-htmlfor-id-paired",
+          "tier": "behavioral",
+          "direction": "+",
+          "requiresMatched": false,
+          "forbidsMatched": null,
+          "satisfied": false
+        },
+        {
+          "id": "field-aria-invalid-paired-with-data-invalid",
+          "tier": "behavioral",
+          "direction": "+",
+          "requiresMatched": false,
+          "forbidsMatched": null,
+          "satisfied": false
+        },
+        {
+          "id": "field-submit-tied-to-form-state",
+          "tier": "behavioral",
+          "direction": "+",
+          "requiresMatched": true,
+          "forbidsMatched": null,
+          "satisfied": true
+        },
+        {
+          "id": "field-typed-submit-handler",
+          "tier": "semantic",
+          "direction": "+",
+          "answered": true,
+          "satisfied": true,
+          "reason": "handleFormSubmit uses ProfileFormValues (z.infer<typeof profileSchema>) as parameter type."
+        },
+        {
+          "id": "field-reasonable-validation",
+          "tier": "semantic",
+          "direction": "+",
+          "answered": true,
+          "satisfied": true,
+          "reason": "Schema has email(), max(300) on bio, and min(1) on name — all three present."
+        },
+        {
+          "id": "field-description-on-a-field",
+          "tier": "semantic",
+          "direction": "+",
+          "answered": false,
+          "satisfied": false,
+          "reason": "Character count is a plain <p>, not a FieldDescription component render."
+        }
+      ]
+    },
+    {
+      "componentName": "field",
+      "condition": "B",
+      "runId": "01",
+      "filePath": "/Users/andie/Repos/shadcn-docs-from-schema/eval/ab-experiment/runs/agentic/field/B/run-01.tsx",
+      "sourceLength": 5016,
+      "results": [
+        {
+          "id": "field-FieldLabel-used",
+          "tier": "structural",
+          "direction": "+",
+          "matched": true,
+          "satisfied": true
+        },
+        {
+          "id": "field-FieldError-used",
+          "tier": "structural",
+          "direction": "+",
+          "matched": true,
+          "satisfied": true
+        },
+        {
+          "id": "field-FieldDescription-used",
+          "tier": "structural",
+          "direction": "+",
+          "matched": true,
+          "satisfied": true
+        },
+        {
+          "id": "field-Field-or-FieldGroup-used",
+          "tier": "structural",
+          "direction": "+",
+          "matched": true,
+          "satisfied": true
+        },
+        {
+          "id": "field-no-raw-label",
+          "tier": "structural",
+          "direction": "-",
+          "matched": false,
+          "satisfied": true
+        },
+        {
+          "id": "field-schema-resolver",
+          "tier": "structural",
+          "direction": "+",
+          "matched": true,
+          "satisfied": true
+        },
+        {
+          "id": "field-form-library",
+          "tier": "structural",
+          "direction": "+",
+          "matched": true,
+          "satisfied": true
+        },
+        {
+          "id": "field-label-htmlfor-id-paired",
+          "tier": "behavioral",
+          "direction": "+",
+          "requiresMatched": true,
+          "forbidsMatched": null,
+          "satisfied": true
+        },
+        {
+          "id": "field-aria-invalid-paired-with-data-invalid",
+          "tier": "behavioral",
+          "direction": "+",
+          "requiresMatched": false,
+          "forbidsMatched": null,
+          "satisfied": false
+        },
+        {
+          "id": "field-submit-tied-to-form-state",
+          "tier": "behavioral",
+          "direction": "+",
+          "requiresMatched": true,
+          "forbidsMatched": null,
+          "satisfied": true
+        },
+        {
+          "id": "field-typed-submit-handler",
+          "tier": "semantic",
+          "direction": "+",
+          "answered": true,
+          "satisfied": true,
+          "reason": "onSubmit typed as ProfileFormValues, which is z.infer<typeof profileSchema>."
+        },
+        {
+          "id": "field-reasonable-validation",
+          "tier": "semantic",
+          "direction": "+",
+          "answered": true,
+          "satisfied": true,
+          "reason": "Email has .email(), bio has .max(300), name has .min(1) non-empty check."
+        },
+        {
+          "id": "field-description-on-a-field",
+          "tier": "semantic",
+          "direction": "+",
+          "answered": true,
+          "satisfied": true,
+          "reason": "FieldDescription rendered with bio hint '300 characters max' when no error."
+        }
+      ]
+    },
+    {
+      "componentName": "field",
+      "condition": "B",
+      "runId": "02",
+      "filePath": "/Users/andie/Repos/shadcn-docs-from-schema/eval/ab-experiment/runs/agentic/field/B/run-02.tsx",
+      "sourceLength": 3929,
+      "results": [
+        {
+          "id": "field-FieldLabel-used",
+          "tier": "structural",
+          "direction": "+",
+          "matched": true,
+          "satisfied": true
+        },
+        {
+          "id": "field-FieldError-used",
+          "tier": "structural",
+          "direction": "+",
+          "matched": true,
+          "satisfied": true
+        },
+        {
+          "id": "field-FieldDescription-used",
+          "tier": "structural",
+          "direction": "+",
+          "matched": true,
+          "satisfied": true
+        },
+        {
+          "id": "field-Field-or-FieldGroup-used",
+          "tier": "structural",
+          "direction": "+",
+          "matched": true,
+          "satisfied": true
+        },
+        {
+          "id": "field-no-raw-label",
+          "tier": "structural",
+          "direction": "-",
+          "matched": false,
+          "satisfied": true
+        },
+        {
+          "id": "field-schema-resolver",
+          "tier": "structural",
+          "direction": "+",
+          "matched": true,
+          "satisfied": true
+        },
+        {
+          "id": "field-form-library",
+          "tier": "structural",
+          "direction": "+",
+          "matched": true,
+          "satisfied": true
+        },
+        {
+          "id": "field-label-htmlfor-id-paired",
+          "tier": "behavioral",
+          "direction": "+",
+          "requiresMatched": true,
+          "forbidsMatched": null,
+          "satisfied": true
+        },
+        {
+          "id": "field-aria-invalid-paired-with-data-invalid",
+          "tier": "behavioral",
+          "direction": "+",
+          "requiresMatched": true,
+          "forbidsMatched": null,
+          "satisfied": true
+        },
+        {
+          "id": "field-submit-tied-to-form-state",
+          "tier": "behavioral",
+          "direction": "+",
+          "requiresMatched": true,
+          "forbidsMatched": null,
+          "satisfied": true
+        },
+        {
+          "id": "field-typed-submit-handler",
+          "tier": "semantic",
+          "direction": "+",
+          "answered": true,
+          "satisfied": true,
+          "reason": "Handler typed as `(data: ProfileFormValues)` derived from `z.infer<typeof profileSchema>`."
+        },
+        {
+          "id": "field-reasonable-validation",
+          "tier": "semantic",
+          "direction": "+",
+          "answered": true,
+          "satisfied": true,
+          "reason": "Schema has email format check, bio max(300), and name min(1)."
+        },
+        {
+          "id": "field-description-on-a-field",
+          "tier": "semantic",
+          "direction": "+",
+          "answered": true,
+          "satisfied": true,
+          "reason": "FieldDescription rendered with real content on all three fields."
+        }
+      ]
+    },
+    {
+      "componentName": "field",
+      "condition": "B",
+      "runId": "03",
+      "filePath": "/Users/andie/Repos/shadcn-docs-from-schema/eval/ab-experiment/runs/agentic/field/B/run-03.tsx",
+      "sourceLength": 7250,
+      "results": [
+        {
+          "id": "field-FieldLabel-used",
+          "tier": "structural",
+          "direction": "+",
+          "matched": true,
+          "satisfied": true
+        },
+        {
+          "id": "field-FieldError-used",
+          "tier": "structural",
+          "direction": "+",
+          "matched": true,
+          "satisfied": true
+        },
+        {
+          "id": "field-FieldDescription-used",
+          "tier": "structural",
+          "direction": "+",
+          "matched": true,
+          "satisfied": true
+        },
+        {
+          "id": "field-Field-or-FieldGroup-used",
+          "tier": "structural",
+          "direction": "+",
+          "matched": true,
+          "satisfied": true
+        },
+        {
+          "id": "field-no-raw-label",
+          "tier": "structural",
+          "direction": "-",
+          "matched": false,
+          "satisfied": true
+        },
+        {
+          "id": "field-schema-resolver",
+          "tier": "structural",
+          "direction": "+",
+          "matched": true,
+          "satisfied": true
+        },
+        {
+          "id": "field-form-library",
+          "tier": "structural",
+          "direction": "+",
+          "matched": true,
+          "satisfied": true
+        },
+        {
+          "id": "field-label-htmlfor-id-paired",
+          "tier": "behavioral",
+          "direction": "+",
+          "requiresMatched": true,
+          "forbidsMatched": null,
+          "satisfied": true
+        },
+        {
+          "id": "field-aria-invalid-paired-with-data-invalid",
+          "tier": "behavioral",
+          "direction": "+",
+          "requiresMatched": false,
+          "forbidsMatched": null,
+          "satisfied": false
+        },
+        {
+          "id": "field-submit-tied-to-form-state",
+          "tier": "behavioral",
+          "direction": "+",
+          "requiresMatched": true,
+          "forbidsMatched": null,
+          "satisfied": true
+        },
+        {
+          "id": "field-typed-submit-handler",
+          "tier": "semantic",
+          "direction": "+",
+          "answered": true,
+          "satisfied": true,
+          "reason": "onSubmit accepts ProfileValues, which is z.infer<typeof profileSchema>."
+        },
+        {
+          "id": "field-reasonable-validation",
+          "tier": "semantic",
+          "direction": "+",
+          "answered": true,
+          "satisfied": true,
+          "reason": "Schema has email(), max(300) on bio, and min(1) on name."
+        },
+        {
+          "id": "field-description-on-a-field",
+          "tier": "semantic",
+          "direction": "+",
+          "answered": true,
+          "satisfied": true,
+          "reason": "FieldDescription rendered with real content on email and bio fields."
+        }
+      ]
+    },
+    {
+      "componentName": "field",
+      "condition": "B",
+      "runId": "04",
+      "filePath": "/Users/andie/Repos/shadcn-docs-from-schema/eval/ab-experiment/runs/agentic/field/B/run-04.tsx",
+      "sourceLength": 9013,
+      "results": [
+        {
+          "id": "field-FieldLabel-used",
+          "tier": "structural",
+          "direction": "+",
+          "matched": true,
+          "satisfied": true
+        },
+        {
+          "id": "field-FieldError-used",
+          "tier": "structural",
+          "direction": "+",
+          "matched": true,
+          "satisfied": true
+        },
+        {
+          "id": "field-FieldDescription-used",
+          "tier": "structural",
+          "direction": "+",
+          "matched": true,
+          "satisfied": true
+        },
+        {
+          "id": "field-Field-or-FieldGroup-used",
+          "tier": "structural",
+          "direction": "+",
+          "matched": true,
+          "satisfied": true
+        },
+        {
+          "id": "field-no-raw-label",
+          "tier": "structural",
+          "direction": "-",
+          "matched": false,
+          "satisfied": true
+        },
+        {
+          "id": "field-schema-resolver",
+          "tier": "structural",
+          "direction": "+",
+          "matched": true,
+          "satisfied": true
+        },
+        {
+          "id": "field-form-library",
+          "tier": "structural",
+          "direction": "+",
+          "matched": true,
+          "satisfied": true
+        },
+        {
+          "id": "field-label-htmlfor-id-paired",
+          "tier": "behavioral",
+          "direction": "+",
+          "requiresMatched": true,
+          "forbidsMatched": null,
+          "satisfied": true
+        },
+        {
+          "id": "field-aria-invalid-paired-with-data-invalid",
+          "tier": "behavioral",
+          "direction": "+",
+          "requiresMatched": true,
+          "forbidsMatched": null,
+          "satisfied": true
+        },
+        {
+          "id": "field-submit-tied-to-form-state",
+          "tier": "behavioral",
+          "direction": "+",
+          "requiresMatched": true,
+          "forbidsMatched": null,
+          "satisfied": true
+        },
+        {
+          "id": "field-typed-submit-handler",
+          "tier": "semantic",
+          "direction": "+",
+          "answered": true,
+          "satisfied": true,
+          "reason": "onSubmit typed as ProfileFormValues, which is z.infer<typeof profileSchema>."
+        },
+        {
+          "id": "field-reasonable-validation",
+          "tier": "semantic",
+          "direction": "+",
+          "answered": true,
+          "satisfied": true,
+          "reason": "Schema has email(), max(160) on bio, and min(2) on name."
+        },
+        {
+          "id": "field-description-on-a-field",
+          "tier": "semantic",
+          "direction": "+",
+          "answered": true,
+          "satisfied": true,
+          "reason": "FieldDescription renders real helper text on name, email, and bio fields."
+        }
+      ]
+    },
+    {
+      "componentName": "field",
+      "condition": "B",
+      "runId": "05",
+      "filePath": "/Users/andie/Repos/shadcn-docs-from-schema/eval/ab-experiment/runs/agentic/field/B/run-05.tsx",
+      "sourceLength": 6400,
+      "results": [
+        {
+          "id": "field-FieldLabel-used",
+          "tier": "structural",
+          "direction": "+",
+          "matched": true,
+          "satisfied": true
+        },
+        {
+          "id": "field-FieldError-used",
+          "tier": "structural",
+          "direction": "+",
+          "matched": true,
+          "satisfied": true
+        },
+        {
+          "id": "field-FieldDescription-used",
+          "tier": "structural",
+          "direction": "+",
+          "matched": true,
+          "satisfied": true
+        },
+        {
+          "id": "field-Field-or-FieldGroup-used",
+          "tier": "structural",
+          "direction": "+",
+          "matched": true,
+          "satisfied": true
+        },
+        {
+          "id": "field-no-raw-label",
+          "tier": "structural",
+          "direction": "-",
+          "matched": false,
+          "satisfied": true
+        },
+        {
+          "id": "field-schema-resolver",
+          "tier": "structural",
+          "direction": "+",
+          "matched": true,
+          "satisfied": true
+        },
+        {
+          "id": "field-form-library",
+          "tier": "structural",
+          "direction": "+",
+          "matched": true,
+          "satisfied": true
+        },
+        {
+          "id": "field-label-htmlfor-id-paired",
+          "tier": "behavioral",
+          "direction": "+",
+          "requiresMatched": true,
+          "forbidsMatched": null,
+          "satisfied": true
+        },
+        {
+          "id": "field-aria-invalid-paired-with-data-invalid",
+          "tier": "behavioral",
+          "direction": "+",
+          "requiresMatched": true,
+          "forbidsMatched": null,
+          "satisfied": true
+        },
+        {
+          "id": "field-submit-tied-to-form-state",
+          "tier": "behavioral",
+          "direction": "+",
+          "requiresMatched": true,
+          "forbidsMatched": null,
+          "satisfied": true
+        },
+        {
+          "id": "field-typed-submit-handler",
+          "tier": "semantic",
+          "direction": "+",
+          "answered": true,
+          "satisfied": true,
+          "reason": "onSubmit uses ProfileValues (z.infer<typeof profileSchema>), passed to handleSubmit."
+        },
+        {
+          "id": "field-reasonable-validation",
+          "tier": "semantic",
+          "direction": "+",
+          "answered": true,
+          "satisfied": true,
+          "reason": "Schema has email(), bio max(300), and name min(1) checks."
+        },
+        {
+          "id": "field-description-on-a-field",
+          "tier": "semantic",
+          "direction": "+",
+          "answered": true,
+          "satisfied": true,
+          "reason": "FieldDescription renders email notification note and bio visibility note."
+        }
+      ]
+    }
+  ]
+}

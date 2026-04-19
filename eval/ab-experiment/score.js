@@ -12,7 +12,6 @@ import { scoreSemanticBatch, createJudgeClient } from "./scorers/semantic.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = __dirname;
-const RUNS_DIR = join(ROOT, "runs", "direct");
 const RESULTS_DIR = join(ROOT, "results");
 
 function parseArgs(argv) {
@@ -21,6 +20,7 @@ function parseArgs(argv) {
     condition: null,
     skipSemantic: false,
     output: "scored.json",
+    runsDir: join(ROOT, "runs", "direct"),
   };
   for (let i = 2; i < argv.length; i++) {
     const flag = argv[i];
@@ -29,6 +29,7 @@ function parseArgs(argv) {
     else if (flag === "--condition") { args.condition = next; i++; }
     else if (flag === "--skip-semantic") { args.skipSemantic = true; }
     else if (flag === "--output") { args.output = next; i++; }
+    else if (flag === "--runs-dir") { args.runsDir = next; i++; }
   }
   return args;
 }
@@ -80,13 +81,13 @@ async function scoreOneFile({ judgeClient, componentName, condition, runId, file
   };
 }
 
-function enumerateRuns({ componentsFilter, conditionFilter }) {
+function enumerateRuns({ componentsFilter, conditionFilter, runsDir }) {
   const entries = [];
   const componentNames = componentsFilter || Object.keys(COMPONENTS);
   for (const componentName of componentNames) {
     if (!COMPONENTS[componentName]) continue;
     for (const condition of conditionFilter ? [conditionFilter] : ["A", "B"]) {
-      const dir = join(RUNS_DIR, componentName, condition);
+      const dir = join(runsDir, componentName, condition);
       if (!existsSync(dir)) continue;
       const files = readdirSync(dir).filter((f) => f.endsWith(".tsx")).sort();
       for (const f of files) {
@@ -122,7 +123,7 @@ async function main() {
   const args = parseArgs(process.argv);
   mkdirSync(RESULTS_DIR, { recursive: true });
 
-  const runs = enumerateRuns({ componentsFilter: args.components, conditionFilter: args.condition });
+  const runs = enumerateRuns({ componentsFilter: args.components, conditionFilter: args.condition, runsDir: args.runsDir });
   if (runs.length === 0) {
     console.error("No run files found. Did the harness complete?");
     process.exit(1);
@@ -131,7 +132,7 @@ async function main() {
 
   const judgeClient = args.skipSemantic ? null : createJudgeClient();
 
-  const scored = await runPool(runs, 5, async (entry) => {
+  const scored = await runPool(runs, 2, async (entry) => {
     const result = await scoreOneFile({
       judgeClient,
       skipSemantic: args.skipSemantic,
