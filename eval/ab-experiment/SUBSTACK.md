@@ -1,14 +1,14 @@
-# Does your CLAUDE.md actually help? I built one and ran 200 tests to find out.
+# Does AI-facing documentation actually move AI? I built some and ran 200 tests.
 
-*Subtitle: a pre-registered A/B on 10 shadcn/ui components. The effect is real, modest, and not where I expected.*
+*Subtitle: a pre-registered A/B on the machine-facing half of a dual-audience documentation tool. The effect is real, modest, and not where I expected.*
 
 ---
 
 At Amazon I spent three hours per component writing design documentation. The app team had no designated writer and most of the engineers who needed the docs couldn't read the technical ones. So I built a tool that read a component's JSON schema and produced human-readable guidelines cross-referenced against Apple's HIG, Material Design, and Shopify's Polaris. The three-hour job shrank to thirty minutes. The team used it. It worked.
 
-The one thing I never fixed was the friction at the input: every draft started with copy-pasting a schema. Last month I rebuilt the tool from scratch with two changes. First, pull the schema directly from the component library's source. Second, produce two outputs, not one: the human-facing markdown I built the original tool for, and a compact machine-readable format for a different audience that didn't exist when I wrote the first version.
+The friction I never fixed was at the input: every draft started with me copy-pasting a schema. Last month I rebuilt the tool from scratch with two changes. First, pull the schema directly from the component library's source, so the tool can stand on its own. Second, produce two outputs from the same source, for two different audiences: the human-facing markdown I'd built the original tool for, and a compact machine-readable format that didn't need to exist when I wrote the first version.
 
-That second audience is AI coding agents. And it reframed the whole project, because the problem the original tool solved is mostly gone.
+The machine-facing audience is AI coding agents. And adding it reframed the whole project, because the problem the original tool solved is mostly gone.
 
 ## The problem shifted
 
@@ -19,6 +19,12 @@ The new problem is worse. Walk into any team using shadcn/ui. They ran `npx shad
 This was always going to cause problems for new engineers and contractors. Now it causes problems for AI agents writing production UI. v0, Cursor, Claude Code, Bolt. A tech lead prompts one tool to build a settings page. Another PM prompts a different tool to build onboarding. Both get working code. Neither gets consistency, because the AI doesn't know your team renamed `destructive` to `critical` or that your Dialog has a custom focus trap. Without structured context for the actual component system, AI agents generate plausible-looking but wrong code.
 
 The 0xminds team tested this directly: across 50 prompts, 34% of AI-generated shadcn components had API errors. Give the AI structured documentation as context and that dropped to 3%. That's the bet this new tool is placing.
+
+## The thing I built is a prompt
+
+What I actually made is a prompt. A versioned, modular prompt that encodes documentation expertise — editorial rules, accessibility reference material, template structure, output length constraints — and runs raw component docs through it. The prompt is the product. Everything else is either input to the prompt or output from it.
+
+The prompt produces a single piece of structured content per component. That content then gets rendered in two forms for two audiences. For humans, it's markdown: a design-system doc you could publish to GitBook or a Mintlify site. For machines, it's a compact YAML representation of the same content with stable keys, wrapped in one of three agent-context envelopes: CLAUDE.md, AGENTS.md, or llms.txt. The CLAUDE.md everyone talks about is one envelope around one half of the tool's output. The tool is the prompt.
 
 ## How the tool works
 
@@ -56,17 +62,17 @@ You can read the rest of the pitch and see the code at [github.com/andiexchoi/sh
 
 I shipped it. I wrote a README explaining why it matters. I linked to the academic papers on documentation drift and the survey data on design system decay and the industry reports on AI-generated code quality. The thesis made sense. The architecture made sense. The output looked good.
 
-And then I realized I had no idea if it worked.
+And then I realized I had no idea if the machine-facing half worked.
 
-The AI coding tools space is full of confident pitches and unmeasured effects. Everyone is shipping a CLAUDE.md. AGENTS.md. llms.txt. .cursorrules. The variants proliferate. The tooling around them proliferates. The premise underneath all of them is the same: give AI tools structured reference material and they write better code. I have not seen anyone publish a clean test of that premise, for their own tool or anyone else's. Maybe someone has, and I missed it. Most of what I've seen is anecdata, cherry-picked screenshots, and confident pitches.
+The humans-facing half is self-evident. Markdown documentation is markdown documentation. If someone reads a shadcn design-system doc that the tool generated, they can use it or they can't, and that's a question I can answer by handing it to a designer and asking. The machine-facing half is different. The premise there is that if you feed AI coding agents a structured reference for your component system, they will write code that hews closer to your system's actual conventions. Plausible. Everyone is building on that premise. I haven't seen anyone publish a clean test of it, for their own tool or anyone else's. Most of what I've seen is anecdata, cherry-picked screenshots, and confident pitches.
 
-I built a tool that is supposed to help AI write better code. I was telling other people that it would. If my version of this was doing useful work, I wanted to be able to defend that with a number. If it wasn't, I wanted to know before more people adopted it.
+I built a prompt that produces AI-facing output. I was telling other people the AI-facing output would change what AI writes. If my prompt was actually doing useful work on that side, I wanted to defend it with a number. If it wasn't, I wanted to know before more people adopted it.
 
-So I ran the A/B.
+So I ran the A/B on that half.
 
 ## How I tested it
 
-Ten components, chosen for distinct failure profiles: Dialog, Sheet, Select, Field, Tabs, DropdownMenu, Popover, Toast (Sonner), Checkbox, RadioGroup. Two conditions: Condition A sent Claude Sonnet a ticket-style prompt with no CLAUDE.md. Condition B sent the same prompt with the CLAUDE.md generated by my tool included in the system prompt. Ten runs per cell. 200 total generations.
+Ten components, chosen for distinct failure profiles: Dialog, Sheet, Select, Field, Tabs, DropdownMenu, Popover, Toast (Sonner), Checkbox, RadioGroup. Two conditions: Condition A sent Claude Sonnet a ticket-style prompt with no CLAUDE.md. Condition B sent the same prompt with the machine-facing output of my tool, wrapped as a CLAUDE.md, included in the system prompt. Ten runs per cell. 200 total generations.
 
 The tickets looked like real product tickets:
 
@@ -152,15 +158,15 @@ Four components saw zero movement because Sonnet was already at ceiling. That's 
 
 ## What this is
 
-CLAUDE.md closes about a third of the gap between Sonnet's capable-but-generic default output and what a library's actual documentation would want. That's a defensible claim with a 95% confidence interval I can point at. It's narrower than the usual pitch. It also happens to be true.
+The machine-facing output of my documentation tool, when given to Claude Sonnet as system-prompt context, closes about a third of the gap between Sonnet's capable-but-generic default adherence and what the library's documentation actually specifies. A defensible claim with a 95% confidence interval I can point at. Narrower than the usual pitch for this class of tool. Also true.
 
-The work doesn't happen at the level of API shape. The model already knows API shape. It happens on the long tail of editorial and accessibility judgments that a code review tends to catch, that a PM's ticket never mentions, and that a team's actual conventions encode in ways training data does not. Timezone grouping. Motion sensitivity. Title framing. Explicit ARIA wiring. The stuff that makes a component feel designed instead of auto-generated.
+The work doesn't happen at the level of API shape. The model already knows API shape. It happens on the long tail of editorial and accessibility judgments a good design reviewer catches, a ticket never spells out, and a team's conventions encode in ways training data does not. Timezone grouping. Motion sensitivity. Title framing. Explicit ARIA wiring. The stuff that makes a component feel designed instead of auto-generated.
 
-That's the pitch that holds up. Not "AI tools need your design system." Not "CLAUDE.md unlocks better code." Those are too strong for the number. The number is: a generated CLAUDE.md from a library's own documentation closes about a third of the adherence gap, concentrated on the parts a good designer would catch.
+So the pitch that holds up is specific to what I built, not to CLAUDE.md in the abstract. My prompt, run against the current shadcn docs, produces AI-facing output that closes about a third of the adherence gap, concentrated on guidelines a designer would catch. Different upstream docs, a different prompt, a different model — different numbers. The architecture is testable. That's what the pre-registration and the ablations give you.
 
-If you're shipping a CLAUDE.md: it's doing something. It's not doing nothing. It's also not a transformation, and the thing that will determine how much it does for your team is whether the content it encodes matches what your team actually ships.
+If you're shipping a CLAUDE.md from your own pipeline: it's doing something, it's not doing nothing, and the thing determining how much it does is whether the prompt you're running encodes what your team actually ships. If your prompt is a two-paragraph "here are our conventions" afterthought, the measurable effect on AI-generated code will match. If it encodes external a11y specs and editorial posture the way the platform-guidelines module in my tool does, you get closer to what I measured.
 
-If you're thinking of building a CLAUDE.md generator: the single most load-bearing input is not the framing, not the format, not the structure. It's the external reference material that encodes what external libraries, guidelines, and accessibility specs say. Half of the measurable effect I saw traced directly to that content. If you want a tool like this to do more, that's where to invest.
+If you're thinking of building a documentation pipeline of the kind I built: the most load-bearing input is not the framing, not the output format, not the envelope choice. It's the external reference material that encodes what platform standards and accessibility specs say. Half of the measurable effect I saw traced directly to the platform-guidelines module. If you want a tool like this to do more for the AI-facing audience, that's where to invest.
 
 ## For the curious
 
