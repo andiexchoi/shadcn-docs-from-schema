@@ -224,27 +224,36 @@ def figure_forest(agg):
 
 
 def figure_ablation(agg):
-    """Three-way comparison: A / B (full CLAUDE.md) / B' (framing stripped)."""
-    abl_path = ROOT / "results" / "ablation-report.md"
-    scored_abl_path = ROOT / "results" / "scored-ablation-no-framing.json"
-    if not abl_path.exists() or not scored_abl_path.exists():
+    """N-way comparison: A / B + any ablations present in results/."""
+    RES = ROOT / "results"
+    ablation_files = sorted([f for f in os.listdir(RES) if f.startswith("scored-ablation-") and f.endswith(".json")])
+    if not ablation_files:
         print("  ablation data not found, skipping figure")
         return
 
-    abl = json.loads(scored_abl_path.read_text())
-    # Aggregate B' per component
-    bpByComp = {}
-    for run in abl["runs"]:
-        c = run["componentName"]
-        if c not in bpByComp:
-            bpByComp[c] = {"k": 0, "n": 0}
-        for r in run["results"]:
-            bpByComp[c]["n"] += 1
-            if r["satisfied"]:
-                bpByComp[c]["k"] += 1
+    label_map = {
+        "no-framing": "B′ (framing stripped)",
+        "no-platform-guidelines": "B″ (platform-guidelines stripped)",
+    }
+    palette = ["#8b6eb4", "#5a8d77", "#b47c56", "#7a7ab0"]
+
+    ablations = []
+    for fname in ablation_files:
+        data = json.loads((RES / fname).read_text())
+        label = fname.replace("scored-ablation-", "").replace(".json", "")
+        short = label_map.get(label, f"ablation: {label}")
+        by_comp = {}
+        for run in data["runs"]:
+            c = run["componentName"]
+            if c not in by_comp:
+                by_comp[c] = {"k": 0, "n": 0}
+            for r in run["results"]:
+                by_comp[c]["n"] += 1
+                if r["satisfied"]:
+                    by_comp[c]["k"] += 1
+        ablations.append({"label": label, "short": short, "by_comp": by_comp})
 
     comps = list(agg["byComponent"].keys())
-    # Sort by B − A descending
     def delta_main(c):
         v = agg["byComponent"][c]
         return (v["kB"] / max(v["nB"], 1)) - (v["kA"] / max(v["nA"], 1))
@@ -252,19 +261,27 @@ def figure_ablation(agg):
 
     pA = [agg["byComponent"][c]["kA"] / agg["byComponent"][c]["nA"] for c in comps]
     pB = [agg["byComponent"][c]["kB"] / agg["byComponent"][c]["nB"] for c in comps]
-    pBp = [bpByComp[c]["k"] / bpByComp[c]["n"] for c in comps]
+    ablation_rows = [[a["by_comp"][c]["k"] / a["by_comp"][c]["n"] for c in comps] for a in ablations]
 
     y = np.arange(len(comps))
-    h = 0.27
+    n_series = 2 + len(ablations)
+    h = 0.78 / n_series
 
-    fig, ax = plt.subplots(figsize=(10, 6))
-    ax.barh(y + h, pA, h, color=COLOR_A, label="A: no CLAUDE.md")
-    ax.barh(y, pB, h, color=COLOR_B, label="B: full CLAUDE.md")
-    ax.barh(y - h, pBp, h, color="#8b6eb4", label="B': framing stripped")
+    fig, ax = plt.subplots(figsize=(11, max(6, len(comps) * 0.7)))
+    # Bars: A at top, then B, then each ablation
+    offsets = np.linspace(-(n_series - 1) / 2, (n_series - 1) / 2, n_series) * h
+    ax.barh(y + offsets[0], pA, h, color=COLOR_A, label="A: no CLAUDE.md")
+    ax.barh(y + offsets[1], pB, h, color=COLOR_B, label="B: full CLAUDE.md")
+    for idx, a in enumerate(ablations):
+        ax.barh(y + offsets[2 + idx], ablation_rows[idx], h,
+                color=palette[idx % len(palette)], label=a["short"])
+
     for i, c in enumerate(comps):
-        ax.text(pA[i] + 0.005, y[i] + h, pct(pA[i]), va="center", fontsize=7.5, color=COLOR_AXIS)
-        ax.text(pB[i] + 0.005, y[i], pct(pB[i]), va="center", fontsize=7.5, color=COLOR_AXIS)
-        ax.text(pBp[i] + 0.005, y[i] - h, pct(pBp[i]), va="center", fontsize=7.5, color=COLOR_AXIS)
+        ax.text(pA[i] + 0.005, y[i] + offsets[0], pct(pA[i]), va="center", fontsize=7, color=COLOR_AXIS)
+        ax.text(pB[i] + 0.005, y[i] + offsets[1], pct(pB[i]), va="center", fontsize=7, color=COLOR_AXIS)
+        for idx, a in enumerate(ablations):
+            ax.text(ablation_rows[idx][i] + 0.005, y[i] + offsets[2 + idx],
+                    pct(ablation_rows[idx][i]), va="center", fontsize=7, color=COLOR_AXIS)
 
     ax.set_yticks(y)
     ax.set_yticklabels(comps)
@@ -273,9 +290,10 @@ def figure_ablation(agg):
     ax.set_xlim(0, 1.1)
     ax.set_xticks(np.arange(0, 1.01, 0.2))
     ax.set_xticklabels(["0%", "20%", "40%", "60%", "80%", "100%"])
-    ax.legend(loc="upper center", bbox_to_anchor=(0.5, -0.08), ncol=3, frameon=False)
-    ax.set_title("Ablation: framing philosophy stripped from prompt.js", loc="left", fontweight="bold", pad=14)
-    plt.subplots_adjust(left=0.14, right=0.96, top=0.92, bottom=0.16)
+    ax.legend(loc="upper center", bbox_to_anchor=(0.5, -0.08), ncol=2 + len(ablations), frameon=False, fontsize=9)
+    ax.set_title("Ablations: isolating which sections of prompt.js carry the effect",
+                 loc="left", fontweight="bold", pad=14)
+    plt.subplots_adjust(left=0.14, right=0.96, top=0.94, bottom=0.14)
 
     out = FIG_DIR / "figure_4_ablation.png"
     fig.savefig(out, dpi=180)

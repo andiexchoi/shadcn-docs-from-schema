@@ -1,7 +1,10 @@
-// Compares the framing-stripped ablation (B') to the full-framing baseline (B)
-// and the no-CLAUDE.md condition (A). Writes results/ablation-report.md.
+// Compares the framing-stripped ablation (B'), platform-guidelines-stripped
+// ablation (B''), and any other ablations to the main B condition and to A.
+//
+// Ablations are discovered from results/scored-ablation-<label>.json files.
+// Each one is loaded and compared against the main scored.json.
 
-import { readFileSync, writeFileSync, mkdirSync } from "fs";
+import { readFileSync, writeFileSync, mkdirSync, readdirSync, existsSync } from "fs";
 import { join, dirname } from "path";
 import { fileURLToPath } from "url";
 import { COMPONENTS } from "./components.js";
@@ -37,7 +40,6 @@ function fmtPct(x) { return (x * 100).toFixed(1) + "%"; }
 function formatCI(p, lo, hi) { return `${fmtPct(p)} [${fmtPct(lo)}, ${fmtPct(hi)}]`; }
 
 function buildMarkerTable(scored, condition) {
-  // byMarker[component][markerId] = [satisfied, ...]
   const out = {};
   for (const run of scored.runs) {
     if (run.condition !== condition) continue;
@@ -50,112 +52,154 @@ function buildMarkerTable(scored, condition) {
   return out;
 }
 
+function aggregateTable(table) {
+  let k = 0, n = 0;
+  for (const comp of Object.keys(COMPONENTS)) {
+    for (const marker of COMPONENTS[comp].markers) {
+      const arr = (table[comp] || {})[marker.id] || [];
+      k += arr.reduce((s, v) => s + v, 0);
+      n += arr.length;
+    }
+  }
+  return { k, n };
+}
+
+function markerLevelDeltas(baseline, variant) {
+  const out = [];
+  for (const comp of Object.keys(COMPONENTS)) {
+    for (const marker of COMPONENTS[comp].markers) {
+      const baseArr = (baseline[comp] || {})[marker.id] || [];
+      const varArr = (variant[comp] || {})[marker.id] || [];
+      const pBase = baseArr.length ? baseArr.reduce((s, v) => s + v, 0) / baseArr.length : 0;
+      const pVar = varArr.length ? varArr.reduce((s, v) => s + v, 0) / varArr.length : 0;
+      out.push({ component: comp, id: marker.id, tier: marker.tier, pBase, pVar, delta: pVar - pBase });
+    }
+  }
+  return out;
+}
+
+function componentAgg(table) {
+  const out = {};
+  for (const comp of Object.keys(COMPONENTS)) {
+    let k = 0, n = 0;
+    for (const marker of COMPONENTS[comp].markers) {
+      const arr = (table[comp] || {})[marker.id] || [];
+      k += arr.reduce((s, v) => s + v, 0);
+      n += arr.length;
+    }
+    out[comp] = { k, n, p: n ? k / n : 0 };
+  }
+  return out;
+}
+
+function findAblations() {
+  const files = readdirSync(RESULTS).filter((f) => f.startsWith("scored-ablation-") && f.endsWith(".json"));
+  return files.map((f) => ({
+    label: f.replace(/^scored-ablation-/, "").replace(/\.json$/, ""),
+    path: join(RESULTS, f),
+  }));
+}
+
+function labelToShort(label) {
+  return {
+    "no-framing": "B′ (framing stripped)",
+    "no-platform-guidelines": "B″ (platform-guidelines stripped)",
+  }[label] || `B (${label})`;
+}
+
 function main() {
   const main = JSON.parse(readFileSync(join(RESULTS, "scored.json"), "utf8"));
-  const abl = JSON.parse(readFileSync(join(RESULTS, "scored-ablation-no-framing.json"), "utf8"));
-
   const mA = buildMarkerTable(main, "A");
   const mB = buildMarkerTable(main, "B");
-  const mBp = buildMarkerTable(abl, "B");
+  const aggA = aggregateTable(mA);
+  const aggB = aggregateTable(mB);
 
-  // Per-marker comparison
-  const rows = [];
-  for (const component of Object.keys(COMPONENTS)) {
-    const markers = COMPONENTS[component].markers;
-    for (const marker of markers) {
-      const a = (mA[component] || {})[marker.id] || [];
-      const b = (mB[component] || {})[marker.id] || [];
-      const bp = (mBp[component] || {})[marker.id] || [];
-      const pA = a.length ? a.reduce((s, v) => s + v, 0) / a.length : 0;
-      const pB = b.length ? b.reduce((s, v) => s + v, 0) / b.length : 0;
-      const pBp = bp.length ? bp.reduce((s, v) => s + v, 0) / bp.length : 0;
-      rows.push({ component, id: marker.id, tier: marker.tier, pA, pB, pBp, deltaB: pB - pA, deltaBp: pBp - pA, deltaAbl: pBp - pB });
-    }
-  }
+  const ablations = findAblations();
+  const ablTables = ablations.map((abl) => {
+    const data = JSON.parse(readFileSync(abl.path, "utf8"));
+    return { label: abl.label, short: labelToShort(abl.label), table: buildMarkerTable(data, "B") };
+  });
 
-  // Overall aggregates
-  const byCond = { A: { k: 0, n: 0 }, B: { k: 0, n: 0 }, Bp: { k: 0, n: 0 } };
-  for (const component of Object.keys(COMPONENTS)) {
-    for (const marker of COMPONENTS[component].markers) {
-      const a = (mA[component] || {})[marker.id] || [];
-      const b = (mB[component] || {})[marker.id] || [];
-      const bp = (mBp[component] || {})[marker.id] || [];
-      byCond.A.k += a.reduce((s, v) => s + v, 0); byCond.A.n += a.length;
-      byCond.B.k += b.reduce((s, v) => s + v, 0); byCond.B.n += b.length;
-      byCond.Bp.k += bp.reduce((s, v) => s + v, 0); byCond.Bp.n += bp.length;
-    }
-  }
+  // Per-component aggregates
+  const compA = componentAgg(mA);
+  const compB = componentAgg(mB);
+  const compAbl = ablTables.map(({ table, short }) => ({ short, agg: componentAgg(table) }));
 
-  const pA = byCond.A.k / byCond.A.n;
-  const pB = byCond.B.k / byCond.B.n;
-  const pBp = byCond.Bp.k / byCond.Bp.n;
-  const ciA = clopperPearson(byCond.A.k, byCond.A.n);
-  const ciB = clopperPearson(byCond.B.k, byCond.B.n);
-  const ciBp = clopperPearson(byCond.Bp.k, byCond.Bp.n);
-
-  // Bootstrap CIs on marker-level deltas
-  const deltasB = rows.map((r) => r.deltaB);
-  const deltasBp = rows.map((r) => r.deltaBp);
-  const deltasAbl = rows.map((r) => r.deltaAbl);
-  const bootB = bootstrapMeanCI(deltasB);
-  const bootBp = bootstrapMeanCI(deltasBp);
-  const bootAbl = bootstrapMeanCI(deltasAbl);
-
-  // Per-component summary
-  const byComp = {};
-  for (const r of rows) {
-    if (!byComp[r.component]) byComp[r.component] = { nA: 0, kA: 0, nB: 0, kB: 0, nBp: 0, kBp: 0 };
-    byComp[r.component].kA += r.pA * 10; byComp[r.component].nA += 10;
-    byComp[r.component].kB += r.pB * 10; byComp[r.component].nB += 10;
-    byComp[r.component].kBp += r.pBp * 10; byComp[r.component].nBp += 10;
-  }
-
-  // Render markdown
   const lines = [];
-  lines.push(`# Ablation: framing philosophy stripped from prompt.js`);
+  lines.push(`# Ablations report`);
   lines.push("");
-  lines.push(`What it tests: whether the "Non-negotiable formatting rules" and "Framing philosophy" sections in prompt.js are doing real work, or whether the CLAUDE.md's downstream effect survives without them. Everything else in prompt.js (template, output budget, style-guide, platform-guidelines, semantic-guidelines) stays. Rerun: regenerate the 10 CLAUDE.md files with \`ablations/prompt-no-framing.js\`, then run the 100-generation B condition using those CLAUDE.md's. No changes to the rubric or the A condition.`);
+  lines.push(`Ablations loaded: ${ablations.map((a) => a.label).join(", ")}. Each variant regenerates the 10 CLAUDE.md files with one section of \`prompt.js\` removed, then runs 100 B-condition generations with those CLAUDE.md files as context. Comparisons are against the main B (full CLAUDE.md) and A (no CLAUDE.md) baselines from the primary matrix.`);
   lines.push("");
   lines.push(`## Headline`);
   lines.push("");
-  lines.push(`| Condition | Satisfaction rate | Δ vs A | Mean marker-level Δ (bootstrap 95% CI) |`);
+  const aggRows = [];
+  const pA = aggA.k / aggA.n;
+  const pB = aggB.k / aggB.n;
+  const ciA = clopperPearson(aggA.k, aggA.n);
+  const ciB = clopperPearson(aggB.k, aggB.n);
+  aggRows.push(`| A (no CLAUDE.md) | ${formatCI(pA, ciA.lower, ciA.upper)} | — | — |`);
+  aggRows.push(`| B (full prompt.js) | ${formatCI(pB, ciB.lower, ciB.upper)} | ${fmtPct(pB - pA)} | — |`);
+  for (const { short, table } of ablTables) {
+    const agg = aggregateTable(table);
+    const p = agg.k / agg.n;
+    const ci = clopperPearson(agg.k, agg.n);
+    const deltas = markerLevelDeltas(mB, table).map((r) => r.delta);
+    const boot = bootstrapMeanCI(deltas);
+    aggRows.push(`| ${short} | ${formatCI(p, ci.lower, ci.upper)} | ${fmtPct(p - pA)} | ${fmtPct(boot.mean)} [${fmtPct(boot.lower)}, ${fmtPct(boot.upper)}] |`);
+  }
+  lines.push(`| Condition | Satisfaction rate | Δ vs A | Mean marker-level Δ vs B (bootstrap 95% CI) |`);
   lines.push(`| --- | --- | --- | --- |`);
-  lines.push(`| A (no CLAUDE.md) | ${formatCI(pA, ciA.lower, ciA.upper)} | — | — |`);
-  lines.push(`| B (full CLAUDE.md) | ${formatCI(pB, ciB.lower, ciB.upper)} | ${fmtPct(pB - pA)} | ${fmtPct(bootB.mean)} [${fmtPct(bootB.lower)}, ${fmtPct(bootB.upper)}] |`);
-  lines.push(`| B' (framing stripped) | ${formatCI(pBp, ciBp.lower, ciBp.upper)} | ${fmtPct(pBp - pA)} | ${fmtPct(bootBp.mean)} [${fmtPct(bootBp.lower)}, ${fmtPct(bootBp.upper)}] |`);
+  lines.push(...aggRows);
   lines.push("");
-  lines.push(`**B' − B: ${fmtPct(pBp - pB)} overall**, mean marker-level delta ${fmtPct(bootAbl.mean)} (95% CI [${fmtPct(bootAbl.lower)}, ${fmtPct(bootAbl.upper)}]).`);
-  lines.push("");
+
   lines.push(`## Per-component`);
   lines.push("");
-  lines.push(`| Component | A | B | B' | B−A | B'−A | B'−B |`);
-  lines.push(`| --- | --- | --- | --- | --- | --- | --- |`);
-  for (const [comp, v] of Object.entries(byComp)) {
-    const pA = v.kA / v.nA;
-    const pB = v.kB / v.nB;
-    const pBp = v.kBp / v.nBp;
-    lines.push(`| ${comp} | ${fmtPct(pA)} | ${fmtPct(pB)} | ${fmtPct(pBp)} | ${fmtPct(pB - pA)} | ${fmtPct(pBp - pA)} | ${fmtPct(pBp - pB)} |`);
+  const compsSorted = Object.keys(COMPONENTS).sort((a, b) =>
+    (compB[b].p - compA[b].p) - (compB[a].p - compA[a].p)
+  );
+  const header = ["Component", "A", "B"];
+  for (const ab of ablTables) header.push(ab.short);
+  lines.push(`| ${header.join(" | ")} |`);
+  lines.push(`| ${header.map(() => "---").join(" | ")} |`);
+  for (const comp of compsSorted) {
+    const row = [comp, fmtPct(compA[comp].p), fmtPct(compB[comp].p)];
+    for (const ab of compAbl) row.push(fmtPct(ab.agg[comp].p));
+    lines.push(`| ${row.join(" | ")} |`);
   }
   lines.push("");
-  lines.push(`## Per-marker (sorted by |B' − B|)`);
-  lines.push("");
-  lines.push(`Only markers where the ablation moved the result by 10pp or more in either direction.`);
-  lines.push("");
-  lines.push(`| Component | Marker | Tier | A | B | B' | B'−B |`);
-  lines.push(`| --- | --- | --- | --- | --- | --- | --- |`);
-  const filtered = rows.filter((r) => Math.abs(r.deltaAbl) >= 0.1);
-  filtered.sort((a, b) => Math.abs(b.deltaAbl) - Math.abs(a.deltaAbl));
-  for (const r of filtered) {
-    lines.push(`| ${r.component} | \`${r.id}\` | ${r.tier} | ${fmtPct(r.pA)} | ${fmtPct(r.pB)} | ${fmtPct(r.pBp)} | ${fmtPct(r.deltaAbl)} |`);
+
+  // Per-marker for each ablation — only show markers where |variant - B| >= 10pp
+  for (const { short, table, label } of ablTables) {
+    lines.push(`## Per-marker: ${short} vs. full B (moved ≥ 10pp)`);
+    lines.push("");
+    const deltas = markerLevelDeltas(mB, table);
+    const moved = deltas.filter((r) => Math.abs(r.delta) >= 0.1);
+    moved.sort((a, b) => Math.abs(b.delta) - Math.abs(a.delta));
+    if (moved.length === 0) {
+      lines.push(`_No markers moved by 10pp or more._`);
+      lines.push("");
+      continue;
+    }
+    lines.push(`| Component | Marker | Tier | B (full) | ${short} | Δ |`);
+    lines.push(`| --- | --- | --- | --- | --- | --- |`);
+    for (const r of moved) {
+      lines.push(`| ${r.component} | \`${r.id}\` | ${r.tier} | ${fmtPct(r.pBase)} | ${fmtPct(r.pVar)} | ${fmtPct(r.delta)} |`);
+    }
+    lines.push("");
   }
-  lines.push("");
 
   mkdirSync(RESULTS, { recursive: true });
   const outPath = join(RESULTS, "ablation-report.md");
   writeFileSync(outPath, lines.join("\n"));
   console.log(`Wrote ${outPath}`);
-  console.log(`\nHeadline: A ${fmtPct(pA)}, B ${fmtPct(pB)}, B' ${fmtPct(pBp)}`);
-  console.log(`B' − B: ${fmtPct(pBp - pB)} (bootstrap 95% CI [${fmtPct(bootAbl.lower)}, ${fmtPct(bootAbl.upper)}])`);
+  console.log(`\nHeadline:`);
+  console.log(`  A: ${fmtPct(pA)}`);
+  console.log(`  B: ${fmtPct(pB)}`);
+  for (const { short, table } of ablTables) {
+    const agg = aggregateTable(table);
+    const p = agg.k / agg.n;
+    console.log(`  ${short}: ${fmtPct(p)}  (Δ vs B: ${fmtPct(p - pB)})`);
+  }
 }
 
 main();

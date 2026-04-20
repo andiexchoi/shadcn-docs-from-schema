@@ -200,41 +200,60 @@ Each of those runs on the same harness with a swapped CLAUDE.md source. The mark
 
 The existing `eval/run.js` framework in this repo tests a different question: is the markdown the prompt produces well-formed and on-voice? That's upstream of what this experiment measures. Both matter. The link between them is worth making explicit: "well-formed markdown on its own means nothing if it doesn't move the model." This A/B is that missing measurement.
 
-## Ablation: stripping the framing philosophy from `prompt.js`
+## Ablations: which sections of `prompt.js` carry the effect?
 
-The natural first ablation, from the menu in the previous section: generate the 10 CLAUDE.md files with a version of `prompt.js` that drops the opening "Non-negotiable formatting rules" and "Framing philosophy" sections. Keep everything else (template, output budget, style-guide, platform-guidelines, semantic-guidelines). Re-run the full 100-generation B matrix against those framing-stripped CLAUDE.md files. Compare to both baselines.
+Two ablations so far, each identical to the full B condition except for one change: regenerate all 10 CLAUDE.md files from a version of `prompt.js` with one section stripped, then re-run 100 B-condition generations against those regenerated CLAUDE.md files. Same scaffolds, same prompts, same rubric, same A baseline.
 
-| Condition | Satisfaction rate | Δ vs A | Mean marker-level Δ (bootstrap 95% CI) |
-| --- | --- | --- | --- |
-| A (no CLAUDE.md) | 79.9% [77.3%, 82.3%] | — | — |
-| B (full CLAUDE.md) | 86.3% [84.0%, 88.3%] | +6.3pp | +6.3pp [2.3%, 10.6%] |
-| B' (framing stripped) | 85.1% [82.8%, 87.2%] | +5.2pp | +5.2pp [1.5%, 9.3%] |
+| Condition | What's stripped | Satisfaction rate | Δ vs A | Δ vs B | Mean marker-level Δ vs B (bootstrap 95% CI) |
+| --- | --- | --- | --- | --- | --- |
+| A | no CLAUDE.md at all | 79.9% [77.3%, 82.3%] | — | — | — |
+| B | nothing (full prompt.js) | 86.3% [84.0%, 88.3%] | +6.3pp | — | — |
+| B′ | formatting rules + framing philosophy | 85.1% [82.8%, 87.2%] | +5.2pp | **−1.2pp** | −1.2pp [−3.9%, +1.3%] |
+| B″ | platform-guidelines module | 82.9% [80.4%, 85.2%] | +3.0pp | **−3.4pp** | −3.4pp [−6.8%, −0.1%] |
 
-**B' − B: −1.2pp overall, 95% CI [−3.9%, +1.3%].** The framing ablation loses about a percentage point on average relative to the full CLAUDE.md, but the confidence interval crosses zero. At this sample size, the framing philosophy section is not reliably distinguishable from no-framing on the aggregate headline number.
+![Four-way comparison: A vs B vs B′ vs B″](results/figures/figure_4_ablation.png)
 
-![Three-way comparison: A vs B vs B'](results/figures/figure_4_ablation.png)
+*Figure 4. Per-component breakdown across all four conditions. `platform-guidelines` carries clear weight on Dialog (B″ drops to 63.6% vs B's 77.3%), Sheet (71% vs 75%), Field (54.6% vs 60%), and Toast (77.8% vs 82.2%). Most other components are at ceiling in all three prompt variants.*
 
-*Figure 4. Component-level comparison across the three conditions. Most components show B ≈ B' (the framing philosophy has no effect or a near-zero effect). The outlier is Dialog, where B beats B' by 17pp. Sheet and Toast go the other direction, with B' beating B by 5–6pp.*
+### What the ablations localize
 
-Aggregate hides a real split. Per-marker, the ablation matters a great deal in a few specific places:
+Removing the **framing philosophy and formatting rules** (B′) costs about **1.2pp** on the aggregate, with a CI that crosses zero. At this sample size, the framing section is not reliably distinguishable from no-framing on the headline metric. But it is load-bearing on a small set of Dialog-specific markers:
 
-| Component | Marker | Tier | A | B (full) | B' (no framing) | B' − B |
-| --- | --- | --- | --- | --- | --- | --- |
-| dialog | `dialog-motion-reduce` | semantic | 0% | **80%** | **0%** | **−80pp** |
-| dialog | `dialog-title-question-framing` | semantic | 0% | **70%** | **10%** | **−60pp** |
-| dialog | `dialog-aria-describedby-explicit` | behavioral | 40% | **100%** | **60%** | **−40pp** |
-| sheet | `sheet-side-prop` | structural | 0% | 50% | **100%** | **+50pp** |
-| toast | `toast-error-has-duration-or-action` | behavioral | 80% | 60% | **100%** | **+40pp** |
-| sheet | `sheet-motion-reduce` | semantic | 0% | 30% | 50% | +20pp |
-| field | `field-FieldDescription-used` | structural | 0% | 20% | 50% | +30pp |
+| Component | Marker | B (full) | B′ (no framing) | Δ |
+| --- | --- | --- | --- | --- |
+| dialog | `dialog-motion-reduce` | 80% | 0% | **−80pp** |
+| dialog | `dialog-title-question-framing` | 70% | 10% | **−60pp** |
+| dialog | `dialog-aria-describedby-explicit` | 100% | 60% | **−40pp** |
+| sheet | `sheet-side-prop` | 50% | 100% | **+50pp** |
+| toast | `toast-error-has-duration-or-action` | 60% | 100% | **+40pp** |
 
-Dialog is where the framing philosophy does the most work. The "lead with what to do, every guideline needs a why, be specific" section of `prompt.js` is what drives the Dialog CLAUDE.md to include directives that trigger `motion-reduce`, question-style title framing, and explicit `aria-describedby` wiring in the generated code. Strip that section and the Dialog CLAUDE.md produces a less persuasive set of guidelines. The model reads them, but they don't move behavior on those specific semantic markers.
+The framing section drives the Dialog CLAUDE.md's most specific imperatives (`motion-reduce`, question-style titles, explicit `aria-describedby`). Strip it and those signals weaken. It simultaneously makes the Sheet and Toast CLAUDE.md's less strict, which *helps* two markers where the full-framing CLAUDE.md was pushing library-specific contracts against common UX defaults.
 
-Sheet and Toast move the opposite direction. With framing stripped, B' produces CLAUDE.md files that are arguably less strict, which actually helps the `sheet-side-prop` and `toast-error-has-duration-or-action` markers. The explanation on Toast is clean: the full framing pushes Sonner's "errors-for-automatic-failures" contract harder, which trades against the general-UX heuristic the marker encodes. The framing is doing work, it's just that on that marker, the work runs counter to what the rubric rewards.
+Removing the **platform-guidelines module** (B″) costs **3.4pp** on the aggregate, with a CI that stays below zero ([−6.8%, −0.1%]). About a third of the total CLAUDE.md effect traces back to the Apple HIG + Material Design + ARIA-pattern content that this module injects.
 
-The full-framing CLAUDE.md is doing something specific, and it's mostly concentrated on Dialog. Ablations of the other four `prompt.js` modules (style guide, platform guidelines, semantic guidelines, output budget) would tell us which specific inputs are carrying the rest of the effect. This first ablation localizes about a quarter of the total CLAUDE.md effect to the framing sections. The other three-quarters live somewhere in the still-intact modules.
+| Component | Marker | B (full) | B″ (no platform-guidelines) | Δ |
+| --- | --- | --- | --- | --- |
+| dialog | `dialog-motion-reduce` | 80% | 0% | **−80pp** |
+| dialog | `dialog-aria-describedby-explicit` | 100% | 30% | **−70pp** |
+| dialog | `dialog-title-question-framing` | 70% | 10% | **−60pp** |
+| radiogroup | `radio-items-have-ids` | 20% | 70% | **+50pp** |
+| sheet | `sheet-side-prop` | 50% | 100% | **+50pp** |
+| field | `field-FieldError-used` | 50% | 0% | **−50pp** |
+| field | `field-FieldDescription-used` | 20% | 60% | **+40pp** |
+| checkbox | (no change) | — | — | 0 |
 
-Full ablation data in `results/ablation-report.md`. The framing-stripped `prompt.js` variant is committed at `ablations/prompt-no-framing.js`.
+The platform-guidelines module carries essentially all of the `dialog-motion-reduce` and `dialog-aria-describedby-explicit` gains. Those are not just encoded in the shadcn docs; they're reinforced by the HIG/MD content that this project injects. Strip that injection and the model loses the context needed to emit `motion-reduce:` classes or wire ARIA associations explicitly. The `field-FieldError-used` regression suggests the platform module was also the thing making the Field CLAUDE.md explicit about error rendering.
+
+### What this means for the project's design
+
+The framing + platform-guidelines together account for about **4.6pp of the 6.3pp** headline effect (roughly 73% of the total CLAUDE.md-attributable gain on this rubric). The remaining ~1.7pp lives in the three modules still intact across both ablations: `styleGuide`, `semanticGuidelines`, and the output-budget rules.
+
+Two concrete things for anyone maintaining `prompt.js`:
+
+1. **The `platformGuidelines` module is the single most load-bearing input.** If any section of `prompt.js` deserves more iteration and expansion, it's the one sourcing external a11y standards. The specific items that moved markers (prefers-reduced-motion language, explicit ARIA association guidance) are the ones worth naming explicitly in that module.
+2. **The framing + formatting rules do real but component-specific work.** They're not dead weight, but they're concentrated on Dialog and Sheet. A revision that tightens them to be more imperative (the directives they already produce for `dialog-motion-reduce` replicated across other components) might expand the effect into components that currently show no movement.
+
+Full ablation data: `results/ablation-report.md`. Ablated `prompt.js` variants: `ablations/prompt-no-framing.js`, `ablations/prompt-no-platform-guidelines.js`. Three ablations remain unrun from the original menu: style-guide strip, semantic-guidelines strip, and length trim. Each takes ~$5 and ~30 minutes on the same harness.
 
 ## What this means for teams shipping a CLAUDE.md
 
