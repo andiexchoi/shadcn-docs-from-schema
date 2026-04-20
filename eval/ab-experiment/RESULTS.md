@@ -53,6 +53,10 @@ Conditions, scaffolds, markers, scoring code, and the dry-run artifacts that sur
 | Mean marker-level delta (bootstrap) | | | **+6.3pp [2.3%, 10.4%]** |
 | Sign test across 25 non-tied markers | 21+ / 4− | | **p = 0.0009** |
 
+![Guideline adherence by component, ranked by delta](results/figures/figure_1_by_component.png)
+
+*Figure 1. Proportion of pre-registered markers satisfied per component, ranked by B − A. Five components show gains of 5pp or more, two are at ceiling in both conditions, and two show negative deltas (Checkbox: rubric artifact; Toast: marker/guideline mismatch, both discussed below).*
+
 Three conclusions immediately:
 
 1. **The effect is statistically robust.** 21 of 25 markers moved in the CLAUDE.md's favor. A sign test against a null of no systematic shift returns p < 0.001. This is not a ceiling that the noise could have carried by chance.
@@ -69,6 +73,10 @@ Breaking the matrix out by tier:
 | Behavioral | 33 | 80.9% | 82.4% | +1.5pp | [−6.7%, +9.1%] |
 | Semantic | 25 | 74.8% | 86.4% | +11.6pp | [+2.0%, +23.2%] |
 
+![Tier breakdown with CIs](results/figures/figure_2_by_tier.png)
+
+*Figure 2. Left: proportion satisfied per tier with 95% Clopper-Pearson CIs. Right: mean marker-level delta per tier with bootstrap 95% CIs. Structural markers move cleanly; behavioral is a null; semantic has the largest per-marker effect but also the widest CI (25 markers is a small sample for bootstrap).*
+
 Semantic markers moved the most per-marker, structural second, behavioral barely at all. The shape tells a story: where the gap exists, it's on things a regex can't spot. The editorial judgment, the a11y awareness, the phrasing. The places where "Sonnet follows a convention it learned from training" and "Sonnet follows the specific convention this library documents" pull apart.
 
 The five biggest single-marker wins, sorted by delta:
@@ -84,6 +92,10 @@ The five biggest single-marker wins, sorted by delta:
 Every one of these is something the Sonnet default basically doesn't do and the `CLAUDE.md` specifically tells it to. Grouping timezones by continent. Adding `motion-reduce:animate-none` classes on Dialog animations. Framing a confirmation title as a question that names the subject instead of a generic "Delete project" label. Wiring `aria-describedby` explicitly rather than trusting Radix to handle it implicitly.
 
 These are editorial and a11y guidelines, not API-shape rules. The CLAUDE.md earns its keep on the long tail of details that individual prompts can't negotiate for.
+
+![Forest plot of per-marker deltas](results/figures/figure_3_forest.png)
+
+*Figure 3. Per-marker delta (B − A) with 95% Newcombe CIs. Only markers that moved in at least one condition are shown; ceiling-only markers (both conditions at 100%) are omitted. Tier legend: S = structural, B = behavioral, M = semantic. The large positive deltas at the top are all semantic or structural markers for specific editorial/a11y rules the CLAUDE.md names explicitly. The lone −100pp outlier at the bottom (`checkbox-label-htmlfor`) is the rubric-artifact regression discussed below.*
 
 ## Where CLAUDE.md doesn't help
 
@@ -187,6 +199,42 @@ The natural next experiment is not "CLAUDE.md vs. no CLAUDE.md" but ablations on
 Each of those runs on the same harness with a swapped CLAUDE.md source. The marker count is fixed by the pre-registration; the conditions vary. Roughly $7–10 per ablation in API costs. A full ablation study is 5–7 experiments.
 
 The existing `eval/run.js` framework in this repo tests a different question: is the markdown the prompt produces well-formed and on-voice? That's upstream of what this experiment measures. Both matter. The link between them is worth making explicit: "well-formed markdown on its own means nothing if it doesn't move the model." This A/B is that missing measurement.
+
+## Ablation: stripping the framing philosophy from `prompt.js`
+
+The natural first ablation, from the menu in the previous section: generate the 10 CLAUDE.md files with a version of `prompt.js` that drops the opening "Non-negotiable formatting rules" and "Framing philosophy" sections. Keep everything else (template, output budget, style-guide, platform-guidelines, semantic-guidelines). Re-run the full 100-generation B matrix against those framing-stripped CLAUDE.md files. Compare to both baselines.
+
+| Condition | Satisfaction rate | Δ vs A | Mean marker-level Δ (bootstrap 95% CI) |
+| --- | --- | --- | --- |
+| A (no CLAUDE.md) | 79.9% [77.3%, 82.3%] | — | — |
+| B (full CLAUDE.md) | 86.3% [84.0%, 88.3%] | +6.3pp | +6.3pp [2.3%, 10.6%] |
+| B' (framing stripped) | 85.1% [82.8%, 87.2%] | +5.2pp | +5.2pp [1.5%, 9.3%] |
+
+**B' − B: −1.2pp overall, 95% CI [−3.9%, +1.3%].** The framing ablation loses about a percentage point on average relative to the full CLAUDE.md, but the confidence interval crosses zero. At this sample size, the framing philosophy section is not reliably distinguishable from no-framing on the aggregate headline number.
+
+![Three-way comparison: A vs B vs B'](results/figures/figure_4_ablation.png)
+
+*Figure 4. Component-level comparison across the three conditions. Most components show B ≈ B' (the framing philosophy has no effect or a near-zero effect). The outlier is Dialog, where B beats B' by 17pp. Sheet and Toast go the other direction, with B' beating B by 5–6pp.*
+
+Aggregate hides a real split. Per-marker, the ablation matters a great deal in a few specific places:
+
+| Component | Marker | Tier | A | B (full) | B' (no framing) | B' − B |
+| --- | --- | --- | --- | --- | --- | --- |
+| dialog | `dialog-motion-reduce` | semantic | 0% | **80%** | **0%** | **−80pp** |
+| dialog | `dialog-title-question-framing` | semantic | 0% | **70%** | **10%** | **−60pp** |
+| dialog | `dialog-aria-describedby-explicit` | behavioral | 40% | **100%** | **60%** | **−40pp** |
+| sheet | `sheet-side-prop` | structural | 0% | 50% | **100%** | **+50pp** |
+| toast | `toast-error-has-duration-or-action` | behavioral | 80% | 60% | **100%** | **+40pp** |
+| sheet | `sheet-motion-reduce` | semantic | 0% | 30% | 50% | +20pp |
+| field | `field-FieldDescription-used` | structural | 0% | 20% | 50% | +30pp |
+
+Dialog is where the framing philosophy does the most work. The "lead with what to do, every guideline needs a why, be specific" section of `prompt.js` is what drives the Dialog CLAUDE.md to include directives that trigger `motion-reduce`, question-style title framing, and explicit `aria-describedby` wiring in the generated code. Strip that section and the Dialog CLAUDE.md produces a less persuasive set of guidelines. The model reads them, but they don't move behavior on those specific semantic markers.
+
+Sheet and Toast move the opposite direction. With framing stripped, B' produces CLAUDE.md files that are arguably less strict, which actually helps the `sheet-side-prop` and `toast-error-has-duration-or-action` markers. The explanation on Toast is clean: the full framing pushes Sonner's "errors-for-automatic-failures" contract harder, which trades against the general-UX heuristic the marker encodes. The framing is doing work, it's just that on that marker, the work runs counter to what the rubric rewards.
+
+The full-framing CLAUDE.md is doing something specific, and it's mostly concentrated on Dialog. Ablations of the other four `prompt.js` modules (style guide, platform guidelines, semantic guidelines, output budget) would tell us which specific inputs are carrying the rest of the effect. This first ablation localizes about a quarter of the total CLAUDE.md effect to the framing sections. The other three-quarters live somewhere in the still-intact modules.
+
+Full ablation data in `results/ablation-report.md`. The framing-stripped `prompt.js` variant is committed at `ablations/prompt-no-framing.js`.
 
 ## What this means for teams shipping a CLAUDE.md
 

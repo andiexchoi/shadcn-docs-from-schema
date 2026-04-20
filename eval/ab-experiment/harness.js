@@ -6,8 +6,8 @@ import { COMPONENTS, buildSystemPrompt, buildUserPrompt } from "./components.js"
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = __dirname;
-const CLAUDE_MD_CACHE = join(ROOT, "claude-md");
-const RUNS_DIR = join(ROOT, "runs", "direct");
+const DEFAULT_CLAUDE_MD_CACHE = join(ROOT, "claude-md");
+const DEFAULT_RUNS_DIR = join(ROOT, "runs", "direct");
 const RESULTS_DIR = join(ROOT, "results");
 
 const MODEL = "claude-sonnet-4-6";
@@ -29,6 +29,8 @@ function parseArgs(argv) {
     startRun: 1,
     label: "matrix",
     skipExisting: false,
+    claudeMdDir: DEFAULT_CLAUDE_MD_CACHE,
+    runsDir: DEFAULT_RUNS_DIR,
   };
   for (let i = 2; i < argv.length; i++) {
     const flag = argv[i];
@@ -39,18 +41,20 @@ function parseArgs(argv) {
     else if (flag === "--start-run") { args.startRun = Number(next); i++; }
     else if (flag === "--label") { args.label = next; i++; }
     else if (flag === "--skip-existing") { args.skipExisting = true; }
+    else if (flag === "--claude-md-dir") { args.claudeMdDir = next; i++; }
+    else if (flag === "--runs-dir") { args.runsDir = next; i++; }
     else if (flag === "--help") {
-      console.log(`Usage: node harness.js [--components a,b] [--runs N] [--condition A|B] [--start-run N] [--label LBL] [--skip-existing]`);
+      console.log(`Usage: node harness.js [--components a,b] [--runs N] [--condition A|B] [--start-run N] [--label LBL] [--skip-existing] [--claude-md-dir PATH] [--runs-dir PATH]`);
       process.exit(0);
     }
   }
   return args;
 }
 
-function loadClaudeMd(componentName) {
-  const path = join(CLAUDE_MD_CACHE, `${componentName}.md`);
+function loadClaudeMd(claudeMdDir, componentName) {
+  const path = join(claudeMdDir, `${componentName}.md`);
   if (!existsSync(path)) {
-    throw new Error(`CLAUDE.md cache missing for "${componentName}". Run cache-claude-md.js first.`);
+    throw new Error(`CLAUDE.md cache missing for "${componentName}" at ${path}. Run cache-claude-md.js first.`);
   }
   return readFileSync(path, "utf8");
 }
@@ -81,8 +85,8 @@ function looksLikeTsx(text) {
   );
 }
 
-async function generateOne({ client, component, condition, runId, log }) {
-  const claudeMdContent = condition === "B" ? loadClaudeMd(component.batchName) : null;
+async function generateOne({ client, component, condition, runId, claudeMdDir, log }) {
+  const claudeMdContent = condition === "B" ? loadClaudeMd(claudeMdDir, component.batchName) : null;
   const system = buildSystemPrompt({ component, claudeMdContent });
   const user = buildUserPrompt(component);
 
@@ -157,7 +161,7 @@ async function main() {
     for (const condition of conditions) {
       for (let r = 0; r < args.runs; r++) {
         const runId = String(args.startRun + r).padStart(2, "0");
-        const outPath = join(RUNS_DIR, componentName, condition, `run-${runId}.tsx`);
+        const outPath = join(args.runsDir, componentName, condition, `run-${runId}.tsx`);
         if (args.skipExisting && existsSync(outPath)) {
           skipped++;
           continue;
@@ -180,7 +184,7 @@ async function main() {
 
   await runPool(tasks, CONCURRENCY, async (task, i) => {
     const { component, componentName, condition, runId } = task;
-    const runDir = join(RUNS_DIR, componentName, condition);
+    const runDir = join(args.runsDir, componentName, condition);
     mkdirSync(runDir, { recursive: true });
     const outPath = join(runDir, `run-${runId}.tsx`);
 
@@ -190,6 +194,7 @@ async function main() {
       component,
       condition,
       runId,
+      claudeMdDir: args.claudeMdDir,
       log: (msg) => perRunLog.push(msg),
     });
 
