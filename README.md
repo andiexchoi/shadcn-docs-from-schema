@@ -20,6 +20,7 @@ The documentation layer between your component library and everything that reads
 - [Examples](#examples)
   - [Button (basic)](#example-button)
   - [Custom Button (divergence from upstream)](#example-custom-button-divergence-from-upstream)
+- [Does it work? A pre-registered A/B experiment](#does-it-work-a-pre-registered-ab-experiment)
 - [Background and motivation](#background-and-motivation)
   - [Origin](#origin)
   - [The problem has shifted](#the-problem-has-shifted)
@@ -234,13 +235,29 @@ The AI agent that consumes this file will never hallucinate `destructive` or mis
 
 ---
 
+## Does it work? A pre-registered A/B experiment
+
+Shipping a CLAUDE.md is a reflex now. Plenty of tools produce them. What's rare is a clean measurement of what they change.
+
+[`eval/ab-experiment/`](eval/ab-experiment/) holds a pre-registered A/B on 10 shadcn/ui components × 200 one-shot generations with Claude Sonnet 4.6. Condition A: no CLAUDE.md. Condition B: the CLAUDE.md this tool produces, generated from the same source the model would otherwise lack.
+
+Headline: the generated CLAUDE.md raises the fraction of pre-registered guidelines the output satisfies from **79.9% to 86.3%** — an absolute improvement of **6.3 percentage points** (95% CI [2.3%, 10.4%]). Across 25 non-tied markers, 21 moved positive and 4 negative. Sign test p = 0.0009.
+
+The effect is real, modest, and not uniform: Dialog and Sheet move substantially (the sub-component omission failure mode the tool was built to address), Checkbox and Toast show small negative deltas traced to a rubric artifact and a marker/guideline mismatch respectively. Both are documented in the write-up.
+
+- **Pre-registration** (hypotheses, conditions, rubric, locked before any scored run): [`eval/ab-experiment/PRE_REGISTRATION.md`](eval/ab-experiment/PRE_REGISTRATION.md)
+- **Full write-up** with figures and per-component breakdown: [`eval/ab-experiment/RESULTS.md`](eval/ab-experiment/RESULTS.md)
+- **Reproduction**: harness, scorers, ablations, and raw runs are all under [`eval/ab-experiment/`](eval/ab-experiment/) — see that folder's README for the map.
+
+---
+
 ## Background and motivation
 
 ### Origin
 
-I built the [first version of this](https://andiechoi.com/work/mobiledocs) while at Amazon, or a mobile app team with no designated writer. I referenced Apple’s HIG, Material Design, and Shopify’s Polaris principles to create an AI agent that cut documentation time from 3+ hours to 30 minutes per component.
+I built the [first version of this](https://andiechoi.com/work/mobiledocs) while at Amazon, for a mobile app team with no designated writer. I referenced Apple's HIG, Material Design, and Shopify's Polaris principles to create an AI agent that cut documentation time from 3+ hours to 30 minutes per component.
 
-It’s main friction point was that every draft started with copy-pasting a component’s JSON schema into the generator. I wanted to see if I could rebuild the tool on my own, remove that step, and make something that could stand on its own. The public version pulls component schemas directly from shadcn/ui’s GitHub repos. Users search for a component the same way they would on the shadcn docs site and get structured design documentation back.
+Its main friction point was that every draft started with copy-pasting a component's JSON schema into the generator. I wanted to see if I could rebuild the tool on my own, remove that step, and make something that could stand on its own. The public version pulls component schemas directly from shadcn/ui's GitHub repos. Users search for a component the same way they would on the shadcn docs site and get structured design documentation back.
 
 ### The problem has shifted
 
@@ -307,7 +324,7 @@ The shadcn fetch is proof of concept. The thesis is that every team running a cu
 ### Stack
 
 - Next.js on Vercel
-- Anthropic API (claude-opus-4-6)
+- Anthropic API (claude-sonnet-4-6)
 - Live doc fetching from GitHub raw content (shadcn/ui, Radix UI, Base UI)
 - Regex-based TypeScript/JSX prop extraction (no build tooling dependency)
 - Deterministic markdown-to-YAML post-processing (no second API call)
@@ -334,6 +351,7 @@ See `[eval/README.md](eval/README.md)` for details.
 
 ## What's next
 
-- End-to-end validation: give an AI agent the compact output as context, generate a component, and check for known failure patterns (missing ARIA, wrong prop names, broken contracts)
+- Expand the A/B beyond 10 components and strengthen the agentic (Claude Code) arm, which currently runs at a smaller sample than the direct-API matrix
 - Support for OpenAPI specs as input alongside JSON schemas and TSX source
+- CI integration: regenerate the component library's agent context on every PR that touches component source
 
