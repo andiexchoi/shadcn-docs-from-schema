@@ -20,7 +20,7 @@ The documentation layer between your component library and everything that reads
 - [Examples](#examples)
   - [Button (basic)](#example-button)
   - [Custom Button (divergence from upstream)](#example-custom-button-divergence-from-upstream)
-- [Does it work? A pre-registered A/B experiment](#does-it-work-a-pre-registered-ab-experiment)
+- [Does it work? Dialog side-by-side test](#does-it-work-dialog-side-by-side-test)
 - [Background and motivation](#background-and-motivation)
   - [Origin](#origin)
   - [The problem has shifted](#the-problem-has-shifted)
@@ -33,8 +33,6 @@ The documentation layer between your component library and everything that reads
   - [Stack](#stack)
   - [Prompt eval system](#prompt-eval-system)
   - [Prompt changelog](#prompt-changelog)
-  - [Research](#research)
-  - [Design philosophy](#design-philosophy)
 - [What's next](#whats-next)
 
 ---
@@ -235,19 +233,18 @@ The AI agent that consumes this file will never hallucinate `destructive` or mis
 
 ---
 
-## Does it work? A pre-registered A/B experiment
+## Does it work? Dialog side-by-side test
 
-Shipping a CLAUDE.md is a reflex now. Plenty of tools produce them. What's rare is a clean measurement of what they change.
+To test what the editorial layer actually contributes, I generated two versions of the Dialog doc from the same tool: **V1** with source docs plus external references only (template and framing rules stripped out), and **V2** with the full pipeline. Both scored against an 8-criterion rubric written beforehand: decision support, accessibility coverage, contract specificity, failure modes named, editorial guidelines, PM-legibility, canonical-vs-variant coverage, signal density.
 
-[`eval/ab-experiment/`](eval/ab-experiment/) holds a pre-registered A/B on 10 shadcn/ui components × 200 one-shot generations with Claude Sonnet 4.6. Condition A: no CLAUDE.md. Condition B: the CLAUDE.md this tool produces, generated from the same source the model would otherwise lack.
+Initial result: **V1 and V2 both scored 14/16.** Tied, different strengths. V1 ran 401 lines, code-heavy, covered seven variants. V2 ran 69 lines, prose-first, covered one. The editorial layer was doing compression and cross-functional legibility — not unique technical content. External references plus source docs carried the accessibility, ARIA, and editorial substance.
 
-Headline: the generated CLAUDE.md raises the fraction of pre-registered guidelines the output satisfies from **79.9% to 86.3%** — an absolute improvement of **6.3 percentage points** (95% CI [2.3%, 10.4%]). Across 25 non-tied markers, 21 moved positive and 4 negative. Sign test p = 0.0009.
+The side-by-side surfaced V2's actual gaps: thin alternative-component guidance, thin variant coverage, no reviewer-facing checklist. Five targeted prompt changes followed (default/override rule shape, minimum-two alternatives, minimum-three variants, quantitative thresholds, a new "Decisions to verify" section). Revised V2 scored 16/16.
 
-The effect is real, modest, and not uniform: Dialog and Sheet move substantially (the sub-component omission failure mode the tool was built to address), Checkbox and Toast show small negative deltas traced to a rubric artifact and a marker/guideline mismatch respectively. Both are documented in the write-up.
-
-- **Pre-registration** (hypotheses, conditions, rubric, locked before any scored run): [`eval/ab-experiment/PRE_REGISTRATION.md`](eval/ab-experiment/PRE_REGISTRATION.md)
-- **Full write-up** with figures and per-component breakdown: [`eval/ab-experiment/RESULTS.md`](eval/ab-experiment/RESULTS.md)
-- **Reproduction**: harness, scorers, ablations, and raw runs are all under [`eval/ab-experiment/`](eval/ab-experiment/) — see that folder's README for the map.
+- **Rubric**: [`docs/rubric.md`](docs/rubric.md)
+- **Outputs**: [`evaluation/dialog/v1-external-only.md`](evaluation/dialog/v1-external-only.md), [`evaluation/dialog/v2-full.md`](evaluation/dialog/v2-full.md)
+- **Reproduction**: [`scripts/generate-dialog-comparison.js`](scripts/generate-dialog-comparison.js) regenerates both versions from the current prompt.
+- **Prompt evolution**: [`PROMPT_CHANGELOG.md`](PROMPT_CHANGELOG.md)
 
 ---
 
@@ -337,21 +334,13 @@ See `[eval/README.md](eval/README.md)` for details.
 
 ### Prompt changelog
 
-`[PROMPT_CHANGELOG.md](PROMPT_CHANGELOG.md)` tracks what changed in the prompt, why, and what effect it had on output quality. Each entry corresponds to a meaningful change in the prompt, style guide, or platform guidelines.
-
-### Research
-
-`[docs/research.md](docs/research.md)` contains the sources and citations backing the claims in this README, organized by argument with verification notes and MLA citations.
-
-### Design philosophy
-
-`[docs/design-philosophy.md](docs/design-philosophy.md)` covers the rationale behind the hybrid template format and the compact YAML representation: why the same editorial philosophy governs both human-readable and machine-readable output, and why structure matters more than token count.
+[`PROMPT_CHANGELOG.md`](PROMPT_CHANGELOG.md) tracks what changed in the prompt, why, and what effect it had on output quality. Each entry corresponds to a meaningful change in the prompt, style guide, or platform guidelines.
 
 ---
 
 ## What's next
 
-- Expand the A/B beyond 10 components and strengthen the agentic (Claude Code) arm, which currently runs at a smaller sample than the direct-API matrix
+- Run the same side-by-side test against more components (Select, Toast, Sheet) to check whether the current prompt generalizes past Dialog
 - Support for OpenAPI specs as input alongside JSON schemas and TSX source
 - CI integration: regenerate the component library's agent context on every PR that touches component source
 

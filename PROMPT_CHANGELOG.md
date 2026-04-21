@@ -1,43 +1,43 @@
 # Prompt changelog
 
-Documents what changed in the prompt, why, and what effect it had on output quality. Each entry corresponds to a meaningful change in `src/prompt.js`, `src/style-guide.js`, `src/platform-guidelines.js`, or `src/semantic-guidelines.js`.
+Two entries: the original prompt I wrote at Amazon in 2025, and the current prompt in 2026.
 
 ---
 
-## v5 — Audience reframe and semantic layer (2026)
+## 2026 — Current prompt
 
-- **What changed:** Reframed the audience from "product managers and designers" to "engineers, design engineers, and AI coding agents," added four template sections (Component contracts, Keyboard interactions, ARIA requirements, Common mistakes), introduced `src/semantic-guidelines.js`, extracted shared content into `buildSharedPromptBody`, added explicit section omission rules, raised `max_tokens` from 2000 to 4000, and expanded eval coverage by six cases.
-- **Why:** Component adoption now outpaces component governance — AI coding agents generate wrong UI without structured context for team-mutated component systems, and research shows 34% of AI-generated shadcn components have API errors without structured docs as context (0xminds, 2026).
-- **Effect:** Output now specifies structural contracts, keyboard mappings, ARIA attributes, and common-mistake callouts; complex components like Dialog emit all the new sections while simple ones like Badge correctly omit them.
+**What it is.** A modular prompt assembled from four separable layers, each versioned independently:
 
----
+- `src/prompt.js` — template structure, section omission rules, output budget, framing philosophy (default/override rule shape, quantitative thresholds, required alternatives and variants, reviewer-facing "Decisions to verify" checklist).
+- `src/style-guide.js` — editorial rules for voice, tense, modal verbs, sentence economy, inclusive language.
+- `src/platform-guidelines.js` — curated chunks of Apple HIG and Material Design by component type.
+- `src/semantic-guidelines.js` — WCAG-derived accessibility rules (focus management, ARIA contracts, keyboard interactions, motion preferences).
 
-## v4 — Live doc fetching mode (2024)
+**What it does differently than the 2025 version.**
 
-- **What changed:** Added `buildPromptFromDocs()` alongside `buildPrompt()`, accepting fetched MDX as the grounding source instead of a JSON schema.
-- **Why:** Schemas alone miss behavior details, composition patterns, and accessibility guidance that live in each library's actual documentation.
-- **Effect:** Output for shadcn/ui components now references real composition patterns, keyboard behaviors, and prop semantics pulled from the current upstream docs rather than schema inference.
+- **Dual audience.** The output is written to serve engineers, designers, PMs, and AI coding agents reading the doc as a reference — not just mobile designers translating PRDs. Section structure, heading names, and omission rules are designed so the markdown can be deterministically parsed into compact YAML for agent context files (CLAUDE.md, AGENTS.md, llms.txt).
+- **Modular references.** Platform and semantic guidelines are separate data files the prompt injects, not inline passages. The model draws from encoded references instead of recalling from training data. Each source is auditable and replaceable.
+- **Decision-support framing.** The prompt requires a minimum of two named alternative components, a minimum of three named variants with trigger conditions, and a "Decisions to verify" checklist at the end of every doc. Rules in designated sections express as **default + override + reason** so that overriding a pattern becomes a visible decision, not silent drift.
+- **Quantitative thresholds.** Editorial rules use concrete numbers ("no more than two primary actions," "one or two sentences") instead of vague adjectives ("keep it short").
+- **Source flexibility.** The prompt accepts three input modes — JSON schema, TSX source, or live MDX fetched from a component library's GitHub — and produces the same downstream structure.
 
----
-
-## v3 — Style guide integration (2024)
-
-- **What changed:** Extracted editorial rules into `src/style-guide.js` and added constraints on modal verbs, word economy, goal-before-task ordering, and inclusive language.
-- **Why:** Inline formatting rules were hard to maintain, and "should"/"may"-heavy outputs weakened the authority of the guidance.
-- **Effect:** Output tightened noticeably — "should" and "may" disappeared, sentences shortened, Latin abbreviations were eliminated.
+**How it was tested.** One component (Dialog), two generations: full prompt vs. external references only. Both scored 14/16 against an 8-criterion rubric. The comparison surfaced gaps in alternatives, variants, and reviewer checklists; five targeted prompt changes closed them. Revised prompt scored 16/16. See [`docs/rubric.md`](docs/rubric.md) and [`evaluation/dialog/`](evaluation/dialog/).
 
 ---
 
-## v2 — Em-dash ban and formatting enforcement (2024)
+## 2025 — Amazon origin prompt
 
-- **What changed:** Added an em-dash ban, a 15–20 word sentence cap, and rules to lead with positive framing and include a "why" for every guideline.
-- **Why:** Early outputs had an em-dash-heavy, sentence-bloated, recognizably AI-generated tone, and positive framing was added after Kuvaas and Selart (2004) showed it produces higher confidence in decision-making.
-- **Effect:** Output reads more like a human-written style guide; Do's and Don'ts sections lead with clear guidance instead of a list of warnings.
+**What it was.** A single-file prompt I wrote while embedded with a mobile app team at Amazon that had no dedicated technical writer. The team produced components faster than documentation could keep up, and the upstream sources they were drawing from (Apple HIG, Material Design, internal style guide) were too scattered to reference in review. The prompt was my attempt to collapse the editorial work I was doing by hand into a first-draft generator.
 
----
+**What it drew from.**
 
-## v1 — Initial prompt (2024)
+- **My team's internal style guide.** Voice, tense, modal verb rules, sentence economy — the rules I'd been enforcing in review were encoded directly into the prompt.
+- **Apple Human Interface Guidelines.** The sections I'd been pulling from most often in reviews — touch target sizes, modal presentation, destructive action conventions.
+- **Material Design.** Component conventions for the Android side of the app.
+- **Team preferences.** The specific sections the mobile team wanted in every doc and the editorial conventions they'd already agreed on.
 
-- **What changed:** First version of the prompt, defining the template (component name, one-line summary, When to use, Do's and Don'ts, Anatomy, Variants, Placement, Editorial, Accessibility) with Apple HIG and Material Design as inline references.
-- **Why:** Replaced the manual documentation process I used at Amazon by encoding the same editorial structure the team had written by hand across 15+ components.
-- **Effect:** Generated first drafts in the correct structure; quality was uneven — some too long, some passive, some with hallucinated props — which each subsequent version addressed.
+**What it did.** Given a JSON schema pasted in by hand, it produced a first-draft markdown doc with the sections the team had standardized on. It cut documentation time from roughly three hours per component to about thirty minutes — the remaining work was verification, edge cases, and anything the schema didn't capture.
+
+**Limits.** One input mode (manually pasted schema). Audience was internal mobile design. No accessibility layer beyond what was in the style guide. No external reference injection — the model recalled HIG and Material content from training data rather than drawing from source text. Single-file, not modular.
+
+I don't have the original artifact. The 2026 version is a rebuild from scratch for a different audience and a different set of constraints.
