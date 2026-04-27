@@ -109,7 +109,7 @@ export const cases = [
     },
     traits: [
       "# Badge",
-      "## Variants and options",
+      "## Variants and patterns",
     ],
     antitraits: [
       "## Keyboard interactions", // Badge is non-interactive
@@ -161,10 +161,7 @@ export const cases = [
     ],
     antitraits: [
       "is displayed",
-      "is rendered",
-      "is shown",
       "are displayed",
-      "are rendered",
       "can be seen",
     ],
   },
@@ -292,9 +289,110 @@ export const cases = [
       if (!hasLoadingText) {
         return { pass: false, reason: "Output does not mention loadingText prop" };
       }
-      const variantRef = /`destructive`|variant="destructive"|variant:\s*destructive\b|"destructive"/.test(output);
+      // Allow backtick mentions of `destructive` — the model correctly documents it as
+      // the upstream name to avoid. Only flag JSX/object usage that would ship broken code.
+      const variantRef = /variant="destructive"|variant:\s*"destructive"/.test(output);
       if (variantRef) {
-        return { pass: false, reason: "Output references destructive as a variant value (should be critical)" };
+        return { pass: false, reason: "Output recommends variant=\"destructive\" as valid usage (should be \"critical\")" };
+      }
+      return { pass: true };
+    },
+  },
+  {
+    // No evidence registered for Avatar — platform section must be absent.
+    name: "Avatar (schema) — no platform evidence → platform section absent",
+    input: {
+      schema: {
+        component: "Avatar",
+        props: {
+          src: { type: "string" },
+          alt: { type: "string" },
+          fallback: { type: "string" },
+        },
+      },
+    },
+    traits: ["# Avatar"],
+    antitraits: ["Platform compliance checklist"],
+  },
+  {
+    // No semantic evidence registered for Accordion — ARIA and Keyboard sections
+    // must fall back to absorbed knowledge and include the fallback note.
+    // Using Accordion (not Avatar) because Avatar is non-interactive and omits
+    // ARIA/Keyboard sections entirely, so there is no section to append the note to.
+    name: "Accordion (schema) — no semantic evidence → fallback note present",
+    input: {
+      schema: {
+        component: "Accordion",
+        props: {
+          type: { type: "enum", values: ["single", "multiple"], default: "single" },
+          collapsible: { type: "boolean", default: false },
+          disabled: { type: "boolean", default: false },
+        },
+      },
+    },
+    traits: ["Generated from training knowledge"],
+    antitraits: [],
+  },
+  {
+    // Dialog has registered semantic evidence. When reviewState is current, the output
+    // must cite at least one evidence ID from wai-aria-apg-dialog.
+    name: "Dialog (schema) — semantic evidence IDs cited when current",
+    input: {
+      schema: {
+        component: "Dialog",
+        props: {
+          open: { type: "boolean", default: false },
+          onOpenChange: { type: "function" },
+          modal: { type: "boolean", default: true },
+        },
+      },
+    },
+    traits: [],
+    antitraits: [],
+    customCheck: (output) => {
+      // Evidence IDs only appear in output when reviewState is "current".
+      // This case is expected to fail until evidence is reviewed and set to current.
+      const hasEvidenceId = /wai-aria-apg-dialog-|radix-dialog-/.test(output);
+      if (!hasEvidenceId) {
+        return {
+          pass: false,
+          reason: "No semantic evidence IDs cited — set reviewState to 'current' in evidence files to enable",
+        };
+      }
+      return { pass: true };
+    },
+  },
+  {
+    // Button has registered evidence. When reviewState is current, the output
+    // must cite at least one evidence ID from apple-hig-buttons.
+    name: "Button (schema) — current evidence IDs cited in platform section",
+    input: {
+      schema: {
+        component: "Button",
+        props: {
+          variant: {
+            type: "enum",
+            values: ["default", "destructive", "outline"],
+            default: "default",
+          },
+        },
+      },
+    },
+    traits: [],
+    antitraits: [],
+    customCheck: (output) => {
+      // Evidence IDs only appear in output when reviewState is "current".
+      // This case is expected to fail until evidence is reviewed and set to current.
+      const hasSection = output.includes("Platform compliance checklist");
+      const hasEvidenceId = /apple-hig-buttons-|material3-buttons-/.test(output);
+      if (!hasSection) {
+        return {
+          pass: false,
+          reason: "Platform section absent — set reviewState to 'current' in evidence files to enable",
+        };
+      }
+      if (!hasSection || !hasEvidenceId) {
+        return { pass: false, reason: "Platform section present but no evidence IDs cited" };
       }
       return { pass: true };
     },

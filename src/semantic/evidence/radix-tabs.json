@@ -1,0 +1,24 @@
+{
+  "sourceId": "radix-tabs",
+  "platform": "radix",
+  "canonicalUrl": "https://www.radix-ui.com/primitives/docs/components/tabs",
+  "retrievedAt": "2026-04-26",
+  "reviewedAt": "2026-04-26",
+  "reviewState": "current",
+  "excerpts": [
+    {
+      "id": "radix-tabs-composition",
+      "section": "aria-requirements",
+      "topic": "composition",
+      "evidence": "Tabs.List contains the triggers that are aligned along the edge of the active content. Tabs.Trigger is the button that activates its associated content. Tabs.Content contains the content associated with each trigger.",
+      "supportsGuideline": "TabsList must wrap all TabsTrigger elements. Each TabsTrigger activates one TabsContent. All three sub-components are required."
+    },
+    {
+      "id": "radix-tabs-value-matching",
+      "section": "aria-requirements",
+      "topic": "value prop",
+      "evidence": "Each Trigger has a value prop that must match the value prop of its corresponding Content component. This pairing determines which content displays when a trigger is activated.",
+      "supportsGuideline": "Each TabsTrigger and its corresponding TabsContent must share the same value prop. A mismatch breaks the tab association."
+    }
+  ]
+}

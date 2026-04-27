@@ -1,0 +1,82 @@
+{
+  "sourceId": "apple-hig-text-fields",
+  "platform": "apple-hig",
+  "canonicalUrl": "https://developer.apple.com/design/human-interface-guidelines/text-fields",
+  "retrievedAt": "2026-04-26",
+  "reviewedAt": "2026-04-26",
+  "reviewState": "current",
+  "excerpts": [
+    {
+      "id": "apple-hig-text-fields-purpose",
+      "topic": "field-purpose",
+      "evidence": "A text field is a rectangular area in which people enter or edit small, specific pieces of text. Use a text field to request a small amount of information, such as a name or an email address. To let people input larger amounts of text, use a text view instead.",
+      "supportsChecklistItem": "Verify that text fields are used for small, specific pieces of text. Use a text view for larger amounts of text."
+    },
+    {
+      "id": "apple-hig-text-fields-placeholder",
+      "topic": "placeholder-text",
+      "evidence": "Show a hint in a text field to help communicate its purpose. A text field can contain placeholder text — such as \"Email\" or \"Password\" — when there's no other text in the field. Because placeholder text disappears when people start typing, it can also be useful to include a separate label describing the field to remind people of its purpose.",
+      "supportsChecklistItem": "Verify that placeholder text is used as a hint to help communicate the field's purpose, and that a separate label is included when users need a persistent reminder after they start typing."
+    },
+    {
+      "id": "apple-hig-text-fields-label",
+      "topic": "labels",
+      "evidence": "Because placeholder text disappears when people start typing, it can also be useful to include a separate label describing the field to remind people of its purpose.",
+      "supportsChecklistItem": "Verify that fields include a separate label when placeholder text alone would not give people enough context after they start typing."
+    },
+    {
+      "id": "apple-hig-text-fields-size",
+      "topic": "field-size",
+      "evidence": "To the extent possible, match the size of a text field to the quantity of anticipated text. The size of a text field helps people visually gauge the amount of information to provide.",
+      "supportsChecklistItem": "Verify that the visible size of the text field matches the expected amount of input so people can visually gauge how much information to provide."
+    },
+    {
+      "id": "apple-hig-text-fields-spacing",
+      "topic": "field-spacing",
+      "evidence": "Evenly space multiple text fields. If your layout includes multiple text fields, leave enough space between them so people can easily see which input field belongs with each introductory label. Stack multiple text fields vertically when possible, and use consistent widths to create a more organized layout.",
+      "supportsChecklistItem": "Verify that multiple text fields are evenly spaced, vertically stacked when possible, and wide enough/consistent enough for people to associate each field with its introductory label."
+    },
+    {
+      "id": "apple-hig-text-fields-tab-order",
+      "topic": "focus-order",
+      "evidence": "Ensure that tabbing between multiple fields flows as people expect. When tabbing between fields, move focus in a logical sequence. The system attempts to achieve this result automatically, so you won't need to customize this too often.",
+      "supportsChecklistItem": "Verify that keyboard focus moves through multiple text fields in a logical sequence."
+    },
+    {
+      "id": "apple-hig-text-fields-validation",
+      "topic": "validation",
+      "evidence": "Validate fields when it makes sense. For example, if the only legitimate value for a field is a string of digits, your app needs to alert people if they've entered characters other than digits. The appropriate time to check the data depends on the context: when entering an email address, it's best to validate when people switch to another field; when creating a user name or password, validation needs to happen before people switch to another field.",
+      "supportsChecklistItem": "Verify that field validation timing matches the context. For email fields, validate when people switch to another field; for username or password creation, validate before people switch fields."
+    },
+    {
+      "id": "apple-hig-text-fields-secure",
+      "topic": "secure-entry",
+      "evidence": "Use secure text fields to hide private data. Always use a secure text field when your app asks for sensitive data, such as a password.",
+      "supportsChecklistItem": "Verify that fields collecting sensitive data, such as passwords, use secure text entry."
+    },
+    {
+      "id": "apple-hig-text-fields-formatting",
+      "topic": "numeric-formatting",
+      "evidence": "Use a number formatter to help with numeric data. A number formatter automatically configures the text field to accept only numeric values. It can also display the value in a specific way, such as with a certain number of decimal places, as a percentage, or as currency. Don't assume the actual presentation of data, however, as formatting can vary significantly based on people's locale.",
+      "supportsChecklistItem": "Verify that numeric text fields use appropriate numeric formatting and respect locale-specific presentation."
+    },
+    {
+      "id": "apple-hig-text-fields-keyboard-type",
+      "topic": "keyboard-type",
+      "evidence": "In iOS, iPadOS, tvOS, and visionOS apps, show the appropriate keyboard type. Several different keyboard types are available, each designed to facilitate a different type of input, such as numbers or URLs. To streamline data entry, display the keyboard that's appropriate for the type of content people are entering.",
+      "supportsChecklistItem": "Verify that text fields show the keyboard type appropriate to the expected content, such as numbers, URLs, email addresses, or other specialized input."
+    },
+    {
+      "id": "apple-hig-text-fields-clear-button",
+      "topic": "clear-button",
+      "evidence": "Display a Clear button in the trailing end of a text field to help people erase their input. When this element is present, people can tap it to clear the text field's contents, without having to keep tapping the Delete key.",
+      "supportsChecklistItem": "For text fields where clearing input is useful, verify that a trailing Clear button is available."
+    },
+    {
+      "id": "apple-hig-text-fields-leading-trailing-elements",
+      "topic": "field-accessories",
+      "evidence": "Use images and buttons to provide clarity and functionality in text fields. You can display custom images in both ends of a text field, or you can add a system-provided button, such as the Bookmarks button. In general, use the leading end of a text field to indicate a field's purpose and the trailing end to offer additional features, such as bookmarking.",
+      "supportsChecklistItem": "Verify that leading text-field elements clarify the field's purpose, while trailing elements provide additional functionality."
+    }
+  ]
+}

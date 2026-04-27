@@ -1,0 +1,70 @@
+{
+  "sourceId": "apple-hig-buttons",
+  "platform": "apple-hig",
+  "canonicalUrl": "https://developer.apple.com/design/human-interface-guidelines/buttons",
+  "retrievedAt": "2026-04-26",
+  "reviewedAt": "2026-04-26",
+  "reviewState": "current",
+  "excerpts": [
+    {
+      "id": "apple-hig-buttons-purpose",
+      "topic": "button-purpose",
+      "evidence": "A button initiates an instantaneous action. Versatile and highly customizable, buttons give people simple, familiar ways to do tasks in your app. In general, a button combines three attributes to clearly communicate its function: style, content, and role.",
+      "supportsChecklistItem": "Verify that buttons are used for instantaneous actions and clearly communicate their function through style, content, and role."
+    },
+    {
+      "id": "apple-hig-buttons-labeling",
+      "topic": "labeling",
+      "evidence": "Consider using text when a short label communicates more clearly than an icon. To use text, write a few words that succinctly describe what the button does. Using title-style capitalization, consider starting the label with a verb to help convey the button's action — for example, a button that lets people add items to their shopping cart might use the label \"Add to Cart.\"",
+      "supportsChecklistItem": "Verify that text button labels succinctly describe what the button does, use title-style capitalization, and consider starting with a verb when doing so helps convey the action."
+    },
+    {
+      "id": "apple-hig-buttons-hierarchy",
+      "topic": "visual-hierarchy",
+      "evidence": "In general, use a button that has a prominent visual style for the most likely action in a view. To draw people's attention to a specific button, use a prominent button style so the system can apply an accent color to the button's background. Keep the number of prominent buttons to one or two per view. Presenting too many prominent buttons increases cognitive load, requiring people to spend more time considering options before making a choice.",
+      "supportsChecklistItem": "Verify that prominent button styles are reserved for the most likely actions and limited to one or two per view."
+    },
+    {
+      "id": "apple-hig-buttons-choice-styling",
+      "topic": "visual-hierarchy",
+      "evidence": "Use style — not size — to visually distinguish the preferred choice among multiple options. When you use buttons of the same size to offer two or more options, you signal that the options form a coherent set of choices. If you want to highlight the preferred or most likely option in a set, use a more prominent button style for that option and a less prominent style for the remaining ones.",
+      "supportsChecklistItem": "Verify that preferred choices are distinguished by button style rather than button size, and that buttons in the same choice set use consistent sizing."
+    },
+    {
+      "id": "apple-hig-buttons-touch-target",
+      "topic": "touch-targets",
+      "evidence": "As a general rule, a button needs a hit region of at least 44x44 pt — in visionOS, 60x60 pt — to ensure that people can select it easily, whether they use a fingertip, a pointer, their eyes, or a remote.",
+      "supportsChecklistItem": "Verify that buttons have a hit region of at least 44×44 pt, or 60×60 pt in visionOS."
+    },
+    {
+      "id": "apple-hig-buttons-press-state",
+      "topic": "interaction-feedback",
+      "evidence": "Always include a press state for a custom button. Without a press state, a button can feel unresponsive, making people wonder if it's accepting their input.",
+      "supportsChecklistItem": "Verify that custom buttons include a visible press state so people can tell the button accepted their input."
+    },
+    {
+      "id": "apple-hig-buttons-icon",
+      "topic": "icon-buttons",
+      "evidence": "Depending on the platform, a button can contain a symbol (or icon), a text label, or both to help people understand what it does. Try to associate familiar actions with familiar icons. For example, people can predict that a button containing the square.and.arrow.up symbol will help them perform share-related activities. If it makes sense to use an icon in your button, consider using an existing or customized symbol.",
+      "supportsChecklistItem": "Verify that icon buttons use familiar symbols that clearly communicate the action. Use text when a short label communicates more clearly than an icon."
+    },
+    {
+      "id": "apple-hig-buttons-role-primary",
+      "topic": "button-roles",
+      "evidence": "A system button can have one of the following roles: Normal, Primary, Cancel, Destructive. Primary is the default button — the button people are most likely to choose. Assign the primary role to the button people are most likely to choose.",
+      "supportsChecklistItem": "Verify that the primary role is assigned to the default or most likely nondestructive action."
+    },
+    {
+      "id": "apple-hig-buttons-destructive",
+      "topic": "destructive-actions",
+      "evidence": "A system button can have one of the following roles: Normal, Primary, Cancel, Destructive. Destructive is the button role for an action that can result in data destruction. A button's role can have additional effects on its appearance. For example, a primary button uses an app's accent color, whereas a destructive button uses the system red color. Don't assign the primary role to a button that performs a destructive action, even if that action is the most likely choice.",
+      "supportsChecklistItem": "Verify that destructive actions use the destructive role, receive destructive styling such as system red, and are not assigned the primary role even if they are the most likely action."
+    },
+    {
+      "id": "apple-hig-buttons-loading-state",
+      "topic": "loading-state",
+      "evidence": "Configure a button to display an activity indicator when you need to provide feedback about an action that doesn't instantly complete. Displaying an activity indicator within a button can save space in your user interface while clearly communicating the reason for the delay. To help clarify what's happening, you can also configure the button to display a different label alongside the activity indicator.",
+      "supportsChecklistItem": "Verify that buttons triggering actions that do not complete instantly provide progress feedback, such as an activity indicator and, when helpful, an updated label."
+    }
+  ]
+}

@@ -6,22 +6,23 @@ Two entries: the original prompt I wrote at Amazon in 2025, and the current prom
 
 ## 2026 — Current prompt
 
-**What it is.** A modular prompt assembled from four separable layers, each versioned independently:
+**What it is.** A modular prompt assembled from separable layers, each versioned independently:
 
-- `src/prompt.js` — template structure, section omission rules, output budget, framing philosophy (default/override rule shape, quantitative thresholds, required alternatives and variants, reviewer-facing "Decisions to verify" checklist).
+- `src/prompt.js` — template structure, section omission rules, output budget, framing philosophy (default/override rule shape, quantitative thresholds, required alternatives and variants, reviewer-facing checklist).
 - `src/style-guide.js` — editorial rules for voice, tense, modal verbs, sentence economy, inclusive language.
-- `src/platform-guidelines.js` — curated chunks of Apple HIG and Material Design by component type.
-- `src/semantic-guidelines.js` — WCAG-derived accessibility rules (focus management, ARIA contracts, keyboard interactions, motion preferences).
+- `src/semantic-guidelines.js` — compound component composition rules and known AI agent failure patterns. Permanent curated knowledge, not spec-verifiable.
+- `src/platform/` — human-reviewed excerpts from Apple HIG and Material Design, organized by component type. Injected as `<platform-evidence>` when reviewed evidence exists for a component; powers the Platform compliance checklist section only.
+- `src/semantic/` — human-reviewed excerpts from WAI-ARIA APG and Radix UI docs. Injected as `<semantic-evidence>` when reviewed evidence exists; powers ARIA requirements, Keyboard interactions, and Accessibility sections with source citations.
 
 **What it does differently than the 2025 version.**
 
-- **Dual audience.** The output is written to serve engineers, designers, PMs, and AI coding agents reading the doc as a reference — not just mobile designers translating PRDs. Section structure, heading names, and omission rules are designed so the markdown can be deterministically parsed into compact YAML for agent context files (CLAUDE.md, AGENTS.md, llms.txt).
-- **Modular references.** Platform and semantic guidelines are separate data files the prompt injects, not inline passages. The model draws from encoded references instead of recalling from training data. Each source is auditable and replaceable.
-- **Decision-support framing.** The prompt requires a minimum of two named alternative components, a minimum of three named variants with trigger conditions, and a "Decisions to verify" checklist at the end of every doc. Rules in designated sections express as **default + override + reason** so that overriding a pattern becomes a visible decision, not silent drift.
+- **Dual audience.** The output serves engineers, designers, PMs, and AI coding agents — not just mobile designers translating PRDs. Section structure, heading names, and omission rules are designed so the markdown can be deterministically parsed into compact YAML for agent context files (CLAUDE.md, AGENTS.md, llms.txt).
+- **Evidence-backed citations.** Platform guidance and ARIA/keyboard requirements cite specific reviewed excerpts with source IDs and URLs, rather than recalling platform knowledge from training data. The generator omits a section rather than filling it with unverifiable claims when no reviewed evidence exists.
+- **Decision-support framing.** The prompt requires a minimum of two named alternative components, a minimum of three named variants with trigger conditions, and a "Decisions to verify" checklist at the end of every doc. Rules in designated sections express as **default + override + reason** so overriding a pattern becomes a visible decision, not silent drift.
 - **Quantitative thresholds.** Editorial rules use concrete numbers ("no more than two primary actions," "one or two sentences") instead of vague adjectives ("keep it short").
 - **Source flexibility.** The prompt accepts three input modes — JSON schema, TSX source, or live MDX fetched from a component library's GitHub — and produces the same downstream structure.
 
-**How it was tested.** One component (Dialog), two generations: full prompt vs. external references only. Both scored 14/16 against an 8-criterion rubric. The comparison surfaced gaps in alternatives, variants, and reviewer checklists; five targeted prompt changes closed them. Revised prompt scored 16/16. See [`docs/rubric.md`](docs/rubric.md) and [`evaluation/dialog/`](evaluation/dialog/).
+**How it was tested.** One component (Dialog), two generations: full prompt vs. external references only. The comparison surfaced gaps in alternatives, variants, and reviewer checklists; five targeted prompt changes closed them. Ongoing verification uses the audit system in `eval/audit.js` against the rubric in [`docs/rubric.md`](docs/rubric.md).
 
 ---
 

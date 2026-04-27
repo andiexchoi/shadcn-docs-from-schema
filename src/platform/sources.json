@@ -1,0 +1,62 @@
+{
+  "button": {
+    "sources": [
+      {
+        "id": "apple-hig-buttons",
+        "platform": "apple-hig",
+        "title": "Buttons",
+        "url": "https://developer.apple.com/design/human-interface-guidelines/buttons",
+        "appliesTo": ["button"],
+        "status": "active"
+      },
+      {
+        "id": "material3-buttons",
+        "platform": "material-3",
+        "title": "Buttons",
+        "url": "https://m3.material.io/components/buttons/guidelines",
+        "appliesTo": ["button"],
+        "status": "active"
+      }
+    ]
+  },
+  "dialog": {
+    "sources": [
+      {
+        "id": "apple-hig-alerts",
+        "platform": "apple-hig",
+        "title": "Alerts",
+        "url": "https://developer.apple.com/design/human-interface-guidelines/alerts",
+        "appliesTo": ["dialog"],
+        "status": "active"
+      },
+      {
+        "id": "material3-dialog",
+        "platform": "material-3",
+        "title": "Dialogs",
+        "url": "https://m3.material.io/components/dialogs/guidelines",
+        "appliesTo": ["dialog"],
+        "status": "active"
+      }
+    ]
+  },
+  "input": {
+    "sources": [
+      {
+        "id": "apple-hig-text-fields",
+        "platform": "apple-hig",
+        "title": "Text Fields",
+        "url": "https://developer.apple.com/design/human-interface-guidelines/text-fields",
+        "appliesTo": ["input"],
+        "status": "active"
+      },
+      {
+        "id": "material3-input",
+        "platform": "material-3",
+        "title": "Text fields",
+        "url": "https://m3.material.io/components/text-fields/guidelines",
+        "appliesTo": ["input"],
+        "status": "active"
+      }
+    ]
+  }
+}

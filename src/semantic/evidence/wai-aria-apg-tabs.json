@@ -1,0 +1,52 @@
+{
+  "sourceId": "wai-aria-apg-tabs",
+  "platform": "wai-aria-apg",
+  "canonicalUrl": "https://www.w3.org/WAI/ARIA/apg/patterns/tabs/",
+  "retrievedAt": "2026-04-26",
+  "reviewedAt": "2026-04-26",
+  "reviewState": "current",
+  "excerpts": [
+    {
+      "id": "wai-aria-apg-tabs-tablist-role",
+      "section": "aria-requirements",
+      "topic": "tablist role",
+      "evidence": "The element that serves as the container for the set of tabs has role tablist.",
+      "supportsGuideline": "The tab container element must have role=\"tablist\"."
+    },
+    {
+      "id": "wai-aria-apg-tabs-tab-role",
+      "section": "aria-requirements",
+      "topic": "tab role and selection",
+      "evidence": "Each element that serves as a tab has role tab. Each element with role tab has the property aria-controls referring to its associated tabpanel. The active tab element has the state aria-selected set to true and all other tab elements have it set to false.",
+      "supportsGuideline": "Each tab must have role=\"tab\", aria-controls pointing to its tabpanel's ID, aria-selected=\"true\" when active, and aria-selected=\"false\" when inactive."
+    },
+    {
+      "id": "wai-aria-apg-tabs-tabpanel-role",
+      "section": "aria-requirements",
+      "topic": "tabpanel role",
+      "evidence": "Each element that contains the content panel for a tab has role tabpanel. Each element with role tabpanel has the property aria-labelledby referring to its associated tab element.",
+      "supportsGuideline": "Each tab panel must have role=\"tabpanel\" and aria-labelledby pointing to its associated tab's ID."
+    },
+    {
+      "id": "wai-aria-apg-tabs-keyboard-arrows",
+      "section": "keyboard-interactions",
+      "topic": "arrow navigation",
+      "evidence": "Right Arrow: Moves focus to the next tab. If focus is on the last tab element, moves focus to the first. Left Arrow: Moves focus to the previous tab. If focus is on the first tab, moves focus to the last tab.",
+      "supportsGuideline": "**Arrow Right**: moves focus to the next tab (wraps to first). **Arrow Left**: moves focus to the previous tab (wraps to last)."
+    },
+    {
+      "id": "wai-aria-apg-tabs-keyboard-home-end",
+      "section": "keyboard-interactions",
+      "topic": "Home and End",
+      "evidence": "Home (Optional): Moves focus to the first tab. End (Optional): Moves focus to the last tab.",
+      "supportsGuideline": "**Home** (optional): moves focus to the first tab. **End** (optional): moves focus to the last tab."
+    },
+    {
+      "id": "wai-aria-apg-tabs-keyboard-tab",
+      "section": "keyboard-interactions",
+      "topic": "Tab key",
+      "evidence": "When focus moves into the tab list, places focus on the active tab element. When the tab list contains the focus, Tab moves focus to the next element in the page tab sequence outside of the tablist, which is the tabpanel.",
+      "supportsGuideline": "**Tab**: when focus enters the tab list, lands on the active tab. Pressing Tab again moves focus out of the tab list into the associated tab panel content."
+    }
+  ]
+}

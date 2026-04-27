@@ -17,4 +17,4 @@ Add entries to `eval/cases.js`. Each case tests a specific behavior of the promp
 
 ## When to run
 
-Run the eval after any change to `src/prompt.js`, `src/style-guide.js`, or `src/platform-guidelines.js` to check for regressions.
+Run the eval after any change to `src/prompt.js`, `src/style-guide.js`, or any file in `src/platform/` or `src/semantic/` to check for regressions.

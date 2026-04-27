@@ -1,0 +1,59 @@
+{
+  "sourceId": "wai-aria-apg-dialog",
+  "platform": "wai-aria-apg",
+  "canonicalUrl": "https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/",
+  "retrievedAt": "2026-04-26",
+  "reviewedAt": "2026-04-26",
+  "reviewState": "current",
+  "excerpts": [
+    {
+      "id": "wai-aria-apg-dialog-role",
+      "section": "aria-requirements",
+      "topic": "role",
+      "evidence": "The element that serves as the dialog container has a role of dialog.",
+      "supportsGuideline": "The dialog container element must have role=\"dialog\"."
+    },
+    {
+      "id": "wai-aria-apg-dialog-modal",
+      "section": "aria-requirements",
+      "topic": "aria-modal",
+      "evidence": "The dialog container element has aria-modal set to true.",
+      "supportsGuideline": "The dialog container element must have aria-modal=\"true\"."
+    },
+    {
+      "id": "wai-aria-apg-dialog-labelledby",
+      "section": "aria-requirements",
+      "topic": "aria-labelledby",
+      "evidence": "The dialog container has either a value set for the aria-labelledby property that refers to a visible dialog title, or a label specified by aria-label.",
+      "supportsGuideline": "The dialog container must have aria-labelledby pointing to the visible dialog title element's ID. Use aria-label only when no visible title is present."
+    },
+    {
+      "id": "wai-aria-apg-dialog-describedby",
+      "section": "aria-requirements",
+      "topic": "aria-describedby",
+      "evidence": "Optionally, the aria-describedby property is set on the element with the dialog role to indicate which element or elements in the dialog contain content that describes the primary purpose or message.",
+      "supportsGuideline": "When a description element is present, set aria-describedby on the dialog container pointing to the description element's ID."
+    },
+    {
+      "id": "wai-aria-apg-dialog-keyboard-tab",
+      "section": "keyboard-interactions",
+      "topic": "Tab",
+      "evidence": "Tab: Moves focus to the next tabbable element inside the dialog. If focus is on the last tabbable element inside the dialog, moves focus to the first tabbable element inside the dialog.",
+      "supportsGuideline": "**Tab**: moves focus to the next tabbable element inside the dialog, wrapping from last to first. Focus must not escape to the page behind."
+    },
+    {
+      "id": "wai-aria-apg-dialog-keyboard-shift-tab",
+      "section": "keyboard-interactions",
+      "topic": "Shift+Tab",
+      "evidence": "Shift + Tab: Moves focus to the previous tabbable element inside the dialog. If focus is on the first tabbable element inside the dialog, moves focus to the last tabbable element inside the dialog.",
+      "supportsGuideline": "**Shift+Tab**: moves focus to the previous tabbable element inside the dialog, wrapping from first to last."
+    },
+    {
+      "id": "wai-aria-apg-dialog-keyboard-escape",
+      "section": "keyboard-interactions",
+      "topic": "Escape",
+      "evidence": "Escape: Closes the dialog.",
+      "supportsGuideline": "**Escape**: closes the dialog and returns focus to the element that triggered it."
+    }
+  ]
+}

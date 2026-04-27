@@ -11,16 +11,17 @@ The documentation layer between your component library and everything that reads
 - [What it does](#what-it-does)
 - [How it works](#how-it-works)
   - [Three input modes](#three-input-modes)
-  - [The platform guidelines drive the reasoning](#the-platform-guidelines-drive-the-reasoning)
+  - [Schema-level reasoning](#schema-level-reasoning)
+  - [Platform evidence pipeline](#platform-evidence-pipeline)
+  - [Semantic evidence pipeline](#semantic-evidence-pipeline)
   - [The prompt is the core artifact](#the-prompt-is-the-core-artifact)
   - [Two output representations](#two-output-representations)
   - [Agent context file export](#agent-context-file-export)
   - [Batch CLI](#batch-cli)
   - [Output still requires human review](#output-still-requires-human-review)
 - [Examples](#examples)
-  - [Button (basic)](#example-button)
   - [Custom Button (divergence from upstream)](#example-custom-button-divergence-from-upstream)
-- [Does it work? Dialog side-by-side test](#does-it-work-dialog-side-by-side-test)
+- [Does it work? Audit system](#does-it-work-audit-system)
 - [Background and motivation](#background-and-motivation)
   - [Origin](#origin)
   - [The problem has shifted](#the-problem-has-shifted)
@@ -66,11 +67,68 @@ Three inputs feed the same downstream path. The prompt assembles from versioned 
 
 **Paste source:** paste a component's TSX/JSX source code directly. The tool extracts a JSON schema from the source using regex-based prop extraction (interfaces, type aliases, cva variants, forwardRef patterns, destructuring defaults) and generates documentation from the result. This is the path for teams whose components exist only as code, with no schema or upstream docs to fetch.
 
-### The platform guidelines drive the reasoning
+### Schema-level reasoning
 
-A curated knowledge layer in `[src/platform-guidelines.js](src/platform-guidelines.js)` contains best practices from Apple's Human Interface Guidelines and Google's Material Design: touch target sizes, disabled state guidance, label conventions, accessibility requirements, and more. This layer is injected into every prompt as a reference.
+Two optional schema fields let you encode the "why" behind your component's decisions directly in the schema:
 
-The model draws from this encoded knowledge rather than recalling best practices from training data. The result is guidance that's grounded and auditable: if something looks wrong, you can check it against the source file.
+- Add a `reason` field to any prop to explain why it exists or what decision it encodes. The model uses this as the "because" clause in the corresponding guideline.
+- Add a `rules` array at the component level for design decisions that should generate Do's directly. Each entry takes a `rule`, a `reason`, and an optional `override` field. The model turns each into a Do bullet in default/override form.
+
+```json
+{
+  "component": "Button",
+  "props": {
+    "variant": {
+      "type": "enum",
+      "values": ["default", "critical"],
+      "reason": "critical replaces destructive to match our severity scale — user research found destructive tested as alarming for low-severity actions"
+    }
+  },
+  "rules": [
+    {
+      "rule": "Use the critical variant only for actions that permanently delete data or cannot be undone.",
+      "reason": "critical is the highest severity on the product scale — applying it to reversible actions trains users to ignore the warning.",
+      "override": "Use the default variant when the action can be undone within the same session, such as archiving with an undo affordance."
+    }
+  ]
+}
+```
+
+These fields are optional and additive. Schemas without them still generate complete documentation. Add them where your team has made decisions that the model would otherwise have to guess.
+
+### Platform evidence pipeline
+
+The tool generates a "Platform compliance checklist" section at the end of each doc. This section is a checklist of things to confirm before you start building — each item tied to a specific, reviewed excerpt from Apple HIG or Material Design, with a source ID and a direct URL.
+
+The distinction from a typical AI doc generator: the tool does not synthesize platform guidance from training knowledge. It only injects platform checklist items when a human-reviewed evidence excerpt backs them up. If no reviewed evidence exists for a component, the section is omitted rather than filled with unverifiable claims.
+
+The evidence pipeline lives in `src/platform/`:
+
+- **`sources.json`** — a registry of canonical HIG and Material source URLs, organized by component type
+- **`evidence/*.json`** — reviewed excerpts from those sources, each with a source ID, a quoted or paraphrased passage, and the checklist item it supports
+- **`validate-evidence.js`** — checks that all evidence files are structurally valid and that source IDs resolve in the registry
+- **`refresh-sources.js`** — checks whether source URLs are still reachable and flags any whose content appears to have changed
+
+Run `node src/platform/validate-evidence.js` to check all files. The generator will not inject evidence that isn't marked `current`.
+
+**Adding evidence for your own component types.** Add an entry to `sources.json` with the canonical URL, create an evidence file in `src/platform/evidence/`, and set `reviewState: "current"` once you've verified the excerpts against the live source. Any component type with current evidence will automatically get a platform verification section in its generated doc.
+
+### Semantic evidence pipeline
+
+The ARIA requirements and Keyboard interactions sections follow the same evidence-backed model as the platform checklist. When reviewed excerpts from a canonical accessibility source exist for a component, those sections cite the source with an ID and URL. When no reviewed evidence exists, those sections generate from absorbed knowledge (the structural and semantic guidelines) and add a note: *Generated from training knowledge. No verified source excerpts available for this component.*
+
+The semantic evidence pipeline lives in `src/semantic/`:
+
+- **`sources.json`** — a registry of canonical source URLs organized by component type. Source families: WAI-ARIA APG, Radix UI docs, MDN, HTML spec.
+- **`evidence/*.json`** — reviewed excerpts from those sources. Each excerpt has a `section` field that routes it to the correct doc section (`aria-requirements`, `keyboard-interactions`, or `accessibility`).
+- **`validate-evidence.js`** — checks that all evidence files are structurally valid and that source IDs resolve in the registry. Run: `node src/semantic/validate-evidence.js`
+- **`refresh-sources.js`** — checks whether source URLs are still reachable and flags any whose content appears to have changed. Run: `node src/semantic/refresh-sources.js`
+
+The generator will not inject evidence that isn't marked `current`. Initial evidence covers dialog, select, and tabs across WAI-ARIA APG and Radix UI docs.
+
+**Adding evidence for your own component types.** Add an entry to `sources.json`, create an evidence file in `src/semantic/evidence/`, and set `reviewState: "current"` once you've verified the excerpts against the live source. Each excerpt must have: `id`, `section`, `topic`, `evidence` (the source text), and `supportsGuideline` (the pre-phrased doc requirement).
+
+**What semantic evidence does not cover.** The compound component composition rules and known AI agent failure patterns in `src/semantic-guidelines.js` are curated empirical knowledge — they're not spec-verifiable against a canonical URL. They remain as absorbed reference material and power Component contracts and Common mistakes sections.
 
 ### The prompt is the core artifact
 
@@ -78,10 +136,10 @@ The model draws from this encoded knowledge rather than recalling best practices
 
 The prompt assembles from four modules, injected in this order:
 
-1. **Formatting rules and framing philosophy** (inline in `prompt.js`) — non-negotiable editorial constraints: no passive voice, no em-dashes, positive framing first, every guideline includes a "why"
+1. **Formatting rules and framing philosophy** (inline in `prompt.js`) — four non-negotiable constraints (no em-dashes, no "should"/"may", no Latin abbreviations, schema-defined names only) plus framing philosophy: positive guidance before negative, every rule carries a "why," and guidelines use default/override form when the source provides a reason
 2. **Template with section structure** (inline in `prompt.js`) — the exact heading names and section omission rules that make the output deterministically parseable by the compact format converter
 3. **Output budget** (inline in `prompt.js`) — sentence and bullet limits per section, calibrated to produce first drafts that are tight enough to use as agent context without post-editing
-4. **Style guide** (`[src/style-guide.js](src/style-guide.js)`), **platform guidelines** (`[src/platform-guidelines.js](src/platform-guidelines.js)`), and **semantic guidelines** (`[src/semantic-guidelines.js](src/semantic-guidelines.js)`) — injected as reference material the model draws from rather than recalling from training data
+4. **Style guide** (`[src/style-guide.js](src/style-guide.js)`) and **semantic guidelines** (`[src/semantic-guidelines.js](src/semantic-guidelines.js)`) — injected as reference material; **semantic evidence** (`[src/semantic/](src/semantic/)`) and **platform evidence** (`[src/platform/](src/platform/)`) — loaded per component and injected only when reviewed evidence exists
 
 The modules are separate so each can be versioned, tested, and updated independently. The heading names in the template are the same heading names the compact format parser splits on, which is why both must be maintained together.
 
@@ -116,67 +174,6 @@ The tool generates first drafts. Engineers verify technical accuracy. Writers ed
 ---
 
 ## Examples
-
-### Example: Button
-
-**Input schema:**
-
-```json
-{
-  "component": "Button",
-  "props": {
-    "variant": {
-      "type": "enum",
-      "values": ["default", "destructive", "outline", "secondary", "ghost", "link"],
-      "default": "default"
-    },
-    "size": {
-      "type": "enum",
-      "values": ["default", "sm", "lg", "icon"],
-      "default": "default"
-    },
-    "disabled": {
-      "type": "boolean",
-      "default": false
-    }
-  }
-}
-```
-
-**Generated output (excerpted):**
-
-```markdown
-# Button
-
-Triggers a single, discrete action wherever a user needs to confirm, submit, or initiate something.
-
-## When to use
-
-Use a button when a user action produces an immediate result, like submitting a form, saving changes,
-or opening a dialog. For link-style navigation to another page, use the `link` variant or a plain
-anchor. For toggling between states, consider a toggle or checkbox instead.
-
-## Variants and options
-
-**Default:** the primary action. Use once per view for the most important thing the user can do.
-
-**Destructive:** for actions that delete data or cannot be undone. Always pair with a confirmation dialog.
-
-**Ghost:** low-emphasis actions where a filled or outlined button would compete with more important UI.
-
-**Icon (size):** use only when the icon is universally understood. Always include an `aria-label`.
-
-## Accessibility
-
-Set `aria-label` on every icon-only button. The label names the action, not the icon: "Close dialog," not "X."
-
-Use `aria-disabled="true"` instead of the HTML `disabled` attribute to keep the element in the tab
-order while communicating that it's unavailable.
-
-Use `aria-pressed` when the button toggles between two states. Update the value on each selection.
-
-Both Enter and Space activate a button. Don't override or block these key bindings.
-```
 
 ### Example: Custom Button (divergence from upstream)
 
@@ -233,17 +230,20 @@ The AI agent that consumes this file will never hallucinate `destructive` or mis
 
 ---
 
-## Does it work? Dialog side-by-side test
+## Does it work? Audit system
 
-To test what the editorial layer actually contributes, I generated two versions of the Dialog doc from the same tool: **V1** with source docs plus external references only (template and framing rules stripped out), and **V2** with the full pipeline. Both scored against an 8-criterion rubric written beforehand: decision support, accessibility coverage, contract specificity, failure modes named, editorial guidelines, PM-legibility, canonical-vs-variant coverage, signal density.
+The tool ships with an assisted-reading audit system for verifying generated output. It checks two things:
 
-Initial result: **V1 and V2 both scored 14/16.** Tied, different strengths. V1 ran 401 lines, code-heavy, covered seven variants. V2 ran 69 lines, prose-first, covered one. The editorial layer was doing compression and cross-functional legibility — not unique technical content. External references plus source docs carried the accessibility, ARIA, and editorial substance.
+**Source fidelity.** Every factual claim in the generated doc traces back to a line in the source — fetched MDX, JSON schema, or TSX. The audit catches hallucinated props, invented keyboard shortcuts, fabricated ARIA attributes, and wrong sub-component names.
 
-The side-by-side surfaced V2's actual gaps: thin alternative-component guidance, thin variant coverage, no reviewer-facing checklist. Five targeted prompt changes followed (default/override rule shape, minimum-two alternatives, minimum-three variants, quantitative thresholds, a new "Decisions to verify" section). Revised V2 scored 16/16.
+**Prompt conformance.** The output follows every rule in `src/prompt.js` and `src/style-guide.js`. The audit catches em-dashes, passive voice in guidelines, missing sections, and sections that should have been omitted.
+
+Running `node eval/audit.js <component>` generates a doc, fetches the source, runs substring scans for the style rules, and pre-extracts every prop, variant, ARIA attribute, keyboard key, and sub-component the doc mentions into checklist rows. The reading and verdicts are filled in by hand. Audit files are written to `evaluation/audits/`.
+
+The rubric that defines these checks, including the reader's guide for evaluating output against your own team's needs, lives in [`docs/rubric.md`](docs/rubric.md).
 
 - **Rubric**: [`docs/rubric.md`](docs/rubric.md)
-- **Outputs**: [`evaluation/dialog/v1-external-only.md`](evaluation/dialog/v1-external-only.md), [`evaluation/dialog/v2-full.md`](evaluation/dialog/v2-full.md)
-- **Reproduction**: [`scripts/generate-dialog-comparison.js`](scripts/generate-dialog-comparison.js) regenerates both versions from the current prompt.
+- **Audit guide**: [`docs/audit-guide.md`](docs/audit-guide.md)
 - **Prompt evolution**: [`PROMPT_CHANGELOG.md`](PROMPT_CHANGELOG.md)
 
 ---
@@ -328,19 +328,19 @@ The shadcn fetch is proof of concept. The thesis is that every team running a cu
 
 ### Prompt eval system
 
-The `eval/` directory contains a lightweight evaluation framework for testing prompt changes against expected output quality. Each test case defines traits the output must contain and antitraits it must not. Run `node eval/run.js` after changing the prompt, style guide, or platform guidelines to check for regressions.
+The `eval/` directory contains a lightweight evaluation framework for testing prompt changes against expected output quality. Each test case defines traits the output must contain and antitraits it must not. Run `node eval/run.js` after changing the prompt, style guide, or any file in `src/platform/` or `src/semantic/` to check for regressions.
 
 See `[eval/README.md](eval/README.md)` for details.
 
 ### Prompt changelog
 
-[`PROMPT_CHANGELOG.md`](PROMPT_CHANGELOG.md) tracks what changed in the prompt, why, and what effect it had on output quality. Each entry corresponds to a meaningful change in the prompt, style guide, or platform guidelines.
+[`PROMPT_CHANGELOG.md`](PROMPT_CHANGELOG.md) documents the two versions of the prompt: the Amazon origin and the current version, with a description of what changed between them.
 
 ---
 
 ## What's next
 
-- Run the same side-by-side test against more components (Select, Toast, Sheet) to check whether the current prompt generalizes past Dialog
+- Run audits against more components (Select, Toast, Sheet) using `eval/audit.js` to check whether the prompt generalizes past Dialog and Button
 - Support for OpenAPI specs as input alongside JSON schemas and TSX source
 - CI integration: regenerate the component library's agent context on every PR that touches component source
 

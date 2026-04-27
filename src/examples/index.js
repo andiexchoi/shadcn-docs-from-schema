@@ -483,7 +483,8 @@ export const examples = [
           type: "enum",
           values: ["default", "outline", "ghost", "critical", "secondary", "link"],
           default: "default",
-          description: "Controls the visual style of the button. 'critical' replaces the upstream 'destructive' variant to align with the product's severity taxonomy."
+          description: "Controls the visual style of the button. 'critical' replaces the upstream 'destructive' variant to align with the product's severity taxonomy.",
+          reason: "'critical' was renamed from 'destructive' after user research in Q3 2024 found that 'destructive' tested as alarming for low-severity actions like archiving a record. The product severity scale is info, warning, critical — this variant maps to critical."
         },
         size: {
           type: "enum",
@@ -494,7 +495,8 @@ export const examples = [
         loading: {
           type: "boolean",
           default: false,
-          description: "Shows a spinner and disables interaction. The button retains its dimensions to prevent layout shift."
+          description: "Shows a spinner and disables interaction. The button retains its dimensions to prevent layout shift.",
+          reason: "Prevents double-submission on async actions. The button stays in place visually so the user knows their action was received."
         },
         loadingText: {
           type: "string",
@@ -518,6 +520,18 @@ export const examples = [
           description: "Present when loading is true. Use for CSS-only loading styles."
         }
       },
+      rules: [
+        {
+          rule: "Use the critical variant only for actions that permanently delete data or cannot be undone.",
+          reason: "critical is the highest severity on the product scale. Applying it to reversible actions trains users to ignore the visual warning.",
+          override: "Override with the default variant when the action can be undone within the same session, such as archiving a record with an undo affordance."
+        },
+        {
+          rule: "Always provide loadingText when loading is true on a button with a short label.",
+          reason: "A spinner replacing a one-word label gives users no information about what is happening. loadingText like 'Saving...' or 'Deleting...' closes that gap.",
+          override: "Omit loadingText when the button label is already a verb phrase that describes the in-progress state ('Uploading file'), because the label already communicates progress."
+        }
+      ],
       notes: {
         upstreamDivergence: "This component diverges from upstream shadcn/ui Button in three ways: (1) 'destructive' variant renamed to 'critical', (2) loading and loadingText props added, (3) focusTrap prop added for modal contexts. Upstream docs do not cover these props.",
         loading: "The loading spinner renders inside the button at inline-start position. The button's min-width is locked to prevent layout shift when loadingText changes the label length.",

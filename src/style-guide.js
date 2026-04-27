@@ -9,7 +9,7 @@ Apply every rule in this section to every word you write.
 ### Voice and structure
 
 - Address the reader as "you." Write in the second person throughout.
-- Use active voice. Never passive.
+- Use active voice in guidelines, Do's and Don'ts, and Editorial guidelines. Passive voice is acceptable when describing system or browser behavior with no human actor ("focus is trapped inside the dialog," "content is announced by screen readers").
 - Use present tense. Use future tense only when an event happens later than, not immediately after, the action described.
 - Use imperative sentences where possible. They are shorter and more direct.
 - Put the goal before the task within each sentence. Start with the goal: "To avoid this issue, perform this task." Not: "Perform this task to avoid this issue."

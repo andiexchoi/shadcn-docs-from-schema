@@ -1,0 +1,24 @@
+{
+  "sourceId": "radix-dialog",
+  "platform": "radix",
+  "canonicalUrl": "https://www.radix-ui.com/primitives/docs/components/dialog",
+  "retrievedAt": "2026-04-26",
+  "reviewedAt": "2026-04-26",
+  "reviewState": "current",
+  "excerpts": [
+    {
+      "id": "radix-dialog-title-required",
+      "section": "aria-requirements",
+      "topic": "DialogTitle",
+      "evidence": "DialogTitle is an accessible title to be announced when the dialog is opened. If you want to hide the title, wrap it inside our Visually Hidden utility. It is required for the accessibility layer to work correctly.",
+      "supportsGuideline": "DialogTitle is required. Radix wires aria-labelledby automatically from the dialog container to the title. Wrap in VisuallyHidden when the title must be hidden visually but still exist for screen readers."
+    },
+    {
+      "id": "radix-dialog-description-optional",
+      "section": "aria-requirements",
+      "topic": "DialogDescription",
+      "evidence": "DialogDescription is an optional accessible description to be announced when the dialog is opened. If you want to remove the description entirely, remove this part and pass aria-describedby={undefined} to Dialog.Content.",
+      "supportsGuideline": "DialogDescription is optional. When absent, pass aria-describedby={undefined} to DialogContent to avoid a dangling aria-describedby pointing to a non-existent ID."
+    }
+  ]
+}

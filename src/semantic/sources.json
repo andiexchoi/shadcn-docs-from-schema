@@ -1,0 +1,62 @@
+{
+  "dialog": {
+    "sources": [
+      {
+        "id": "wai-aria-apg-dialog",
+        "platform": "wai-aria-apg",
+        "title": "Dialog (Modal) Pattern",
+        "url": "https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/",
+        "appliesTo": ["dialog"],
+        "status": "active"
+      },
+      {
+        "id": "radix-dialog",
+        "platform": "radix",
+        "title": "Dialog",
+        "url": "https://www.radix-ui.com/primitives/docs/components/dialog",
+        "appliesTo": ["dialog"],
+        "status": "active"
+      }
+    ]
+  },
+  "select": {
+    "sources": [
+      {
+        "id": "wai-aria-apg-select",
+        "platform": "wai-aria-apg",
+        "title": "Combobox Pattern",
+        "url": "https://www.w3.org/WAI/ARIA/apg/patterns/combobox/",
+        "appliesTo": ["select"],
+        "status": "active"
+      },
+      {
+        "id": "radix-select",
+        "platform": "radix",
+        "title": "Select",
+        "url": "https://www.radix-ui.com/primitives/docs/components/select",
+        "appliesTo": ["select"],
+        "status": "active"
+      }
+    ]
+  },
+  "tabs": {
+    "sources": [
+      {
+        "id": "wai-aria-apg-tabs",
+        "platform": "wai-aria-apg",
+        "title": "Tabs Pattern",
+        "url": "https://www.w3.org/WAI/ARIA/apg/patterns/tabs/",
+        "appliesTo": ["tabs"],
+        "status": "active"
+      },
+      {
+        "id": "radix-tabs",
+        "platform": "radix",
+        "title": "Tabs",
+        "url": "https://www.radix-ui.com/primitives/docs/components/tabs",
+        "appliesTo": ["tabs"],
+        "status": "active"
+      }
+    ]
+  }
+}

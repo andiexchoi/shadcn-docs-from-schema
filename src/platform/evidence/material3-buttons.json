@@ -1,0 +1,34 @@
+{
+  "sourceId": "material3-buttons",
+  "platform": "material-3",
+  "canonicalUrl": "https://m3.material.io/components/buttons/guidelines",
+  "retrievedAt": "2026-04-26",
+  "reviewedAt": "2026-04-26",
+  "reviewState": "current",
+  "excerpts": [
+    {
+      "id": "material3-buttons-hierarchy",
+      "topic": "visual-hierarchy",
+      "evidence": "Use visually-prominent filled buttons for the most important actions. Buttons are just one option for representing actions in a product and shouldn't be overused. Too many buttons on a screen can disrupt the visual hierarchy. Since they have such strong emphasis, the filled style should be used sparingly, ideally for only one action on a page.",
+      "supportsChecklistItem": "Verify that filled buttons are reserved for the most important actions and used sparingly, ideally for only one action on a page. Use lower-emphasis variants or other action patterns for secondary and low-priority actions."
+    },
+    {
+      "id": "material3-buttons-labeling",
+      "topic": "labeling",
+      "evidence": "Label text is the most important element of a button. It describes the action that will occur if someone taps a button. It should be very brief, ideally 1–3 words. Use sentence case, which only capitalizes the first word and proper nouns.",
+      "supportsChecklistItem": "Verify that button labels describe the action that occurs when activated, are brief, ideally 1–3 words, and use sentence case."
+    },
+    {
+      "id": "material3-buttons-icon-placement",
+      "topic": "icon-placement",
+      "evidence": "Icons visually communicate the button's action and help draw attention. They should be placed on the leading side of the button, before the label text. Place the icon to the left of the label in buttons with text in left-to-right languages. Place the icon to the right of the label in buttons with text in right-to-left languages.",
+      "supportsChecklistItem": "Verify that buttons with both an icon and a label place the icon on the leading side before the label text: left of the label in left-to-right languages and right of the label in right-to-left languages."
+    },
+    {
+      "id": "material3-buttons-types",
+      "topic": "button-types",
+      "evidence": "Material Design 3 shows five button styles in order of emphasis: Elevated button, Filled button, Filled tonal button, Outlined button, Text button. Filled buttons have strong emphasis and are for important, final actions that complete a flow. Tonal buttons are for lower-priority buttons that need slightly more emphasis than outlined buttons. Outlined buttons are for medium-emphasis actions that aren't primary. Text buttons are for the lowest priority actions.",
+      "supportsChecklistItem": "Verify that button variant selection matches intended emphasis: filled for important final actions; filled tonal for lower-priority actions needing more emphasis than outline; outlined for medium-emphasis secondary actions; text for the lowest-priority actions."
+    }
+  ]
+}

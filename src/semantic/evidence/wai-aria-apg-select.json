@@ -1,0 +1,45 @@
+{
+  "sourceId": "wai-aria-apg-select",
+  "platform": "wai-aria-apg",
+  "canonicalUrl": "https://www.w3.org/WAI/ARIA/apg/patterns/combobox/",
+  "retrievedAt": "2026-04-26",
+  "reviewedAt": "2026-04-26",
+  "reviewState": "current",
+  "excerpts": [
+    {
+      "id": "wai-aria-apg-select-trigger-role",
+      "section": "aria-requirements",
+      "topic": "trigger role",
+      "evidence": "The element that serves as an input and displays the combobox value has role combobox. When the combobox popup is not visible, the element with role combobox has aria-expanded set to false. When the popup element is visible, aria-expanded is set to true. The combobox has aria-haspopup set to a value that corresponds to the popup type; for a listbox popup, this is aria-haspopup=\"listbox\".",
+      "supportsGuideline": "The trigger element must have role=\"combobox\", aria-expanded (true when open, false when closed), and aria-haspopup=\"listbox\"."
+    },
+    {
+      "id": "wai-aria-apg-select-listbox-role",
+      "section": "aria-requirements",
+      "topic": "listbox role",
+      "evidence": "The popup is an element that has role listbox.",
+      "supportsGuideline": "The select content (popup) element must have role=\"listbox\"."
+    },
+    {
+      "id": "wai-aria-apg-select-option-role",
+      "section": "aria-requirements",
+      "topic": "option role and selection",
+      "evidence": "When a suggested value is visually indicated as the currently selected value, the option containing that value has aria-selected set to true.",
+      "supportsGuideline": "Each select item must have role=\"option\". The selected item must have aria-selected=\"true\"; all others have aria-selected=\"false\" or omit the attribute."
+    },
+    {
+      "id": "wai-aria-apg-select-keyboard-navigate",
+      "section": "keyboard-interactions",
+      "topic": "navigation within open popup",
+      "evidence": "Down Arrow: Moves focus to and selects the next option. If focus is on the last option, either returns focus to the combobox or does nothing. Up Arrow: Moves focus to and selects the previous option. If focus is on the first option, either returns focus to the combobox or does nothing. Home (Optional): Moves focus to and selects the first option. End (Optional): Moves focus to the last option.",
+      "supportsGuideline": "**Arrow Down** / **Arrow Up**: moves focus through options. **Home** (optional): first option. **End** (optional): last option."
+    },
+    {
+      "id": "wai-aria-apg-select-keyboard-select",
+      "section": "keyboard-interactions",
+      "topic": "select and close",
+      "evidence": "Enter: Accepts the focused option in the listbox by closing the popup, placing the accepted value in the combobox. Escape: Closes the popup and returns focus to the combobox.",
+      "supportsGuideline": "**Enter**: selects the focused option and closes the listbox. **Escape**: closes the listbox without changing the selection and returns focus to the trigger."
+    }
+  ]
+}

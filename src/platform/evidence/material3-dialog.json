@@ -1,0 +1,58 @@
+{
+  "sourceId": "material3-dialog",
+  "platform": "material-3",
+  "canonicalUrl": "https://m3.material.io/components/dialogs/guidelines",
+  "retrievedAt": "2026-04-26",
+  "reviewedAt": "2026-04-26",
+  "reviewState": "current",
+  "excerpts": [
+    {
+      "id": "material3-dialogs-when-to-use",
+      "topic": "when-to-use",
+      "evidence": "A dialog is a modal window that appears in front of app content to provide critical information or ask for a decision. Dialogs disable all app functionality when they appear, and remain on screen until confirmed, dismissed, or a required action has been taken. Dialogs are purposefully interruptive, so they should be used sparingly. Use dialogs for prompts that block an app's normal operation, and for critical information that requires a specific user task, decision, or acknowledgement. Don't use dialogs for low- or medium-priority information. Instead use a snackbar, which can be dismissed or disappear automatically.",
+      "supportsChecklistItem": "Verify that the dialog is used only for prompts that block normal app operation or critical information requiring a specific task, decision, or acknowledgement. Use a snackbar or another less-disruptive pattern for low- or medium-priority information."
+    },
+    {
+      "id": "material3-dialogs-actions",
+      "topic": "action-count",
+      "evidence": "Dialogs should contain a maximum of two actions. If a single action is provided, it must be an acknowledgement action. If two actions are provided, one must be a confirming action, and the other a dismissing action. Buttons are aligned to the trailing edge of the dialog for easier interaction. The confirmation button is always closest to the edge. Button alignment responds automatically for right-to-left languages, where the confirmation button is aligned to the left edge.",
+      "supportsChecklistItem": "Verify that the dialog has no more than two actions. If there is one action, it must acknowledge the message. If there are two actions, one must confirm and one must dismiss. Place the confirming action closest to the trailing edge, adapting automatically for right-to-left languages."
+    },
+    {
+      "id": "material3-dialogs-dismiss",
+      "topic": "dismissal",
+      "evidence": "Dialogs disable all app functionality when they appear, and remain on screen until confirmed, dismissed, or a required action has been taken. If two actions are provided, one must be a confirming action, and the other a dismissing action. Disable confirming actions until a choice is made. Dismissive actions are never disabled.",
+      "supportsChecklistItem": "Verify that the dialog can be dismissed without completing the confirming action when two actions are present. Ensure dismissive actions are never disabled."
+    },
+    {
+      "id": "material3-dialogs-title",
+      "topic": "content",
+      "evidence": "A dialog's purpose should be communicated by its headline and buttons or actionable items. Headlines should contain a brief, clear statement or question. Avoid apologies, alarm, or ambiguity. Headlines should always be succinct. They can wrap to a second line if necessary, and be truncated.",
+      "supportsChecklistItem": "Verify that the dialog headline, when present, communicates the purpose through a brief, clear statement or question. Avoid ambiguous titles like \"Are you sure?\" and avoid alarmist or apologetic phrasing."
+    },
+    {
+      "id": "material3-dialogs-labeling",
+      "topic": "action-labeling",
+      "evidence": "Avoid presenting people with unclear choices. The confirmation action should be clear about what happens next, like Send or Create. Avoid using vague terms like Done, OK, or Close. To save a selection in a full-screen dialog, use Save. The close icon or dismissive action, such as Cancel or Back, should close the dialog.",
+      "supportsChecklistItem": "Verify that dialog action labels clearly describe what happens next, such as Send, Create, Save, Cancel, or Back. Avoid vague confirming labels like Done, OK, or Close when a more specific action label is available."
+    },
+    {
+      "id": "material3-dialogs-errors",
+      "topic": "error-messages",
+      "evidence": "Errors about the dialog fields should always appear inline where they occur. General errors such as network issues preventing saving or submitting should appear in a basic dialog when the confirming action fails. Error messages should clearly but briefly explain the source of the error and how to fix it. Show all errors on the page at once so people can fix everything before trying again.",
+      "supportsChecklistItem": "Verify that field-level errors inside dialogs appear inline where they occur. Use a basic dialog for general errors, such as network failures that prevent saving or submitting. Ensure error messages briefly explain the source of the error and how to fix it."
+    },
+    {
+      "id": "material3-dialogs-scrolling",
+      "topic": "scrolling",
+      "evidence": "Most dialog content should avoid scrolling. Even when scrolling is required, the dialog title is pinned at the top, with buttons pinned at the bottom. This ensures selected content remains visible alongside the title and buttons, even upon scroll. Dialogs don't scroll with elements outside of the dialog, such as the background.",
+      "supportsChecklistItem": "Verify that dialog content avoids scrolling when possible. When scrolling is required, keep the title pinned at the top and actions pinned at the bottom, and ensure the background does not scroll with the dialog."
+    },
+    {
+      "id": "material3-dialogs-focus-retention",
+      "topic": "focus-retention",
+      "evidence": "Dialogs retain focus until dismissed or an action has been taken, such as choosing a setting. They shouldn't be obscured by other elements or appear partially on screen, with the exception of full-screen dialogs.",
+      "supportsChecklistItem": "Verify that dialogs retain focus until dismissed or completed, and that they are not obscured by other elements or partially off screen except where full-screen dialogs intentionally cover the screen."
+    }
+  ]
+}

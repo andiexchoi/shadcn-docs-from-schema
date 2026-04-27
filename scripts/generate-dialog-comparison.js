@@ -3,7 +3,8 @@ import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import Anthropic from "@anthropic-ai/sdk";
 import { fetchComponentDocs } from "../src/fetchDocs.js";
-import { buildPromptFromDocs, buildRawRefsPrompt } from "../src/prompt.js";
+import { buildPromptFromDocs } from "../src/prompt.js";
+import { semanticGuidelines } from "../src/semantic-guidelines.js";
 
 const COMPONENT = "dialog";
 const MODEL = "claude-sonnet-4-6";
@@ -25,7 +26,7 @@ async function main() {
   const docs = await fetchComponentDocs(COMPONENT, ["shadcn", "radix"]);
   if (!docs.found) throw new Error(`No docs found for ${COMPONENT}`);
 
-  const v1Prompt = buildRawRefsPrompt(COMPONENT, docs.content);
+  const v1Prompt = `You are generating component documentation for ${COMPONENT}. The audience is engineers, design engineers, and AI coding agents.\n\n## Source documentation\n\n${docs.content}\n\n---\n\n${semanticGuidelines}\n\n---\n\nUsing the source documentation and the semantic guidelines above, write documentation for ${COMPONENT}. Output only the documentation.`;
   const v2Prompt = buildPromptFromDocs(COMPONENT, docs.content);
 
   console.log("Generating V1 (external refs only)...");

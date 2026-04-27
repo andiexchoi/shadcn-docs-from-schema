@@ -1,0 +1,31 @@
+{
+  "sourceId": "radix-select",
+  "platform": "radix",
+  "canonicalUrl": "https://www.radix-ui.com/primitives/docs/components/select",
+  "retrievedAt": "2026-04-26",
+  "reviewedAt": "2026-04-26",
+  "reviewState": "current",
+  "excerpts": [
+    {
+      "id": "radix-select-trigger-value",
+      "section": "aria-requirements",
+      "topic": "SelectValue",
+      "evidence": "SelectValue is the part that reflects the selected value. By default the selected item's text will be rendered. It should not be styled to ensure correct positioning.",
+      "supportsGuideline": "SelectValue must be inside SelectTrigger. It renders the current selection and placeholder. Do not style SelectValue — it will break positioning."
+    },
+    {
+      "id": "radix-select-item-composition",
+      "section": "aria-requirements",
+      "topic": "SelectItem composition",
+      "evidence": "SelectItem requires a value prop. SelectItemText should only contain the text you want to see in the trigger when that item is selected. It should not be styled to ensure correct positioning.",
+      "supportsGuideline": "SelectContent must contain SelectItem elements, each with a required value prop. Do not style SelectItemText — it breaks trigger display positioning."
+    },
+    {
+      "id": "radix-select-onvaluechange",
+      "section": "keyboard-interactions",
+      "topic": "value change handler",
+      "evidence": "onValueChange is the event handler called when the value changes.",
+      "supportsGuideline": "Use onValueChange on the Select root to handle selection changes. Do not use onChange or onValueChanged — neither exists on this component."
+    }
+  ]
+}

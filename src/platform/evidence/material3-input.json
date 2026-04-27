@@ -1,0 +1,52 @@
+{
+  "sourceId": "material3-input",
+  "platform": "material-3",
+  "canonicalUrl": "https://m3.material.io/components/text-fields/guidelines",
+  "retrievedAt": "2026-04-26",
+  "reviewedAt": "2026-04-26",
+  "reviewState": "current",
+  "excerpts": [
+    {
+      "id": "material3-text-fields-label",
+      "topic": "labels",
+      "evidence": "Label text tells people what information is requested. Every text field should have a label. Label text should be aligned with the input text, and always visible. It can be placed in the middle of a text field, or rest near the top of the container. Label text shouldn't be truncated or take up multiple lines. Keep it short, clear, and fully visible. A text field doesn't require a label if the field's purpose is indicated by a separate, adjacent label.",
+      "supportsChecklistItem": "Verify that every text field has a label, either inside the field or as a separate adjacent label. Ensure label text stays visible, aligns with the input text, and remains short, clear, untruncated, and on a single line."
+    },
+    {
+      "id": "material3-text-fields-helper-text",
+      "topic": "helper-text",
+      "evidence": "Supporting text conveys additional information about the input field, such as how it will be used. It should ideally be one line, though may wrap to multiple lines if required. It can be either persistently visible or visible only on focus. For text fields that validate their content such as passwords, replace supporting text with error text. Swapping supporting text with error text prevents new lines of text from bumping content and changing the layout.",
+      "supportsChecklistItem": "Verify that supporting text provides additional input guidance and is ideally one line. In error states, replace supporting text with error text rather than showing both simultaneously."
+    },
+    {
+      "id": "material3-text-fields-errors",
+      "topic": "error-messages",
+      "evidence": "For text fields that validate their content such as passwords, replace supporting text with error text. If only one error is possible, error text should describe how to avoid the error. If multiple errors are possible, error text should describe how to avoid the most likely error. It's strongly recommended to show an error icon when the text field is in the error state. This highlights the error for people with visual impairments, and provides an additional sensory indicator.",
+      "supportsChecklistItem": "Verify that error text replaces supporting text, explains how to avoid the error, and is paired with an error icon or other non-color visual indicator in the field."
+    },
+    {
+      "id": "material3-text-fields-character-counter",
+      "topic": "character-limits",
+      "evidence": "If there is a character or word limit, include a character or word counter. They display the ratio of characters used and the total character limit.",
+      "supportsChecklistItem": "Verify that inputs with character or word limits include a counter that displays the amount used and the total limit, such as 42/120."
+    },
+    {
+      "id": "material3-text-fields-variants",
+      "topic": "variants",
+      "evidence": "There are two variants of text fields: Filled text fields and Outlined text fields. Both variants of text fields use a container to provide a visual cue for interaction and provide the same functionality. If both variants of text field are used in a UI, they should be used consistently within different sections, and not intermixed within the same region.",
+      "supportsChecklistItem": "Verify that filled and outlined text fields are not intermixed within the same form or region. Use one variant consistently per section or region."
+    },
+    {
+      "id": "material3-text-fields-required",
+      "topic": "required-fields",
+      "evidence": "To show a field is required, display an asterisk (*) next to the label text, and explain that asterisks indicate required fields in one of two ways: supporting text or a single note at the beginning of the form. Additional best practices include: indicate all required fields; if required text has a particular color, use the same color for the asterisk.",
+      "supportsChecklistItem": "Verify that required fields use an asterisk next to the label and explain the asterisk either with supporting text or a single note at the beginning of the form."
+    },
+    {
+      "id": "material3-text-fields-density",
+      "topic": "density",
+      "evidence": "Don't apply density to text fields by default. This lowers their targets below the recommended 48x48 CSS pixels. Instead, give people a way to choose a higher density, like selecting a denser layout or changing the theme. To ensure this density setting can be easily reverted when it's active, keep all the targets to change it at a minimum of 48x48 CSS pixels each.",
+      "supportsChecklistItem": "Verify that dense text fields are not the default. If dense mode is available, make it user-selectable and ensure controls for changing or reverting density remain at least 48×48 CSS pixels."
+    }
+  ]
+}

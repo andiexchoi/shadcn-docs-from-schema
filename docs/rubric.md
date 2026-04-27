@@ -1,129 +1,108 @@
-# Rubric for scoring Dialog documentation
+# Rubric for evaluating the documentation tool
 
-A prior standard, committed to before generating either version. Each criterion is scored 0, 1, or 2 against the generated doc. Comments cite specific lines.
+Two parts. The audit is what I check against external ground truth. The reader's guide is what you bring to the doc for your own team.
 
-**Scoring key**
-- **0** — absent, wrong, or actively misleading
-- **1** — present but generic, incomplete, or not actionable
-- **2** — specific, correct, and usable for a decision
+The audit checks whether the system did what it promised. The reader's guide is where "good for our team" gets evaluated, and only your team can do that evaluation.
 
 ---
 
-## 1. Decision support
-Does the doc help a reader defend a choice, not just describe behavior? A good doc tells you *what you are deciding against* — so if someone overrides the pattern, the override is visible and arguable.
+## Part 1 — System audit
 
-- 0: pure description, no normative guidance
-- 1: says what's "recommended" but gives no reasoning a reader could use in an argument
-- 2: each guideline carries a "why" that a designer, engineer, or PM could cite when defending or overriding the choice
+Two checks with external ground truth. These are the checks I run against generated output.
 
-## 2. Accessibility coverage
-Does the doc name the load-bearing a11y behaviors for this component? For Dialog specifically: focus trap on open, focus return on close, Escape-to-dismiss, `role="dialog"` or `role="alertdialog"`, `aria-labelledby`, `aria-describedby`, motion-reduce for animations, scrim/overlay behavior with screen readers.
+### 1. Source fidelity
 
-- 0: a11y not mentioned, or only a generic "make it accessible"
-- 1: some attributes named but key behaviors missing (e.g., names ARIA but not focus trap)
-- 2: covers focus management, keyboard, ARIA attributes with specific values, and motion sensitivity
+Every factual claim in the generated doc traces back to a line in the source.
 
-## 3. Contract specificity
-Are the structural requirements precise enough that an AI coding agent could emit correct code from the doc alone? Named attributes, named elements, named values, named sub-components, composition rules.
+**Sources:** raw MDX from shadcn/ui, Radix UI, or Base UI repos (fetched at generation time); a pasted JSON schema; or a TSX/JSX source file.
 
-- 0: vague ("wrap content appropriately")
-- 1: names components but not the nesting rules or required props
-- 2: names every required sub-component, its nesting, and the props that are structurally required even if TypeScript lets you omit them
+**Failure modes this catches:**
+- Hallucinated props (a `loading` prop the component doesn't have)
+- Invented keyboard shortcuts (Escape closing a component that doesn't listen for it)
+- Fabricated ARIA attributes (recommending `aria-pressed` on a non-toggle)
+- Wrong sub-component names (`DialogClose` vs `Dialog.Close`)
+- Renamed values reverting to upstream (calling a fork's `critical` variant `destructive` because the model recalled it from training data)
+- Do's and Don'ts rules sourced from model training knowledge rather than schema or source docs
 
-## 4. Failure modes named
-Does the doc tell you when *not* to use Dialog, and what breaks when you misuse it? Common pitfalls. When to choose a sheet, a drawer, a popover, an inline form instead.
+**How I audit:** read each claim, find the matching line in the source. Anything that doesn't trace is a hallucination, a generalization the source doesn't support, or a guess pulled from training data.
 
-- 0: no failure modes mentioned
-- 1: lists alternatives without saying when each applies
-- 2: names specific misuses (e.g., nested dialogs, dialogs for non-blocking UI, using dialog for confirmation when a toast would do) and the consequence of each
+### 1b. Platform evidence fidelity
 
-## 5. Editorial guidelines for in-component text
-For Dialog: title length/phrasing, whether titles are questions or statements, confirm-button labels ("Delete" vs "OK"), destructive-action conventions, description text length.
+Every item in the "Platform compliance checklist" traces to a reviewed evidence excerpt in `src/platform/evidence/`.
 
-- 0: no guidance on text inside the component
-- 1: mentions text exists, no specific rules
-- 2: specific, actionable rules (char limits, required verbs, destructive-action phrasing) with reasoning
+**Failure modes this catches:**
+- Platform checklist items generated from training knowledge rather than injected evidence
+- Evidence IDs cited in the output that don't exist in the evidence files
+- Platform guidance appearing when `reviewState` is not `current`
 
-## 6. PM-legibility
-Could a non-engineer read this and identify what decisions are being made and why? Not "can a PM implement it" — "can a PM use this doc to participate in a design review."
+**How I audit:** for each platform checklist item, confirm the cited `evidence id` exists in the matching evidence file and that the file has `reviewState: "current"`. Follow the canonical URL to verify the evidence excerpt reflects what the live source actually says.
 
-- 0: reads as pure engineering reference; a PM would bounce off
-- 1: structure is legible but reasoning is buried in implementation detail
-- 2: a PM reading this could say "we are deciding X against Y because Z" for any guideline in the doc
+### 2. Prompt conformance
 
-## 7. Canonical pattern vs variant boundaries
-Does the doc distinguish between the canonical Dialog pattern and its variants (alert dialog, confirmation, form dialog, fullscreen modal)? Can a reader tell which is the default and when to depart from it?
+The output obeys every rule in `src/prompt.js` and `src/style-guide.js`.
 
-- 0: treats all variants equally, no default named
-- 1: names variants but not when to choose each
-- 2: names the canonical default, names each variant's trigger condition, and explains when a custom pattern is warranted
+**Rules this covers:**
+- Section structure: required sections present, omitted sections absent (Badge is non-interactive, so no Keyboard interactions section)
+- Framing: positive guidance before negative (Do before Don't)
+- Output budget: per-section sentence and bullet limits
+- Style: no em-dashes, no passive voice, no Latin abbreviations, no `should`/`may`, no "Click here"
+- Editorial: every guideline carries a "why"
 
-## 8. Signal density
-Is the doc tight? Every sentence earning its place? No filler, no restatement, no "a dialog is a UI element that..."
+**Failure modes this catches:**
+- Drift between what the prompt asks for and what the model produces
+- Style regressions introduced by a prompt change
+- Section omission rules misapplied (Component contracts on a single-element component)
 
-- 0: significant filler, restatement, or generic prose
-- 1: mostly tight, some sections padded
-- 2: every sentence carries weight; cuttable content has been cut
+**How I audit:** read the output against the prompt files. Note each rule the output violates. Some of this is already automated in `eval/cases.js` via substring matching. The audit is the higher-level pass that catches what substring matching can't: subtle passive voice, weak whys, sentences that nominally fit the budget but pad.
 
 ---
 
-## Synthesis questions (after scoring)
+## Part 2 — Reader's guide
 
-After scoring both versions across all 8 criteria, answer these:
+Four questions to hold while reading the output for your own team. Not scored, because scoring them honestly would require knowing your team, your PM, your design system maturity, and your tolerance for editorial versus structural guidance. The questions do real work. Numbers attached to them would not.
 
-1. Which criteria did the editorial layer actually move? Where do V1 and V2 diverge most?
-2. Where did the editorial layer add *nothing*? (Be honest — this is the finding the piece is organized around.)
-3. Is there a criterion where V1 (external refs only) scored *higher* than V2? If so, why — is the editorial layer getting in the way?
-4. If you had to defend V2 over V1 to a skeptical senior designer, what's the one thing you'd point at?
-5. If V1 and V2 score roughly the same, what does that tell you about what your editorial judgment is actually doing?
+### Decision support
 
----
+Does each guideline carry a "why" you could cite while defending or overriding the choice in a design review? Pure description ("the close button appears in the top-right") leaves you nothing to argue. Reasoning you can quote ("close in the top-right keeps the dismiss target reachable on small screens") gives you something to point at.
 
-## Total score
+### Editorial guidelines for in-component text
 
-| Criterion | V1 (external refs only) | V2 (full pipeline) |
-|---|---|---|
-| 1. Decision support | | |
-| 2. Accessibility coverage | | |
-| 3. Contract specificity | | |
-| 4. Failure modes named | | |
-| 5. Editorial guidelines | | |
-| 6. PM-legibility | | |
-| 7. Canonical vs variants | | |
-| 8. Signal density | | |
-| **Total (out of 16)** | | |
+Does the doc give you specific, actionable rules for the text inside the component (title length, confirm-button verbs, destructive-action phrasing) with reasoning? Generic copy advice gets ignored. Specific rules with whys earn their place in a review.
+
+### PM-legibility
+
+Could a non-engineer on your team read this and identify what decisions are being made and why? A concrete test: skim the doc for any section in plain prose or a checklist a PM could read without translation. If everything is code, tables, or ARIA-speak, the answer is no, and your design reviews will run with one less voice.
+
+### Canonical pattern vs variant boundaries
+
+Does the doc name the canonical default and tell you when to depart from it? "Use the standard Dialog unless X, Y, or Z, in which case use Sheet, Drawer, or inline form." Without a named default, every variant looks equally valid, which is how teams end up with three different overlay patterns in the same product.
 
 ---
 
-## Known limitations of this rubric
+## Known limitations
 
-This rubric is a considered artifact, not a measurement tool. It reflects what I think a cross-functional decision-support component doc should do, based on watching teams argue at Amazon and Snowflake. A different writer would make a different rubric. These limitations are named here so any use of the rubric is read with the right posture.
+This is a considered artifact, not a measurement instrument. Naming the limitations so any use is read with the right posture.
 
-### Definitional weaknesses (surfaced by internal re-read)
+### Why the reader's-guide questions aren't scored
 
-1. **Criterion 4 conflates two things.** "Failure modes named" mixes "when not to use this component" (pick an alternative instead) with "common implementation pitfalls" (what breaks if you misuse it). These are different. A doc can cover one and miss the other. When scoring, treat the primary measure as alternative-component guidance; common mistakes bleed into Criterion 3 (Contract specificity).
+Decision support, editorial guidelines, PM-legibility, and canonical-vs-variants are real qualities of a good design system doc. None of them have external ground truth. A score on any of them would be reading attention dressed up as a number. Leaving them as questions does two things: it keeps the rubric from overclaiming, and it enrolls the user in the same reading I'd do.
 
-2. **Criterion 6 is subjective without a concrete test.** "Could a PM read this and participate in a design review" depends on the PM. A tighter operational definition: score 2 if at least one section uses prose or a plain-language checklist a non-engineer can skim (Anatomy as prose, Decisions-to-verify as questions). Score 1 if everything is code, tables, or ARIA-speak.
+### Why the audit doesn't measure "is this a good doc"
 
-3. **Criterion 8 is felt, not measured.** "Every sentence earns its place" is aesthetic judgment. A concrete proxy: score 2 if no section visibly exceeds its output-budget cap; score 1 if one or more sections sprawl past their cap.
+Source fidelity and prompt conformance check whether the system did what it promised. Neither tells you the resulting doc is good for your team. Useful, accurate, and on-spec is a precondition for good, not the same thing as good.
 
-4. **Criteria 1 and 5 can double-count.** An editorial rule with a "why" satisfies both Decision support (Criterion 1) and Editorial guidelines (Criterion 5). When scoring, Criterion 1 should weight structural decision support (contracts labeled default/override, alternatives named, decisions-to-verify checklist) and leave the editorial whys to Criterion 5.
+### Scope gap: capacity and cuttability signaling
 
-### Scope gap (surfaced by Amazon-pattern mapping)
+The Amazon pattern that motivated this tool was engineering pushing back on design proposals under capacity pressure. An ideal decision-support doc helps a team reason about effort: which rules are structural contracts (cannot be cut), which are editorial preferences (can be deferred to v2), which variants require what implementation effort. Prompt conformance covers part of this by labeling contracts as non-negotiable in the template, but the rest of the doc isn't framed as explicitly deferrable. Open question for a future version.
 
-The rubric doesn't directly measure **capacity / cuttability signaling**. The Amazon pattern that motivated this tool was engineering pushing back on design proposals under capacity pressure. An ideal decision-support doc would help a team reason about effort — which rules are structural contracts (cannot be cut), which are editorial preferences (can be deferred to v2), which variants require what implementation effort. Criterion 3 (Contract specificity) covers part of this by labeling contracts as non-negotiable, but the rubric doesn't frame the rest of the doc as explicitly deferrable. This is a known limitation for the audience the tool is built for and a future-revision candidate.
+### Where this overlaps with established design system docs
 
-### Overlap with published design-system doc philosophies
+Several questions in this rubric map to conventions documented by Polaris, Material, Apple HIG, Fluent, and Lightning:
 
-Six of the eight criteria map to conventions documented by Polaris, Material, Apple HIG, Fluent, and Lightning:
-
-| Criterion | Matching convention |
+| This rubric | Matching convention |
 |---|---|
-| 1. Decision support | Polaris Best Practices, Fluent correct usage, Lightning Guidelines |
-| 2. Accessibility coverage | WCAG required by all five |
-| 3. Contract specificity | Lightning component blueprints, Fluent I/O parameters, Material tokens |
-| 5. Editorial guidelines | Polaris Content guidelines, Lightning voice/tone |
-| 7. Canonical vs variants | Fluent state variations |
-| 8. Signal density | Clarity principle in Polaris, HIG, Lightning |
+| Decision support | Polaris Best Practices, Fluent correct usage, Lightning Guidelines |
+| Editorial guidelines | Polaris Content guidelines, Lightning voice/tone |
+| Canonical vs variants | Fluent state variations |
 
-Four criteria or rule-shapes are novel to this rubric and come from the cross-functional argument pattern, not from any published system: **PM-legibility (Criterion 6), default/override rule shape, reviewer-facing checklist (Decisions to verify section), and quantitative thresholds**. Treat the overlap as evidence the rubric isn't idiosyncratic; treat the divergences as where the rubric is doing original work, targeted at a cross-functional audience the published systems don't design for.
+The overlap is evidence the underlying questions aren't idiosyncratic. Source fidelity has no direct equivalent in those systems, because they own their components and don't face the AI-fork problem this tool addresses. PM-legibility, the default/override rule shape, and the audit framing itself come from the cross-functional argument pattern this tool is built for, which the published systems don't design for.
