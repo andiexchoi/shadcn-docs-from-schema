@@ -18,7 +18,50 @@ function extractComponentName(source) {
   return null;
 }
 
-function extractPropsFromInterface(source) {
+function extractTypeAliases(source) {
+  // Collect `type X = "a" | "b" | "c"` declarations (single- or multi-line)
+  // as a map from alias name to its literal values. Skips object types.
+  const aliases = {};
+  const lines = source.split("\n");
+
+  for (let i = 0; i < lines.length; i++) {
+    const aliasStart = lines[i].match(/^\s*(?:export\s+)?type\s+(\w+)\s*=\s*(.*)$/);
+    if (!aliasStart) continue;
+
+    const name = aliasStart[1];
+    let body = aliasStart[2].trim();
+
+    // Stitch continuation lines that start with `|`
+    let j = i + 1;
+    while (j < lines.length && /^\s*\|/.test(lines[j])) {
+      body += " " + lines[j].trim();
+      j++;
+    }
+
+    body = body.replace(/;$/, "").trim();
+
+    // Skip object types — those are handled by extractPropsFromInterface
+    if (body.includes("{")) continue;
+
+    // Must contain at least one quoted string literal to qualify as a union of literals
+    if (!/["']/.test(body)) continue;
+
+    const values = [];
+    const literalPattern = /["']([^"']+)["']/g;
+    let lm;
+    while ((lm = literalPattern.exec(body)) !== null) {
+      values.push(lm[1]);
+    }
+
+    if (values.length > 0) {
+      aliases[name] = values;
+    }
+  }
+
+  return aliases;
+}
+
+function extractPropsFromInterface(source, aliases = {}) {
   const match = source.match(
     /(?:interface|type)\s+\w*Props?\s*(?:extends\s+[^{]+)?\s*=?\s*\{([^}]*)\}/s
   );
@@ -51,6 +94,8 @@ function extractPropsFromInterface(source) {
       props[name] = { type: "number" };
     } else if (typeStr === "string") {
       props[name] = { type: "string" };
+    } else if (aliases[typeStr]) {
+      props[name] = { type: "enum", values: aliases[typeStr] };
     } else {
       props[name] = { type: typeStr };
     }
@@ -63,7 +108,7 @@ function extractDefaults(source) {
   const defaults = {};
 
   const destructurePattern =
-    /\(\s*\{([^}]+)\}\s*(?:,\s*\w+)?\s*\)/g;
+    /\(\s*\{([^}]+)\}\s*(?::\s*\w[\w<>,\s|&]*?)?\s*(?:,\s*\w+)?\s*\)/g;
   let match;
   while ((match = destructurePattern.exec(source)) !== null) {
     const body = match[1];
@@ -157,7 +202,8 @@ function extractExtendsElement(source) {
 
 export function parseComponentSource(source) {
   const componentName = extractComponentName(source);
-  const interfaceProps = extractPropsFromInterface(source);
+  const aliases = extractTypeAliases(source);
+  const interfaceProps = extractPropsFromInterface(source, aliases);
   const cvaProps = extractCvaVariants(source);
   const defaults = extractDefaults(source);
   const subcomponents = extractSubcomponents(source);

@@ -106,6 +106,58 @@ const cases = [
     export { MyComponent }`,
     check: (s) => s.component === "FancyButton",
   },
+  {
+    name: "Resolves single-line string-literal type alias",
+    source: `type Severity = "info" | "success" | "warning" | "danger"
+    type BannerProps = {
+      severity?: Severity
+      title: string
+    }
+    export function Banner() { return null }`,
+    check: (s) =>
+      s.props.severity.type === "enum" &&
+      s.props.severity.values.length === 4 &&
+      s.props.severity.values.includes("success") &&
+      s.props.severity.values.includes("danger"),
+  },
+  {
+    name: "Resolves multi-line string-literal type alias",
+    source: `type Tone =
+      | "neutral"
+      | "positive"
+      | "negative"
+    type Props = {
+      tone?: Tone
+    }
+    export function Pill() { return null }`,
+    check: (s) =>
+      s.props.tone.type === "enum" &&
+      s.props.tone.values.length === 3 &&
+      s.props.tone.values.includes("negative"),
+  },
+  {
+    name: "Resolves exported type alias",
+    source: `export type Size = "sm" | "md" | "lg"
+    type Props = { size?: Size }
+    export function Box() { return null }`,
+    check: (s) =>
+      s.props.size.type === "enum" &&
+      s.props.size.values.length === 3,
+  },
+  {
+    name: "Extracts defaults when destructuring is followed by a type annotation",
+    source: `type Props = {
+      severity?: "info" | "danger"
+      dismissible?: boolean
+    }
+    export function Banner({
+      severity = "info",
+      dismissible = false,
+    }: Props) { return null }`,
+    check: (s) =>
+      s.props.severity.default === "info" &&
+      s.props.dismissible.default === false,
+  },
 ];
 
 function runTests() {

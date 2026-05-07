@@ -3,6 +3,11 @@ import { styleGuide } from "./style-guide.js";
 import { loadPlatformEvidence } from "./platform/load-evidence.js";
 import { loadSemanticEvidence } from "./semantic/load-evidence.js";
 
+// The section headings emitted in the Template block below (## When to use,
+// ## ARIA requirements, etc.) are paired with the HEADING_MAP in
+// src/markdown-to-compact.js. Renaming a heading here without updating the
+// parser will silently drop that section from the compact YAML output and
+// break the agent-context export.
 function buildSharedPromptBody(componentIdentifier) {
   return `## Non-negotiable rules
 
