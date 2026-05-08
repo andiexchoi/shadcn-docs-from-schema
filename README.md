@@ -190,6 +190,32 @@ The full rubric, plus a reader's guide for evaluating output against your team's
 
 ---
 
+## Known limitations
+
+**Variant headers can paraphrase short non-standard enum values.** When a schema defines an enum with short identifiers that aren't standard accessibility vocabulary (e.g., `severity: "info" | "success" | "warning" | "danger"`), the model sometimes renders `info` as "Informational" or `danger` as "Error" in variant section headings, even though the prompt rules require literal values. Standard-English values like `success` and `warning` come through literal. The audit at `eval/audit.js` flags the substitution.
+
+**Workaround.** In the **Custom schema** input mode, add a `description` field on the prop that names the literal values in prose:
+
+```json
+{
+  "severity": {
+    "type": "enum",
+    "values": ["info", "success", "warning", "danger"],
+    "description": "Use `info` for low-urgency announcements, `success` for confirmations, `warning` for non-blocking issues, `danger` for blocking failures."
+  }
+}
+```
+
+When values appear by name in description prose, the model anchors to them and preserves them through the output. (The Custom Button example uses this pattern to keep `critical` literal.) For TSX paste mode, the parser does not yet extract JSDoc comments, so descriptions written in source don't reach the prompt — paste a JSON schema with descriptions instead.
+
+---
+
+## Use this for your own team
+
+To fork this tool for your team's component library, see [`FORKING.md`](FORKING.md). The recipe walks through the five files you'll touch and the friction points to know about up front.
+
+---
+
 ## Quick start
 
 ```bash
@@ -217,5 +243,12 @@ Open [http://localhost:3000](http://localhost:3000).
 - Expand evidence coverage in `src/platform/` and `src/semantic/`. The current set (buttons, dialogs, and inputs for platform; dialog, select, and tabs for semantic) is too narrow for a team to actually adopt — evidence needs to cover the broader set of components a real product ships.
 - Detect when component source changes — whether on a PR branch or on main, in shadcn/ui upstream or your own repo — and auto-regenerate the markdown and agent context to a configured output location, so the docs never lag the source.
 - Run audits against more components (Select, Toast, Sheet) using `eval/audit.js`.
+- Extract JSDoc comments from TSX source so prop descriptions reach the prompt and anchor unusual enum values (closes the gap noted in Known limitations).
 - Support OpenAPI specs as input alongside JSON schemas and TSX source.
+- Centralize default fetch sources into a single `DEFAULT_SOURCES` constant. Today the default lives in five places (`fetchDocs.js` registry and signature, `generate.js`, `batch.js`, `app/page.jsx`); a forker has to find each one.
+- Rename `src/shadcn-components.js` to a library-agnostic name and update importers. The file's job is "registry of supported components," not anything shadcn-specific.
+- Sync the UI pitch in `app/page.jsx` with the README pitch (or generate one from the other) so they don't drift.
+- Add a progress indicator during generation. Right now the UI hangs for 10–20 seconds with no feedback.
+- Improve the "No documentation found" error to name the sources tried and the URLs hit, so a forker debugging a misconfigured URL pattern can diagnose without reading source.
+- Document the `searchComponents` export contract in `src/shadcn-components.js`, or refactor so a forker doesn't need to read the consumer to know it exports a function plus an array with a specific object shape.
 

@@ -16,7 +16,7 @@ These four rules override everything else. No exceptions.
 - Never use em-dashes (—). Replace with a comma, colon, or period.
 - Never use "should" or "may." Use "must," "need to," "can," or "might" instead.
 - Never use Latin abbreviations: not "i.e.," "e.g.," or "etc."
-- Use only the prop names, variant values, and API names defined in the schema or source documentation. Never substitute names from training knowledge or upstream library defaults.
+- Use only the prop names, variant values, and API names defined in the schema or source documentation. Write every variant value verbatim, in backticks, with no paraphrase or expansion: if the schema defines \`severity\` with value \`info\`, write \`info\`, not "informational" or "the informational value." Document every value the schema defines; never silently drop one because it doesn't fit a familiar vocabulary. Never substitute names from training knowledge or upstream library defaults.
 
 ## Semantic guidance rule
 
@@ -104,7 +104,7 @@ A rule with a schema \`reason\` field: use default/override form — "Default: [
 
 ## Variants and patterns
 
-[Name each way this component is commonly composed or configured beyond the default. Include prop-level variants (destructive styling, sizes) and composition patterns (scrollable body, sticky footer, controlled state, confirmation flow). For each, one sentence: bold the variant or pattern name, then name the trigger condition. Minimum three. Skip internal implementation props like className, asChild, ref, onOpenChange. Omit only if the component genuinely has no variants, which is rare.]
+[Name each way this component is commonly composed or configured beyond the default. For each prop-value variant, lead with the literal value from the schema's enum in backticks (e.g., \`info\`, \`critical\`, \`sm\`), then name the trigger condition. Document every value defined in each enum, including ones that seem redundant or unfamiliar; never drop a value silently. For composition patterns (scrollable body, sticky footer, controlled state, confirmation flow), bold the pattern name. One sentence per entry. Minimum three. Skip internal implementation props like className, asChild, ref, onOpenChange. Omit only if the component genuinely has no variants, which is rare.]
 
 ## Placement and layout
 
@@ -175,6 +175,25 @@ ${styleGuide}
 ${semanticGuidelines}`;
 }
 
+function summarizeEnumValues(schema) {
+  if (!schema || !schema.props || typeof schema.props !== "object") return "";
+  const lines = [];
+  for (const [propName, propDef] of Object.entries(schema.props)) {
+    if (propDef && Array.isArray(propDef.values) && propDef.values.length > 0) {
+      const valuesList = propDef.values.map((v) => `\`${v}\``).join(", ");
+      lines.push(`- \`${propName}\`: ${valuesList}`);
+    }
+  }
+  if (lines.length === 0) return "";
+  return `
+
+## Literal enum values
+
+The schema above defines these literal values for enum-typed props. Use each value verbatim in backticks throughout the documentation — in section headings, in prose, in code blocks, in lists. Do not translate, expand, or substitute them: \`info\` stays \`info\`, never "informational"; \`danger\` stays \`danger\`, never "error" or "critical"; \`sm\` stays \`sm\`, never "small." Document every value listed below; never silently omit one because it does not fit a familiar vocabulary.
+
+${lines.join("\n")}`;
+}
+
 function buildSemanticEvidenceBlock(componentName) {
   const evidence = loadSemanticEvidence(componentName);
   if (!evidence) return "";
@@ -221,6 +240,7 @@ Here is the component schema:
 \`\`\`json
 ${JSON.stringify(schema, null, 2)}
 \`\`\`
+${summarizeEnumValues(schema)}
 
 When the schema includes a \`reason\` field on a prop or variant, use that reasoning as the "because" clause in the corresponding guideline. Do not paraphrase — carry the reasoning through directly.
 
